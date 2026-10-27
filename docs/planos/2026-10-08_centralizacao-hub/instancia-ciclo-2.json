@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "pid": 3800,
+    "project_root": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main",
+    "protocol": "hub-runtime-v1"
+  },
+  "listener": {
+    "LocalAddress": "127.0.0.1",
+    "LocalPort": 8765,
+    "OwningProcess": 3800
+  },
+  "processes": [
+    {
+      "ProcessId": 3440,
+      "ParentProcessId": 11076,
+      "Name": "pythonw.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.venv\\Scripts\\pythonw.exe\" \"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\server.py\""
+    },
+    {
+      "ProcessId": 3800,
+      "ParentProcessId": 3440,
+      "Name": "pythonw.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.venv\\Scripts\\pythonw.exe\" \"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\server.py\""
+    },
+    {
+      "ProcessId": 1752,
+      "ParentProcessId": 3800,
+      "Name": "python.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\hub_runtime\\voice\\.venv\\Scripts\\python.exe\" \"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\hub_runtime\\voice\\speak_server.py\""
+    },
+    {
+      "ProcessId": 17156,
+      "ParentProcessId": 1752,
+      "Name": "python.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\hub_runtime\\voice\\.venv\\Scripts\\python.exe\" \"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\hub_runtime\\voice\\speak_server.py\""
+    },
+    {
+      "ProcessId": 5896,
+      "ParentProcessId": 18520,
+      "Name": "python.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.venv\\Scripts\\python.exe\"  -m hub_runtime.assistant -p --input-format stream-json --output-format stream-json --verbose --include-partial-messages --dangerously-skip-permissions --model fable"
+    },
+    {
+      "ProcessId": 9240,
+      "ParentProcessId": 5896,
+      "Name": "python.exe",
+      "CommandLine": "\"C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.venv\\Scripts\\python.exe\"  -m hub_runtime.assistant -p --input-format stream-json --output-format stream-json --verbose --include-partial-messages --dangerously-skip-permissions --model fable"
+    }
+  ],
+  "reportsStatus": 200,
+  "restartExit": 0
+}

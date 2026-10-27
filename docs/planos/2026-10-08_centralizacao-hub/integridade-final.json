@@ -1,0 +1,23 @@
+{
+  "personalNotes": {
+    "unchanged": 117,
+    "expectedLinkEdits": 2,
+    "managedTranscriptAppend": 1,
+    "unexpected": 0
+  },
+  "preferencesEqual": true,
+  "mobileEqual": true,
+  "indexUnchanged": true,
+  "genericVaultSettingsUnchanged": true,
+  "oldRepositoryAbsent": true,
+  "prototypeOriginalsAbsent": true,
+  "oldResidentAbsent": true,
+  "managedTranscript": {
+    "appendOnly": true,
+    "originalBytes": 123781,
+    "currentBytes": 126871,
+    "originalPrefixSha256": "0732344a80d9c74dfa7ddf5e111d9d41cbce434e7c09e3f5b35e1666b891e21c",
+    "originalPrefixVerified": true,
+    "newDataPreserved": true
+  }
+}

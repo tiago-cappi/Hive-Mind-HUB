@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Logs de runtime do restart_hub.ps1
+restart_log.txt
+restart_err.txt
+
+# Dados privados, backups e artefatos recriáveis da migração
+.migration-backups/
+.pytest_tmp/
+hub_runtime/state/
+hub_runtime/voice/models/
+hub_runtime/voice/.venv/
+.migration-checks/
+
+# Dados de runtime, arquivos de QA e temporários (privados/recriáveis)
+.test-tmp/
+.qa-arquivo/
+HiveMind/state/
+mobile/history.json*
+mobile/LINK.txt
+Demonstracoes Comerciais/dados/

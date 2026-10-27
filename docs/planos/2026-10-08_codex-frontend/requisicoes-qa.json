@@ -1,0 +1,24 @@
+[
+  {
+    "body": {
+      "esforco": "",
+      "modelo": "fable",
+      "sid": "s-3a9293e6"
+    },
+    "path": "/session_start"
+  },
+  {
+    "body": {
+      "sid": "s-3a9293e6"
+    },
+    "path": "/session_end"
+  },
+  {
+    "body": {
+      "esforco": "",
+      "modelo": "fable",
+      "sid": "s-be0fecaf"
+    },
+    "path": "/session_start"
+  }
+]

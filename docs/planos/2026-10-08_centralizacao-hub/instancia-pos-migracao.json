@@ -1,0 +1,32 @@
+{
+  "pid": 14944,
+  "project_root": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main",
+  "protocol": "hub-runtime-v1",
+  "bind": "127.0.0.1:8765",
+  "reportsEndpoint": true,
+  "canonicalLaunch": true,
+  "processChains": {
+    "bridge": [
+      13240,
+      14944
+    ],
+    "speech": [
+      16544,
+      7068
+    ]
+  },
+  "stopDryRun": {
+    "exitCode": 0,
+    "identifiedPids": [
+      14944,
+      16544
+    ],
+    "terminated": false
+  },
+  "warmSessionChain": [
+    14944,
+    11324,
+    18588,
+    15132
+  ]
+}

@@ -1,0 +1,6 @@
+# Dependências da instalação de voz validada; ambiente separado do Flask/STT.
+kokoro-onnx==0.5.0
+numpy==2.5.0
+onnxruntime==1.27.0
+sounddevice==0.5.6
+soundfile==0.14.0

@@ -1,0 +1,17 @@
+....................................................F................... [ 31%]
+........................................................................ [ 62%]
+........................................................................ [ 94%]
+.............                                                            [100%]
+================================== FAILURES ===================================
+_______ test_current_effort_normaliza_e_restringe_ao_conjunto_permitido _______
+
+    def test_current_effort_normaliza_e_restringe_ao_conjunto_permitido():
+        m = re.search(r'function currentEffort\(\)\{(.*?)\n\}', SRC, re.S)
+>       assert m, "currentEffort() nao encontrada"
+E       AssertionError: currentEffort() nao encontrada
+E       assert None
+
+tests\test_frontend_static.py:56: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_frontend_static.py::test_current_effort_normaliza_e_restringe_ao_conjunto_permitido
+1 failed, 228 passed in 15.95s

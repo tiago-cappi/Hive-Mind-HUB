@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0f12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icon.svg">
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css">
+<title>C.O.R.E.</title>
+</head>
+<body>
+
+<header class="top">
+  <div class="marca">C.O.R.E.<span id="dot" class="dot off" title="ligacao com o Hub"></span></div>
+  <div class="acoes">
+    <button id="btRel"  class="ic" title="relatorios"    aria-label="relatorios">▤</button>
+    <button id="btCfg"  class="ic" title="opcoes"        aria-label="opcoes">⋯</button>
+    <button id="btNova" class="ic" title="nova conversa" aria-label="nova conversa">✚</button>
+  </div>
+</header>
+
+<!-- gaveta de opcoes -->
+<section id="cfg" class="gaveta" hidden>
+  <label class="linha">
+    <span>Falar a resposta no computador</span>
+    <input type="checkbox" id="optFalar">
+  </label>
+  <label class="linha">
+    <span>Ler a resposta aqui no celular</span>
+    <input type="checkbox" id="optLer">
+  </label>
+  <label class="linha">
+    <span>Modelo</span>
+    <select id="optModelo">
+      <option value="">padrao do Hub</option>
+      <option value="opus">Opus &middot; o mais capaz</option>
+      <option value="fable">Fable &middot; rapido</option>
+      <option value="sonnet">Sonnet &middot; equilibrado</option>
+      <option value="haiku">Haiku &middot; leve</option>
+    </select>
+  </label>
+  <label class="linha">
+    <span>Esforco</span>
+    <select id="optEsforco">
+      <option value="">padrao do Hub</option>
+      <option value="low">baixo &middot; respostas rapidas</option>
+      <option value="medium">medio &middot; equilibrado</option>
+      <option value="high">alto &middot; pensa mais</option>
+      <option value="xhigh">muito alto</option>
+      <option value="max">maximo &middot; o mais lento</option>
+    </select>
+  </label>
+  <p class="nota">Trocar o modelo ou o esforco vale do proximo turno em diante.
+     O Hub resobe o Claude desta sessao retomando a conversa, entao o que ja foi
+     falado continua valendo.</p>
+  <button id="btLimpar" class="txtbt">apagar o historico do celular</button>
+  <p class="nota">Dica: para falar em vez de digitar, use o microfone do teclado
+     do proprio celular.</p>
+</section>
+
+<!-- gaveta de relatorios -->
+<section id="rel" class="gaveta" hidden>
+  <div id="relLista" class="rellista">carregando...</div>
+</section>
+
+<main id="fio" class="fio"></main>
+
+<footer class="compositor">
+  <button id="btCancelar" class="cancelar" hidden>parar</button>
+  <div class="campo">
+    <textarea id="txt" rows="1" placeholder="fale ou escreva…"
+              autocapitalize="sentences" autocorrect="on" enterkeyhint="send"></textarea>
+    <button id="btEnviar" class="enviar" aria-label="enviar">➤</button>
+  </div>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

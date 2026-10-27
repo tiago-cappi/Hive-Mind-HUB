@@ -1,0 +1,6 @@
+# Segredos e estado local do modulo mobile — nunca versionar.
+.secret
+LINK.txt
+history.json
+history.json.tmp
+access.log

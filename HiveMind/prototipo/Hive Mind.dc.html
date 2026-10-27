@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#B8860B;}
+a{color:#000000;}
+a:hover{color:#6E5000;}
+input::placeholder{color:#6B655B;}
+@keyframes hm-flap-l{from{transform:rotate(8deg)}to{transform:rotate(-18deg)}}
+@keyframes hm-flap-r{from{transform:rotate(-8deg)}to{transform:rotate(18deg)}}
+@keyframes hm-bob{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
+@keyframes hm-march{to{stroke-dashoffset:var(--off)}}
+@keyframes hm-flow{to{stroke-dashoffset:var(--cyc)}}
+@keyframes hm-draw{from{stroke-dashoffset:var(--per)}to{stroke-dashoffset:0}}
+@keyframes hm-sweep{0%{opacity:0}8%{opacity:1}36%{opacity:0}100%{opacity:0}}
+@keyframes hm-ripple{from{transform:scale(1);opacity:1}to{transform:scale(var(--k));opacity:0}}
+</style>
+</helmet>
+<div data-screen-label="Hive Mind" style="width:100%;height:100vh;min-height:760px;min-width:1200px;background:#B8860B;color:#000000;display:grid;grid-template-rows:52px minmax(0,1fr);font-family:'Source Sans 3',sans-serif;overflow:hidden">
+  <header style="position:relative;z-index:30;display:flex;align-items:stretch;justify-content:space-between;background:#F1EDE4;border-bottom:1.5px solid #000000;padding:0 20px 0 6px">
+    <nav style="display:flex;align-items:stretch">
+      <div style="display:flex;align-items:center;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;border-top:3px solid transparent;border-bottom:3px solid transparent">Claude Code</div>
+      <div style="display:flex;align-items:center;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;border-top:3px solid transparent;border-bottom:3px solid transparent">Codex</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;white-space:nowrap;border-top:3px solid transparent;border-bottom:3px solid #000000">
+        <img src="assets/hive-mind-logo.png" alt="" style="height:24px;width:auto;display:block">
+        <span>Hive Mind</span>
+      </div>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:8px;font-size:13px">
+        <span style="white-space:nowrap">Projeto</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;white-space:nowrap">Operação de pedidos</span>
+      </div>
+      <div style="width:1px;height:18px;background:#CFC6B4"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;white-space:nowrap">Exemplo</span>
+        <div style="display:flex;border:1px solid #000000">
+          <sc-for list="{{ scenarios }}" as="sc" hint-placeholder-count="3">
+            <button type="button" onClick="{{ sc.onPick }}" style="background:{{ sc.bg }};color:{{ sc.fg }};border:0;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;padding:4px 10px;cursor:pointer;white-space:nowrap">{{ sc.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="width:1px;height:18px;background:#CFC6B4"></div>
+      <button type="button" role="switch" aria-checked="{{ reducedStr }}" onClick="{{ toggleReduced }}" style="display:flex;align-items:center;gap:8px;background:transparent;border:0;color:#000000;font-family:'Source Sans 3',sans-serif;font-size:13px;cursor:pointer;padding:0">
+        <span style="position:relative;display:block;width:28px;height:16px;box-sizing:border-box;border:1.5px solid #000000;background:{{ swBg }}">
+          <span style="position:absolute;top:2px;left:{{ swKnob }};width:9px;height:9px;background:{{ swKnobColor }}"></span>
+        </span>
+        <span style="white-space:nowrap">Reduzir movimento</span>
+      </button>
+      <div style="width:1px;height:18px;background:#CFC6B4"></div>
+      <div style="background:#000000;color:#F1EDE4;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:5px 10px">Demonstração</div>
+    </div>
+  </header>
+
+  <div ref="{{ hiveRef }}" onClick="{{ onHiveBg }}" style="position:relative;overflow:hidden;min-height:0">
+    <div style="position:absolute;left:{{ wx }};top:{{ wy }};width:0;height:0;transform:scale({{ ws }});transition:{{ worldTr }}">
+      {{ meshLayer }}
+
+      <sc-for list="{{ emptySlots }}" as="es" hint-placeholder-count="0">
+        <svg width="100.46" height="116" viewBox="0 0 100.46 116" style="position:absolute;left:{{ es.left }};top:{{ es.top }};overflow:visible;pointer-events:none"><polygon points="50.23,0 100.46,29 100.46,87 50.23,116 0,87 0,29" style="fill:none;stroke:#000000;stroke-width:1.5;stroke-dasharray:6 5"></polygon></svg>
+      </sc-for>
+
+      <sc-if value="{{ showFree }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:{{ freeLeft }};top:{{ freeTop }};width:100.46px;height:116px;pointer-events:none">
+          <svg width="100.46" height="116" viewBox="0 0 100.46 116" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="50.23,0 100.46,29 100.46,87 50.23,116 0,87 0,29" style="fill:#F1EDE4;stroke:#000000;stroke-width:2;stroke-dasharray:6 5"></polygon></svg>
+          <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center">
+            <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1 V13 M1 7 H13" style="stroke:#000000;stroke-width:2"></path></svg>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;line-height:1.2">Célula livre</div>
+            <div style="font-size:12px;line-height:1.2">Destino da nova operária</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-for list="{{ cells }}" as="c" hint-placeholder-count="0">
+        <div onClick="{{ c.onPick }}" style="position:absolute;left:{{ c.left }};top:{{ c.top }};width:124.71px;height:144px;pointer-events:none">
+          <svg width="124.71" height="144" viewBox="0 0 124.71 144" style="position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 3px 3px rgba(0,0,0,0.3))"><polygon points="62.35,0 124.71,36 124.71,108 62.35,144 0,108 0,36" style="fill:{{ c.fill }};stroke:#000000;stroke-width:{{ c.sw }};stroke-dasharray:{{ c.dash }};stroke-linejoin:round;pointer-events:all;cursor:pointer"></polygon><polyline points="3.46,38 62.35,4 121.24,38" style="fill:none;stroke:{{ c.hl }};stroke-width:2;stroke-linecap:round;pointer-events:none"></polyline><polyline points="121.24,106 62.35,140 3.46,106" style="fill:none;stroke:rgba(0,0,0,0.26);stroke-width:2;stroke-linecap:round;pointer-events:none"></polyline></svg>
+          {{ c.fx }}
+          <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            {{ c.bee }}
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;line-height:1.2;margin-top:4px;max-width:106px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:3px;font-size:12.5px;font-weight:600;line-height:1.2;white-space:nowrap">{{ c.sym }}<span>{{ c.short }}</span></div>
+            <sc-if value="{{ c.hasProg }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:1.2;margin-top:2px;font-variant-numeric:tabular-nums">{{ c.progText }}</div></sc-if>
+          </div>
+        </div>
+      </sc-for>
+
+      <sc-for list="{{ subCells }}" as="sb" hint-placeholder-count="0">
+        <div onClick="{{ sb.onPick }}" style="position:absolute;left:{{ sb.left }};top:{{ sb.top }};width:100.46px;height:116px;pointer-events:none">
+          <svg width="100.46" height="116" viewBox="0 0 100.46 116" style="position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 2px 2.5px rgba(0,0,0,0.28))"><polygon points="50.23,0 100.46,29 100.46,87 50.23,116 0,87 0,29" style="fill:{{ sb.fill }};stroke:#000000;stroke-width:{{ sb.sw }};stroke-linejoin:round;pointer-events:all;cursor:pointer"></polygon><polyline points="3.03,30.75 50.23,3.5 97.43,30.75" style="fill:none;stroke:{{ sb.hl }};stroke-width:1.6;stroke-linecap:round;pointer-events:none"></polyline><polyline points="97.43,85.25 50.23,112.5 3.03,85.25" style="fill:none;stroke:rgba(0,0,0,0.26);stroke-width:1.6;stroke-linecap:round;pointer-events:none"></polyline></svg>
+          {{ sb.fx }}
+          <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            {{ sb.bee }}
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;line-height:1.2;margin-top:3px">{{ sb.name }}</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px;font-size:11.5px;font-weight:600;line-height:1.2;white-space:nowrap">{{ sb.sym }}<span>{{ sb.short }}</span></div>
+          </div>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{ hasQueen }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ pickQueen }}" style="position:absolute;left:-62.35px;top:-72px;width:124.71px;height:144px;pointer-events:none">
+          <svg width="124.71" height="144" viewBox="0 0 124.71 144" style="position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 4px 4px rgba(0,0,0,0.34))"><polygon points="62.35,0 124.71,36 124.71,108 62.35,144 0,108 0,36" style="fill:{{ queen.fill }};stroke:#000000;stroke-width:{{ queen.sw }};stroke-linejoin:round;pointer-events:all;cursor:pointer"></polygon><polyline points="3.46,38 62.35,4 121.24,38" style="fill:none;stroke:{{ queen.hl }};stroke-width:2;stroke-linecap:round;pointer-events:none"></polyline><polyline points="121.24,106 62.35,140 3.46,106" style="fill:none;stroke:rgba(0,0,0,0.26);stroke-width:2;stroke-linecap:round;pointer-events:none"></polyline></svg>
+          <sc-if value="{{ queen.double }}" hint-placeholder-val="{{ false }}"><svg width="124.71" height="144" viewBox="0 0 124.71 144" style="position:absolute;left:0;top:0;overflow:visible;pointer-events:none"><polygon points="62.35,6 119.51,39 119.51,105 62.35,138 5.2,105 5.2,39" style="fill:none;stroke:#000000;stroke-width:2"></polygon></svg></sc-if>
+          {{ queen.fx }}
+          <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:{{ queen.fg }}">
+            {{ queen.bee }}
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;line-height:1.1;margin-top:3px;letter-spacing:-0.01em">Rainha</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:3px;font-size:12.5px;font-weight:600;line-height:1.2;white-space:nowrap">{{ queen.sym }}<span>{{ queen.short }}</span></div>
+          </div>
+        </div>
+      </sc-if>
+
+      {{ linksLayer }}
+
+
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:-190px;top:-150px;width:380px;box-sizing:border-box;background:#F1EDE4;border:1.5px solid #000000;padding:26px 30px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <img src="assets/hive-mind-logo.png" alt="Hive Mind" style="height:72px;width:auto;display:block">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-top:4px">Esta colmeia ainda não tem agentes</div>
+          <div style="font-size:14.5px;line-height:1.45;text-wrap:pretty">Na versão integrada, os agentes do projeto local aparecerão nestas células: a rainha no centro e as operárias ao redor.</div>
+          <button type="button" onClick="{{ toMission }}" style="margin-top:6px;height:38px;padding:0 18px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;cursor:pointer">Ver colmeia de exemplo</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ lc.show }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ stop }}" style="position:absolute;left:{{ lc.x }};bottom:{{ lc.y }};width:290px;box-sizing:border-box;background:#F1EDE4;border:1.5px solid #000000;padding:12px 14px 14px;z-index:7;transition:{{ hudTr }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Conexão</span>
+          <button type="button" onClick="{{ closeLink }}" aria-label="Fechar" style="width:24px;height:24px;background:transparent;border:1px solid #000000;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" style="stroke:#000000;stroke-width:1.6"></path></svg></button>
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin-top:4px">{{ lc.title }}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">{{ lc.sample }}<span style="font-size:14px;font-weight:700">{{ lc.state }}</span></div>
+        <div style="font-size:13.5px;line-height:1.4;margin-top:4px">{{ lc.stateText }}</div>
+        <div style="font-size:13.5px;line-height:1.4;margin-top:8px;padding-top:8px;border-top:1px solid #CFC6B4">{{ lc.text }}</div>
+      </div>
+    </sc-if>
+    <div style="position:absolute;top:16px;left:{{ hudX }};transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:8px;transition:{{ hudTr }}">
+      <div style="display:flex;align-items:center;gap:14px;height:44px;box-sizing:border-box;background:#F1EDE4;border:1.5px solid #000000;padding:0 6px 0 14px;white-space:nowrap">
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Missão simulada</span>
+        <div style="display:flex;gap:3px;align-items:center">
+          <sc-for list="{{ hudSteps }}" as="hs" hint-placeholder-count="7">
+            <svg width="12" height="14" viewBox="0 0 12 14" style="display:block;overflow:visible"><polygon points="6,0.8 11.2,3.8 11.2,10.2 6,13.2 0.8,10.2 0.8,3.8" style="fill:{{ hs.fill }};stroke:{{ hs.stroke }};stroke-width:{{ hs.sw }};stroke-dasharray:{{ hs.dash }}"></polygon></svg>
+          </sc-for>
+        </div>
+        <span style="font-size:14px;font-weight:600">{{ hudText }}</span>
+        <sc-if value="{{ primary.show }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ primary.onClick }}" style="height:30px;padding:0 14px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">{{ primary.label }}</button>
+        </sc-if>
+        <sc-if value="{{ primary.wait }}" hint-placeholder-val="{{ false }}">
+          <span style="height:30px;box-sizing:border-box;display:flex;align-items:center;gap:7px;padding:0 10px;font-size:13px;font-weight:600;border:1.5px solid #000000">
+            <svg width="9" height="9" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#000000"></polygon></svg>
+            <span>{{ primary.waitLabel }}</span>
+          </span>
+        </sc-if>
+      </div>
+      <sc-if value="{{ alert.show }}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="display:flex;align-items:center;gap:12px;background:#000000;color:#F1EDE4;padding:8px 8px 8px 14px;max-width:560px;box-sizing:border-box">
+          {{ alert.sym }}
+          <div style="font-size:13.5px;line-height:1.3"><strong style="font-family:'Space Grotesk',sans-serif">{{ alert.title }}</strong> {{ alert.text }}</div>
+          <button type="button" onClick="{{ alert.onOpen }}" style="height:28px;padding:0 12px;background:#F1EDE4;color:#000000;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap">{{ alert.cta }}</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="position:absolute;bottom:0;left:{{ bL }};right:{{ bR }};height:300px;z-index:10;transform:translateY({{ dB }});transition:{{ drawerTr }}">
+      <button type="button" onClick="{{ toggleB }}" aria-expanded="{{ boStr }}" style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);height:36px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 16px;background:{{ pullB }};box-shadow:0 -4px 10px rgba(0,0,0,0.16);color:#000000;border:1.5px solid #000000;border-bottom:0;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;white-space:nowrap">
+        <svg width="12" height="14" viewBox="0 0 12 14"><polygon points="6,0.8 11.2,3.8 11.2,10.2 6,13.2 0.8,10.2 0.8,3.8" style="fill:#000000"></polygon></svg>
+        <span>Conversa com a Rainha</span>
+        <sc-if value="{{ hasLogCount }}" hint-placeholder-val="{{ false }}"><span style="min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;background:#000000;color:#F1EDE4;font-size:11.5px;display:flex;align-items:center;justify-content:center">{{ logCount }}</span></sc-if>
+        <svg width="10" height="7" viewBox="0 0 10 7" style="transform:{{ bCaret }}"><polyline points="1,6 5,1.5 9,6" style="fill:none;stroke:#000000;stroke-width:1.6"></polyline></svg>
+      </button>
+      <div style="height:100%;box-sizing:border-box;background:#F1EDE4;border-top:1.5px solid #000000;box-shadow:{{ shB }};display:grid;grid-template-rows:auto minmax(0,1fr) auto">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 22px 11px;background:#2A2622;color:#F1EDE4;border-bottom:3px solid #B8860B">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0">
+            <svg width="13" height="15" viewBox="0 0 14 16" style="display:block;flex-shrink:0"><polygon points="7,0.5 13.5,4.25 13.5,11.75 7,15.5 0.5,11.75 0.5,4.25" style="fill:#B8860B"></polygon></svg>
+            <span style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;white-space:nowrap">Conversa com a Rainha</span>
+            <span style="font-size:13px;color:#D8D0C0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Demonstração: o envio inicia a simulação da missão de exemplo.</span>
+          </div>
+          <button type="button" onClick="{{ toggleB }}" aria-label="Fechar conversa" style="width:28px;height:28px;flex-shrink:0;background:transparent;border:1px solid rgba(241,237,228,0.4);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" style="stroke:#F1EDE4;stroke-width:1.6"></path></svg></button>
+        </div>
+        <div ref="{{ logRef }}" style="overflow-y:auto;padding:12px 22px;display:flex;flex-direction:column;gap:8px">
+          <sc-if value="{{ logEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:14px;line-height:1.4">Nenhuma mensagem ainda. Escreva um pedido abaixo ou use “Simular missão”.</div>
+          </sc-if>
+          <sc-for list="{{ log }}" as="e" hint-placeholder-count="0">
+            <div style="display:flex;justify-content:{{ e.justify }}">
+              <sc-if value="{{ e.isUser }}" hint-placeholder-val="{{ false }}">
+                <div style="max-width:70%;background:#000000;color:#F1EDE4;padding:7px 12px;font-size:14px;line-height:1.4"><div style="font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2px">Você</div>{{ e.text }}</div>
+              </sc-if>
+              <sc-if value="{{ e.isEvent }}" hint-placeholder-val="{{ false }}">
+                <div style="max-width:84%;display:grid;grid-template-columns:12px minmax(0,1fr);gap:10px;align-items:start">
+                  <div style="padding-top:4px">{{ e.sym }}</div>
+                  <div>
+                    <div style="font-size:14px;line-height:1.4"><strong style="font-family:'Space Grotesk',sans-serif;font-weight:600">{{ e.tag }}</strong> · {{ e.text }}</div>
+                    <sc-if value="{{ e.decide }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <button type="button" onClick="{{ e.onApprove }}" style="height:34px;padding:0 16px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer">Aprovar</button>
+                        <button type="button" onClick="{{ e.onAdjust }}" style="height:34px;padding:0 14px;background:transparent;color:#000000;border:1.5px solid #000000;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Solicitar ajuste</button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ e.failAct }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <button type="button" onClick="{{ e.onRetry }}" style="height:34px;padding:0 16px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Tentar novamente</button>
+                        <button type="button" onClick="{{ e.onRestart }}" style="height:34px;padding:0 14px;background:transparent;color:#000000;border:1.5px solid #000000;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Reiniciar exemplo</button>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <form onSubmit="{{ send }}" style="margin:0;padding:10px 22px 16px;border-top:1px solid #CFC6B4">
+          <label for="hm-ask" style="display:block;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:6px">O que você quer que sua colmeia faça?</label>
+          <div style="display:flex;gap:8px">
+            <input id="hm-ask" ref="{{ chatRef }}" type="text" placeholder="Ex.: Conferir as notas fiscais de setembro e avisar se algum valor estiver diferente" style="flex:1;min-width:0;height:44px;box-sizing:border-box;background:#FFFFFF;border:1.5px solid #000000;color:#000000;font-family:'Source Sans 3',sans-serif;font-size:15px;padding:0 14px;outline:none;border-radius:0">
+            <button type="submit" style="height:44px;padding:0 18px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">Enviar para a Rainha</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div style="position:absolute;top:0;bottom:0;left:0;width:392px;z-index:12;transform:translateX({{ dL }});transition:{{ drawerTr }}">
+      <button type="button" onClick="{{ toggleL }}" aria-expanded="{{ loStr }}" style="position:absolute;left:100%;top:50%;margin-top:-76px;width:38px;height:152px;box-sizing:border-box;background:{{ pullL }};box-shadow:4px 2px 10px rgba(0,0,0,0.18);color:#000000;border:1.5px solid #000000;border-left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;padding:0">
+        <svg width="12" height="14" viewBox="0 0 12 14"><polygon points="6,0.8 11.2,3.8 11.2,10.2 6,13.2 0.8,10.2 0.8,3.8" style="fill:none;stroke:#000000;stroke-width:1.6"></polygon></svg>
+        <span style="writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.04em">Agentes</span>
+        <span style="min-width:20px;height:20px;box-sizing:border-box;padding:0 3px;background:#000000;color:#F1EDE4;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ agentCount }}</span>
+      </button>
+      <div style="height:100%;box-sizing:border-box;background:#F1EDE4;border-right:1.5px solid #000000;box-shadow:{{ shL }};display:flex;flex-direction:column">
+        <div style="padding:18px 20px 16px;background:#2A2622;color:#F1EDE4;border-bottom:3px solid #B8860B">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <span style="display:flex;align-items:center;gap:10px"><svg width="13" height="15" viewBox="0 0 14 16" style="display:block;flex-shrink:0"><polygon points="7,0.5 13.5,4.25 13.5,11.75 7,15.5 0.5,11.75 0.5,4.25" style="fill:#B8860B"></polygon></svg><span style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-0.01em">Agentes</span></span>
+            <button type="button" onClick="{{ toggleL }}" aria-label="Fechar agentes" style="width:28px;height:28px;background:transparent;border:1px solid rgba(241,237,228,0.4);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" style="stroke:#F1EDE4;stroke-width:1.6"></path></svg></button>
+          </div>
+          <div style="font-size:14px;margin-top:2px">{{ compText }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px">
+            <sc-for list="{{ counts }}" as="ct" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:6px;font-size:13px">{{ ct.sym }}<span>{{ ct.text }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:8px 12px 14px">
+          <sc-if value="{{ pEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:12px;padding:10px 8px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600">Colmeia vazia</div>
+              <div style="font-size:14.5px;line-height:1.45;text-wrap:pretty">Este exemplo mostra a página quando ainda não há agentes. Não existe missão para simular nem operária para selecionar.</div>
+              <div style="border-top:1px solid #CFC6B4;padding-top:12px">
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Uma colmeia reúne</div>
+                <div style="display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;margin-top:10px;font-size:14px;line-height:1.4">
+                  <svg width="14" height="16" viewBox="0 0 14 16" style="margin-top:2px"><polygon points="7,0.5 13.5,4.25 13.5,11.75 7,15.5 0.5,11.75 0.5,4.25" style="fill:#000000"></polygon></svg>
+                  <span><strong>Rainha:</strong> coordena a missão, distribui tarefas e reúne as entregas.</span>
+                  <svg width="14" height="16" viewBox="0 0 14 16" style="margin-top:2px"><polygon points="7,1 13,4.5 13,11.5 7,15 1,11.5 1,4.5" style="fill:none;stroke:#000000;stroke-width:1.5"></polygon></svg>
+                  <span><strong>Operárias:</strong> agentes especializados que executam partes do trabalho.</span>
+                </div>
+              </div>
+              <button type="button" onClick="{{ toMission }}" style="align-self:flex-start;height:36px;padding:0 16px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;cursor:pointer">Ver colmeia de exemplo</button>
+            </div>
+          </sc-if>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+            <div style="margin-left:{{ r.indent }};margin-top:4px;background:{{ r.bg }};box-shadow:{{ r.band }}">
+              <button type="button" onClick="{{ r.onPick }}" aria-expanded="{{ r.openStr }}" style="display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:8px 8px 8px 14px;background:transparent;border:0;text-align:left;cursor:pointer;color:#000000;font-family:'Source Sans 3',sans-serif">
+                <span style="display:block;width:34px;height:39.26px">{{ r.icon }}</span>
+                <span style="min-width:0">
+                  <span style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600">{{ r.name }}</span><span style="font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase">{{ r.kindTag }}</span></span>
+                  <span style="display:block;font-size:13px;line-height:1.3;margin-top:1px">{{ r.label }}</span>
+                </span>
+                <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap">{{ r.prog }}{{ r.sym }}</span>
+              </button>
+              <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 14px 16px 18px">
+                  <div style="display:flex;gap:12px;border-bottom:1px solid #D3C8B3">
+                    <sc-for list="{{ r.d.tabs }}" as="tb" hint-placeholder-count="5">
+                      <button type="button" onClick="{{ tb.onPick }}" style="background:transparent;border:0;border-bottom:3px solid {{ tb.bc }};margin-bottom:-1px;padding:8px 0 5px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:{{ tb.fw }};color:#000000;cursor:pointer;white-space:nowrap">{{ tb.label }}</button>
+                    </sc-for>
+                  </div>
+
+                  <sc-if value="{{ r.d.t.geral }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;flex-direction:column;gap:12px;padding-top:12px">
+                      <sc-if value="{{ r.d.isWorker }}" hint-placeholder-val="{{ true }}">
+                        <div>
+                          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">{{ r.d.role }}</div>
+                          <div style="font-size:14.5px;line-height:1.35;margin-top:3px">{{ r.d.spec }}</div>
+                        </div>
+                      </sc-if>
+                      <div>
+                        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Estado</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:6px">{{ r.d.sym }}<span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600">{{ r.d.label }}</span></div>
+                        <div style="font-size:14px;line-height:1.4;margin-top:3px;text-wrap:pretty">{{ r.d.detail }}</div>
+                        <sc-if value="{{ r.d.hasProg }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;gap:2px;margin-top:8px">
+                            <sc-for list="{{ r.d.segs }}" as="sg" hint-placeholder-count="0"><div style="flex:1;height:8px;background:{{ sg.c }}"></div></sc-for>
+                          </div>
+                        </sc-if>
+                      </div>
+                      <sc-if value="{{ r.d.isWorker }}" hint-placeholder-val="{{ true }}">
+                        <div>
+                          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Missão</div>
+                          <div style="font-size:14px;line-height:1.4;margin-top:4px;text-wrap:pretty">{{ r.d.mission }}</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.isQueen }}" hint-placeholder-val="{{ false }}">
+                        <div>
+                          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Objetivo geral</div>
+                          <div style="font-size:14px;line-height:1.4;margin-top:4px">Conferir pedidos recebidos por e-mail e preparar um relatório de divergências.</div>
+                          <div style="font-size:13.5px;line-height:1.4;margin-top:4px">Limites: somente leitura nos sistemas e aprovação humana antes do relatório.</div>
+                        </div>
+                        <sc-if value="{{ r.d.isDone }}" hint-placeholder-val="{{ false }}">
+                          <button type="button" onClick="{{ r.d.openDelivery }}" style="align-self:flex-start;height:34px;padding:0 14px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer">Ver entrega</button>
+                        </sc-if>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ r.d.t.tarefas }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding-top:12px">
+                      <sc-if value="{{ r.d.isWorker }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Tarefa atual</div>
+                        <div style="font-size:14px;line-height:1.4;margin-top:4px;text-wrap:pretty">{{ r.d.task }}</div>
+                        <sc-if value="{{ r.d.hasPlanned }}" hint-placeholder-val="{{ false }}">
+                          <div style="font-size:13.5px;line-height:1.4;margin-top:8px;padding-top:8px;border-top:1px solid #CFC6B4;text-wrap:pretty"><strong>Na missão:</strong> {{ r.d.planned }}</div>
+                        </sc-if>
+                      </sc-if>
+                      <sc-if value="{{ r.d.isQueen }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Plano</div>
+                        <div style="margin-top:4px">
+                          <sc-for list="{{ r.d.plan }}" as="pl" hint-placeholder-count="7">
+                            <div style="display:grid;grid-template-columns:12px 14px minmax(0,1fr) auto;gap:8px;align-items:center;padding:4px 0;font-size:13.5px">
+                              {{ pl.sym }}
+                              <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px">{{ pl.num }}</span>
+                              <span style="font-weight:{{ pl.weight }}">{{ pl.title }}</span>
+                              <span style="font-size:12.5px;white-space:nowrap">{{ pl.who }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ r.d.t.skills }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding-top:12px">
+                      <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Capacidades</div>
+                      <sc-if value="{{ r.d.hasSkills }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+                          <sc-for list="{{ r.d.skills }}" as="sk" hint-placeholder-count="4"><span style="display:inline-flex;align-items:center;gap:7px;background:#F7F4ED;padding:5px 10px 5px 8px;font-size:13.5px;line-height:1.3;white-space:nowrap"><svg width="8" height="9" viewBox="0 0 8 9" style="display:block"><polygon points="4,0.3 7.7,2.4 7.7,6.6 4,8.7 0.3,6.6 0.3,2.4" style="fill:#B8860B"></polygon></svg>{{ sk }}</span></sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.noSkills }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;margin-top:6px">Nenhuma capacidade configurada.</div></sc-if>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ r.d.t.ferramentas }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding-top:12px">
+                      <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Ferramentas</div>
+                      <sc-if value="{{ r.d.hasTools }}" hint-placeholder-val="{{ true }}">
+                        <div style="margin-top:4px">
+                          <sc-for list="{{ r.d.tools }}" as="t" hint-placeholder-count="3">
+                            <div style="display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #D3C8B3;font-size:14px">
+                              <span style="width:22px;height:22px;background:#2A2622;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 2.5 H8.5 M1.5 5 H8.5 M1.5 7.5 H5.5" style="stroke:#F1EDE4;stroke-width:1.4"></path></svg></span>
+                              <span>{{ t.name }}</span>
+                              <span style="white-space:nowrap;font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;background:{{ t.tagBg }};color:{{ t.tagFg }}">{{ t.access }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.noTools }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;margin-top:6px">Nenhuma ferramenta autorizada.</div></sc-if>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ r.d.t.relacoes }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:12px;padding-top:12px">
+                      <sc-if value="{{ r.d.isWorker }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:grid;grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);align-items:center;gap:8px">
+                          <button type="button" onClick="{{ r.d.goFrom }}" style="text-align:left;background:transparent;border:1px solid #000000;color:#000000;padding:6px 10px;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                            <div style="font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Recebe de</div>
+                            <div style="font-size:14.5px;font-weight:600;margin-top:1px">{{ r.d.fromLabel }}</div>
+                          </button>
+                          <svg width="16" height="10" viewBox="0 0 16 10"><line x1="0" y1="5" x2="10" y2="5" style="stroke:#000000;stroke-width:2"></line><polygon points="16,5 10,9 10,1" style="fill:#000000"></polygon></svg>
+                          <button type="button" onClick="{{ r.d.goTo }}" style="text-align:left;background:transparent;border:1px solid #000000;color:#000000;padding:6px 10px;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                            <div style="font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Entrega para</div>
+                            <div style="font-size:14.5px;font-weight:600;margin-top:1px">{{ r.d.toLabel }}</div>
+                          </button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.hasSubs }}" hint-placeholder-val="{{ false }}">
+                        <div style="border-top:1px solid #CFC6B4;padding-top:10px">
+                          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+                            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Subagentes</div>
+                            <button type="button" onClick="{{ r.d.toggleSubs }}" style="height:28px;padding:0 10px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;white-space:nowrap;cursor:pointer">{{ r.d.subsBtnLabel }}</button>
+                          </div>
+                          <div style="font-size:13.5px;line-height:1.4;margin-top:6px">Documentos divide a leitura entre 2 subagentes e reúne o que eles devolvem.</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.isQueen }}" hint-placeholder-val="{{ false }}">
+                        <div>
+                          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Responsabilidades distribuídas</div>
+                          <div style="margin-top:4px">
+                            <sc-for list="{{ r.d.duties }}" as="du" hint-placeholder-count="5">
+                              <button type="button" onClick="{{ du.onPick }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid #CFC6B4;color:#000000;padding:6px 0;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                                <span><span style="display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px">{{ du.name }}</span><span style="display:block;font-size:13px">{{ du.duty }}</span></span>
+                                <span style="display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap">{{ du.sym }}<span>{{ du.short }}</span></span>
+                              </button>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ r.d.hasConns }}" hint-placeholder-val="{{ false }}">
+                        <div>
+                          <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Conexões na colmeia</div>
+                          <div style="margin-top:4px">
+                            <sc-for list="{{ r.d.conns }}" as="cn" hint-placeholder-count="2">
+                              <button type="button" onClick="{{ cn.onPick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;width:100%;text-align:left;background:{{ cn.bg }};border:0;border-top:1px solid #CFC6B4;color:#000000;padding:6px 4px;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                                {{ cn.sample }}
+                                <span><span style="display:block;font-weight:600;font-size:13.5px">{{ cn.title }}</span><span style="display:block;font-size:12.5px">{{ cn.state }}</span></span>
+                              </button>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="border-top:1.5px solid #000000;padding:12px 16px 14px">
+          <sc-if value="{{ notForm }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px">
+              <button type="button" onClick="{{ openForm }}" disabled="{{ createDisabled }}" style="height:38px;padding:0 14px;background:{{ createBg }};color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:{{ createCursor }};display:flex;align-items:center;gap:8px"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 0.5 V11.5 M0.5 6 H11.5" style="stroke:#F1EDE4;stroke-width:1.8"></path></svg><span>Criar operária</span></button>
+              <button type="button" onClick="{{ removeSel }}" disabled="{{ deleteDisabled }}" style="height:38px;padding:0 14px;background:transparent;color:{{ deleteColor }};border:1.5px solid {{ deleteColor }};font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:{{ deleteCursor }}">Excluir agente</button>
+            </div>
+            <div style="font-size:12.5px;line-height:1.35;margin-top:8px">{{ footNote }}</div>
+          </sc-if>
+          <sc-if value="{{ form }}" hint-placeholder-val="{{ false }}">
+            <form onSubmit="{{ submitForm }}" style="display:flex;flex-direction:column;gap:9px;margin:0">
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600">Nova operária</span>
+              <div style="font-size:13px;line-height:1.35">Ela entra como Disponível, sem tarefas nesta missão. Os dados ficam apenas nesta demonstração. Destino: {{ freeLabel }}.</div>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px">
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <label for="hm-new-name" style="font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Nome</label>
+                  <input id="hm-new-name" type="text" value="{{ formName }}" onChange="{{ onFormName }}" placeholder="Ex.: Financeiro" style="height:38px;box-sizing:border-box;background:#FFFFFF;border:1.5px solid #000000;color:#000000;font-family:'Source Sans 3',sans-serif;font-size:14px;padding:0 10px;outline:none;border-radius:0">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <label for="hm-new-spec" style="font-family:'Space Grotesk',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Especialidade</label>
+                  <input id="hm-new-spec" type="text" value="{{ formSpec }}" onChange="{{ onFormSpec }}" placeholder="Ex.: Conferência de pagamentos" style="height:38px;box-sizing:border-box;background:#FFFFFF;border:1.5px solid #000000;color:#000000;font-family:'Source Sans 3',sans-serif;font-size:14px;padding:0 10px;outline:none;border-radius:0">
+                </div>
+              </div>
+              <sc-if value="{{ hasFormError }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600"><svg width="9" height="9" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#000000"></polygon></svg><span>{{ formError }}</span></div>
+              </sc-if>
+              <div style="display:flex;gap:8px">
+                <button type="submit" style="height:36px;padding:0 14px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Adicionar à colmeia</button>
+                <button type="button" onClick="{{ cancelForm }}" style="height:36px;padding:0 14px;background:transparent;color:#000000;border:1.5px solid #000000;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer">Cancelar</button>
+              </div>
+            </form>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:absolute;top:0;bottom:0;right:0;width:392px;z-index:12;transform:translateX({{ dR }});transition:{{ drawerTr }}">
+      <button type="button" onClick="{{ toggleR }}" aria-expanded="{{ roStr }}" style="position:absolute;right:100%;top:50%;margin-top:-76px;width:38px;height:152px;box-sizing:border-box;background:{{ pullR }};box-shadow:-4px 2px 10px rgba(0,0,0,0.18);color:#000000;border:1.5px solid #000000;border-right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;padding:0">
+        <svg width="12" height="14" viewBox="0 0 12 14"><polygon points="6,0.8 11.2,3.8 11.2,10.2 6,13.2 0.8,10.2 0.8,3.8" style="fill:#000000"></polygon></svg>
+        <span style="writing-mode:vertical-rl;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.04em">Missão</span>
+        <span style="writing-mode:vertical-rl;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;background:#000000;color:#F1EDE4;padding:4px 2px">{{ stepBadge }}</span>
+      </button>
+      <div style="height:100%;box-sizing:border-box;background:#F1EDE4;border-left:1.5px solid #000000;box-shadow:{{ shR }};display:flex;flex-direction:column">
+        <div style="padding:18px 20px 16px;background:#2A2622;color:#F1EDE4;border-bottom:3px solid #B8860B">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <svg width="13" height="15" viewBox="0 0 14 16" style="display:block;flex-shrink:0"><polygon points="7,0.5 13.5,4.25 13.5,11.75 7,15.5 0.5,11.75 0.5,4.25" style="fill:#B8860B"></polygon></svg><span style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-0.01em">Missão</span>
+              <span style="border:1px solid #B8860B;color:#D9AC3C;padding:1px 7px;font-size:12px;font-weight:600;white-space:nowrap">Execução simulada</span>
+            </div>
+            <button type="button" onClick="{{ toggleR }}" aria-label="Fechar missão" style="width:28px;height:28px;background:transparent;border:1px solid rgba(241,237,228,0.4);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" style="stroke:#F1EDE4;stroke-width:1.6"></path></svg></button>
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16.5px;font-weight:500;line-height:1.3;margin-top:10px;text-wrap:pretty">Conferir pedidos recebidos por e-mail e preparar um relatório de divergências.</div>
+          <div style="font-size:13px;line-height:1.4;margin-top:4px;color:#D8D0C0">Limites: somente leitura nos sistemas e aprovação humana antes do relatório.</div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto">
+          <div style="padding:14px 20px 16px;background:#E9E2D3">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Andamento</div>
+            <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px">
+              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="7">
+                <div style="height:8px;box-sizing:border-box;position:relative;background:{{ s.bg }};border:{{ s.border }}"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ s.fill }};background:#000000"></div></div>
+              </sc-for>
+            </div>
+            <div style="font-size:14px;line-height:1.4;margin-top:10px"><strong style="font-family:'Space Grotesk',sans-serif">{{ stepTag }}</strong> {{ phaseText }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">
+              <sc-if value="{{ primary.show }}" hint-placeholder-val="{{ true }}">
+                <button type="button" onClick="{{ primary.onClick }}" style="height:32px;padding:0 14px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap">{{ primary.label }}</button>
+              </sc-if>
+              <sc-if value="{{ primary.wait }}" hint-placeholder-val="{{ false }}">
+                <span style="height:32px;box-sizing:border-box;display:flex;align-items:center;gap:7px;padding:0 10px;font-size:13px;font-weight:600;white-space:nowrap;border:1.5px solid #000000"><svg width="9" height="9" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#000000"></polygon></svg><span>{{ primary.waitLabel }}</span></span>
+              </sc-if>
+              <button type="button" onClick="{{ nextStep }}" disabled="{{ nextDisabled }}" style="height:32px;padding:0 12px;background:transparent;color:{{ nextColor }};border:1.5px solid {{ nextColor }};font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;white-space:nowrap;cursor:{{ nextCursor }}">Avançar etapa</button>
+              <button type="button" onClick="{{ restart }}" style="height:32px;padding:0 12px;background:transparent;color:#000000;border:1.5px solid #000000;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;white-space:nowrap;cursor:pointer">Reiniciar</button>
+            </div>
+          </div>
+
+          <div style="padding:14px 20px 16px;border-bottom:1px solid #CFC6B4">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Aprovações</div>
+            <sc-if value="{{ bApproval }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;background:#000000;color:#F1EDE4;padding:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px">
+                  <svg width="12" height="12" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#F1EDE4"></polygon></svg>
+                  <span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600">Revisão pede sua aprovação</span>
+                  <span style="border:1px solid #F1EDE4;padding:0 6px;font-size:11.5px;white-space:nowrap">Decisão simulada</span>
+                </div>
+                <div style="font-size:14px;line-height:1.4;margin-top:6px;text-wrap:pretty">{{ approvalText }}</div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button type="button" onClick="{{ approve }}" style="height:34px;padding:0 16px;background:#F1EDE4;color:#000000;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer">Aprovar</button>
+                  <button type="button" onClick="{{ adjust }}" style="height:34px;padding:0 14px;background:transparent;color:#F1EDE4;border:1.5px solid #F1EDE4;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Solicitar ajuste</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ bFail }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;background:#000000;color:#F1EDE4;padding:14px">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px">
+                  <svg width="12" height="12" viewBox="0 0 10 10"><rect x="0.75" y="0.75" width="8.5" height="8.5" style="fill:none;stroke:#F1EDE4;stroke-width:1.5"></rect><path d="M3 3 L7 7 M7 3 L3 7" style="stroke:#F1EDE4;stroke-width:1.5"></path></svg>
+                  <span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600">Etapa com falha: Coleta</span>
+                  <span style="border:1px solid #F1EDE4;padding:0 6px;font-size:11.5px;white-space:nowrap">Falha simulada</span>
+                </div>
+                <div style="font-size:14px;line-height:1.4;margin-top:6px;text-wrap:pretty">Cadastros não conseguiu consultar o cadastro de clientes: o sistema não respondeu após 3 tentativas. Documentos já entregou sua parte para Análise.</div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button type="button" onClick="{{ retry }}" style="height:34px;padding:0 16px;background:#F1EDE4;color:#000000;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Tentar novamente</button>
+                  <button type="button" onClick="{{ restart }}" style="height:34px;padding:0 14px;background:transparent;color:#F1EDE4;border:1.5px solid #F1EDE4;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer">Reiniciar exemplo</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ approvalIdle }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.4;margin-top:8px">{{ approvalSym }}<span>{{ approvalNote }}</span></div>
+            </sc-if>
+          </div>
+
+          <div style="padding:0 20px">
+            <div style="display:flex;gap:16px;border-bottom:1px solid #CFC6B4">
+              <sc-for list="{{ mTabs }}" as="tb" hint-placeholder-count="4">
+                <button type="button" onClick="{{ tb.onPick }}" style="background:transparent;border:0;border-bottom:3px solid {{ tb.bc }};margin-bottom:-1px;padding:12px 0 7px;font-family:'Source Sans 3',sans-serif;font-size:13.5px;font-weight:{{ tb.fw }};color:#000000;cursor:pointer;white-space:nowrap">{{ tb.label }}</button>
+              </sc-for>
+            </div>
+            <div style="padding:10px 0 20px">
+              <sc-if value="{{ mt.plano }}" hint-placeholder-val="{{ true }}">
+                <sc-for list="{{ plan }}" as="pl" hint-placeholder-count="7">
+                  <div style="display:grid;grid-template-columns:12px 14px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #CFC6B4;font-size:14px">
+                    {{ pl.sym }}
+                    <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px">{{ pl.num }}</span>
+                    <span style="font-weight:{{ pl.weight }}">{{ pl.title }}</span>
+                    <span style="font-size:13px;white-space:nowrap">{{ pl.who }}</span>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ mt.resp }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ duties }}" as="du" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ du.onPick }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #CFC6B4;color:#000000;padding:8px 0;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                    <span><span style="display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px">{{ du.name }}</span><span style="display:block;font-size:13px;margin-top:1px">{{ du.duty }}</span></span>
+                    <span style="display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap">{{ du.sym }}<span>{{ du.label }}</span></span>
+                  </button>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ mt.conex }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13.5px;line-height:1.4">As trilhas seguem as bordas das células. Clique em uma trilha na colmeia ou na lista para ver o que ela representa.</div>
+                <div style="margin-top:10px">
+                  <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="7">
+                    <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:5px 0">
+                      {{ lg.sample }}
+                      <span style="font-size:13.5px"><strong>{{ lg.label }}</strong> · {{ lg.text }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-top:14px">Conexões agora</div>
+                <div style="margin-top:4px">
+                  <sc-for list="{{ connList }}" as="cn" hint-placeholder-count="8">
+                    <button type="button" onClick="{{ cn.onPick }}" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;width:100%;text-align:left;background:{{ cn.bg }};border:0;border-top:1px solid #CFC6B4;color:#000000;padding:7px 4px;cursor:pointer;font-family:'Source Sans 3',sans-serif">
+                      {{ cn.sample }}
+                      <span><span style="display:block;font-weight:600;font-size:13.5px">{{ cn.title }}</span><span style="display:block;font-size:12.5px">{{ cn.state }}</span></span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ mt.entrega }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600">Relatório de divergências</div>
+                  <div style="font-size:13.5px;line-height:1.4;margin-top:2px">Consolidado pela Rainha a partir das entregas de 5 operárias.</div>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px">
+                    <div style="border:1px solid #000000;padding:8px 10px"><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600">23</div><div style="font-size:12.5px">conferidos</div></div>
+                    <div style="border:1px solid #000000;padding:8px 10px"><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600">{{ okCount }}</div><div style="font-size:12.5px">sem divergência</div></div>
+                    <div style="background:#000000;color:#F1EDE4;padding:8px 10px"><div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600">{{ divCount }}</div><div style="font-size:12.5px">com divergência</div></div>
+                  </div>
+                  <button type="button" onClick="{{ openDelivery }}" style="margin-top:12px;height:34px;padding:0 14px;background:#000000;color:#F1EDE4;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer">Ver entrega</button>
+                </sc-if>
+                <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:14px;line-height:1.4">A entrega de exemplo aparece aqui quando a Rainha consolidar o resultado, na etapa 7.</div>
+                </sc-if>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showDelivery }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ stop }}" style="position:absolute;top:0;bottom:0;left:{{ bL }};right:{{ bR }};z-index:20;display:flex;align-items:center;justify-content:center;padding:20px 32px;box-sizing:border-box">
+        <div role="dialog" aria-label="Entrega de exemplo" style="width:100%;max-width:700px;max-height:100%;overflow-y:auto;background:#F1EDE4;border:2px solid #000000;padding:22px 26px;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+            <span style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Entrega de exemplo · simulada</span>
+            <button type="button" onClick="{{ closeDelivery }}" style="height:30px;padding:0 12px;background:transparent;color:#000000;border:1.5px solid #000000;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;cursor:pointer">Fechar</button>
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600;margin-top:8px;letter-spacing:-0.01em">Relatório de divergências</div>
+          <div style="font-size:14.5px;margin-top:4px;line-height:1.4">Pedidos recebidos por e-mail nesta semana. Consolidado pela Rainha a partir das entregas de 5 operárias.</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px">
+            <div style="border:1px solid #000000;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600">23</div><div style="font-size:13px">pedidos conferidos</div></div>
+            <div style="border:1px solid #000000;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600">{{ okCount }}</div><div style="font-size:13px">sem divergência</div></div>
+            <div style="background:#000000;color:#F1EDE4;padding:10px 14px"><div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600">{{ divCount }}</div><div style="font-size:13px;font-weight:600">com divergência</div></div>
+          </div>
+          <div style="margin-top:18px">
+            <div style="display:grid;grid-template-columns:56px 140px minmax(0,1fr) 170px;gap:12px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding-bottom:8px">
+              <span>Pedido</span><span>Cliente</span><span>Divergência</span><span>Próximo passo</span>
+            </div>
+            <sc-for list="{{ divRows }}" as="dr" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:56px 140px minmax(0,1fr) 170px;gap:12px;border-top:1px solid #CFC6B4;padding:9px 0;font-size:13.5px;line-height:1.35">
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600">{{ dr.ped }}</span>
+                <span>{{ dr.cli }}</span>
+                <span>{{ dr.div }}</span>
+                <span>{{ dr.next }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ adjusted }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13.5px;margin-top:8px;line-height:1.4">Ajuste aplicado: o item repetido do pedido 4831 era intencional e saiu da lista.</div>
+          </sc-if>
+          <div style="font-size:13px;margin-top:14px;padding-top:12px;border-top:1px solid #000000;line-height:1.4">Gerado nesta simulação com dados de demonstração. Nenhum e-mail ou sistema real foi consultado.</div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;queenStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Célula preta&quot;,&quot;Contorno duplo&quot;],&quot;default&quot;:&quot;Célula preta&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;pulseSpeed&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Lenta&quot;,&quot;Normal&quot;,&quot;Rápida&quot;],&quot;default&quot;:&quot;Normal&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;autoOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  hiveRef = React.createRef();
+  logRef = React.createRef();
+  chatRef = React.createRef();
+  state = {
+    scenario: 'mission', phase: 'idle', nonce: 0, startAt: 0, pausedAt: 0, running: false, adjusted: false,
+    sel: null, showSubs: false, added: [], seq: 0, form: false, formName: '', formSpec: '', formError: '',
+    reduced: !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+    showDelivery: false, lo: false, ro: false, bo: false, agentTab: 'geral', missionTab: 'plano', link: null, log: [], hw: 1440, hh: 848
+  };
+  R = 72; W = 124.7077; DW = 392; BH = 300;
+  MISSION = 'Conferir pedidos recebidos por e-mail e preparar um relatório de divergências.';
+  AX = { Q: [0, 0], NW: [0, -2], NE: [2, -2], E: [2, 0], SE: [0, 2], SW: [-2, 2], W: [-2, 0], X1: [3, -3], X2: [1, 2], S1: [-1, -3], S2: [-2, -1] };
+  NB = [[1, -1], [1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1]];
+  FREE = ['W', 'X1', 'X2'];
+  STEPS = [['Plano', 'Receber e planejar', 'Rainha'], ['Coleta', 'Extrair e consultar', 'Documentos, Cadastros'], ['Análise', 'Comparar entregas', 'Análise'], ['Revisão', 'Conferir divergências', 'Revisão'], ['Aprovação', 'Aprovar resultado', 'Você'], ['Relatório', 'Preparar relatório', 'Relatórios'], ['Entrega', 'Consolidar entrega', 'Rainha']];
+  STEP_PH = { 1: ['p1a', 'p1b'], 2: ['p2a', 'p2b', 'p2c'], 3: ['p3a', 'p3b'], 4: ['p4a', 'p4b'], 6: ['p6a', 'p6b'], 7: ['p7a', 'p7b'] };
+  DIV = [
+    ['4817', 'Mercado Bom Preço', 'Preço unitário diferente da tabela: R$ 12,90 no pedido e R$ 13,40 na tabela.', 'Confirmar o preço com o cliente.'],
+    ['4822', 'Padaria Central', 'Quantidade acima do limite do cliente: 120 caixas para um limite de 80.', 'Pedir aprovação comercial.'],
+    ['4825', 'Distribuidora Lima', 'CNPJ do pedido não encontrado no cadastro.', 'Atualizar o cadastro do cliente.'],
+    ['4831', 'Empório Real', 'O mesmo item aparece duas vezes no pedido.', 'Confirmar com o cliente se é duplicidade.']
+  ];
+  LINK_INFO = {
+    'q-doc': 'A Rainha delega a Documentos a extração dos pedidos recebidos por e-mail.',
+    'q-cad': 'A Rainha delega a Cadastros a consulta de clientes e da tabela de preços.',
+    'q-ana': 'A Rainha delega a comparação a Análise, que devolve a lista de divergências.',
+    'q-rev': 'A Rainha encaminha as divergências a Revisão. Quando há ajuste, Revisão devolve as observações.',
+    'q-rel': 'A Rainha delega o relatório a Relatórios, que devolve o documento pronto.',
+    'doc-ana': 'Dependência: Análise só começa com os pedidos extraídos por Documentos.',
+    'cad-ana': 'Dependência: Análise só começa com os registros consultados por Cadastros.',
+    'rev-rel': 'Revisão encaminha a lista aprovada para Relatórios.',
+    'doc-s1': 'Documentos repassa os anexos em PDF ao subagente Anexos, que devolve os campos encontrados.',
+    'doc-s2': 'Documentos repassa os e-mails ao subagente Mensagens, que devolve os campos encontrados.',
+    demo: 'Operária de demonstração ligada à Rainha. Não tem tarefas nesta missão.'
+  };
+  STATE_INFO = {
+    idle: ['Sem atividade', 'Nenhuma tarefa ou resultado passa por aqui agora.'],
+    out: ['Tarefa delegada', 'Instruções a caminho do destino, em pulsos simples.'],
+    del: ['Tarefa em execução', 'A tarefa foi entregue e o destino está trabalhando.'],
+    wait: ['Aguardando etapa anterior', 'O destino depende desta entrega para continuar.'],
+    flow: ['Resultado encaminhado', 'A entrega segue para a próxima operária, em pulsos duplos.'],
+    in: ['Resultado retornando', 'O resultado volta para a Rainha, em pulsos duplos.'],
+    done: ['Resultado entregue', 'A entrega chegou ao destino.'],
+    ret: ['Resultado entregue', 'O resultado chegou à Rainha.'],
+    fail: ['Etapa com falha', 'A comunicação não foi concluída.']
+  };
+  AGENTS = [
+    { id: 'rainha', kind: 'queen', slot: 'Q', name: 'Rainha', spec: 'Coordena o trabalho da colmeia', skills: [], tools: [], from: [], to: [] },
+    { id: 'documentos', kind: 'worker', slot: 'NW', name: 'Documentos', spec: 'Leitura e extração de documentos',
+      mission: 'Ler os documentos que chegam à empresa e transformar o conteúdo em informações organizadas.',
+      task: 'Extrair número do pedido, cliente, itens, quantidades e valores dos e-mails recebidos nesta semana.',
+      duty: 'Extrair os dados dos pedidos', from: ['rainha'], to: ['analise'],
+      skills: ['Ler e-mails', 'Abrir anexos em PDF', 'Extrair campos do pedido', 'Separar documentos ilegíveis'],
+      tools: [['Caixa de e-mail de pedidos', 'Somente leitura'], ['Pasta de anexos', 'Somente leitura'], ['Planilha de pedidos', 'Leitura e escrita']] },
+    { id: 'cadastros', kind: 'worker', slot: 'E', name: 'Cadastros', spec: 'Consulta e conferência de cadastros',
+      mission: 'Manter as informações de clientes e produtos consistentes com os registros da empresa.',
+      task: 'Consultar o cadastro de clientes e a tabela de preços de cada pedido da semana.',
+      duty: 'Consultar clientes e preços', from: ['rainha'], to: ['analise'],
+      skills: ['Consultar registros', 'Localizar duplicidades', 'Validar CNPJ', 'Conferir tabela de preços'],
+      tools: [['Cadastro de clientes', 'Somente leitura'], ['Tabela de preços', 'Somente leitura']] },
+    { id: 'analise', kind: 'worker', slot: 'NE', name: 'Análise', spec: 'Análise de dados e divergências',
+      mission: 'Encontrar diferenças, padrões e desvios nos dados da operação.',
+      task: 'Comparar os pedidos extraídos com os registros e listar divergências de preço, quantidade e cadastro.',
+      duty: 'Comparar as duas entregas', from: ['documentos', 'cadastros'], to: ['rainha'],
+      skills: ['Comparar valores', 'Classificar divergências', 'Calcular diferenças', 'Indicar prioridades'],
+      tools: [['Planilha de pedidos', 'Somente leitura'], ['Planilha de divergências', 'Leitura e escrita']] },
+    { id: 'revisao', kind: 'worker', slot: 'SE', name: 'Revisão', spec: 'Revisão de resultados',
+      mission: 'Conferir cada resultado antes da entrega, seguindo os critérios que você definiu.',
+      task: 'Conferir cada divergência com os critérios da empresa e pedir sua aprovação.',
+      duty: 'Conferir e pedir aprovação', from: ['rainha'], to: ['relatorios'],
+      skills: ['Verificar critérios', 'Revisar amostras', 'Sinalizar inconsistências', 'Pedir aprovação'],
+      tools: [['Planilha de divergências', 'Somente leitura'], ['Critérios de conferência', 'Somente leitura']] },
+    { id: 'relatorios', kind: 'worker', slot: 'SW', name: 'Relatórios', spec: 'Relatórios e comunicação',
+      mission: 'Transformar resultados revisados em relatórios claros e mensagens prontas para envio.',
+      task: 'Preparar o relatório de divergências no modelo da empresa.',
+      duty: 'Preparar o relatório', from: ['revisao'], to: ['rainha'],
+      skills: ['Montar relatórios', 'Resumir resultados', 'Seguir o modelo da empresa'],
+      tools: [['Modelo de relatório', 'Somente leitura'], ['Pasta de relatórios', 'Leitura e escrita']] },
+    { id: 'sub-anexos', kind: 'sub', parent: 'documentos', slot: 'S1', name: 'Anexos', spec: 'Leitura dos anexos em PDF', total: 14, unit: 'anexos lidos',
+      mission: 'Ler os anexos em PDF dos e-mails e devolver os campos encontrados para Documentos.',
+      task: 'Ler os 14 anexos em PDF e extrair os campos de cada pedido.', from: ['documentos'], to: ['documentos'],
+      skills: ['Abrir PDF', 'Ler tabelas de itens'], tools: [['Pasta de anexos', 'Somente leitura']] },
+    { id: 'sub-mensagens', kind: 'sub', parent: 'documentos', slot: 'S2', name: 'Mensagens', spec: 'Leitura do texto dos e-mails', total: 9, unit: 'e-mails lidos',
+      mission: 'Ler pedidos escritos no corpo dos e-mails e devolver os campos encontrados para Documentos.',
+      task: 'Ler os 9 pedidos escritos diretamente no corpo do e-mail.', from: ['documentos'], to: ['documentos'],
+      skills: ['Ler texto livre', 'Identificar quantidades'], tools: [['Caixa de e-mail de pedidos', 'Somente leitura']] }
+  ];
+  PH = this.buildPhases();
+
+  buildPhases() {
+    const co = (l, d) => ['coord', l, d];
+    const WA = ['waiting', 'Aguardando informação', 'Depende das entregas de Documentos e Cadastros.'];
+    const DC = { documentos: ['done', 'Entregue', '23 pedidos extraídos e enviados para Análise.'], cadastros: ['done', 'Entregue', '23 clientes consultados e enviados para Análise.'] };
+    const D3 = { ...DC, analise: ['done', 'Entregue', '{n} divergências encontradas em 23 pedidos.'] };
+    const D4 = { ...D3, revisao: ['done', 'Aprovado por você', 'Lista aprovada e enviada para Relatórios.'] };
+    const D5 = { ...D4, relatorios: ['done', 'Entregue', 'Relatório enviado à Rainha.'] };
+    const L2 = { 'doc-ana': 'done', 'cad-ana': 'done' };
+    const L3 = { ...L2, 'q-ana': 'ret' };
+    const FA = ['waiting', 'Aguardando informação', 'Recebeu a entrega de Documentos. Falta Cadastros.'];
+    return {
+      idle: { step: 0, text: 'A missão de exemplo está pronta. Clique em “Simular missão” para acompanhar cada etapa.', a: { rainha: ['idle', 'Aguardando pedido', 'Pronta para receber a missão de exemplo.'] }, l: {}, next: 'p1a' },
+      p1a: { step: 1, dur: 1500, text: 'A Rainha recebeu o pedido e lê o objetivo e os limites definidos por você.', a: { rainha: co('Recebendo o pedido', 'Lendo o objetivo e os limites da missão.') }, l: {}, next: 'p1b' },
+      p1b: { step: 1, dur: 1900, text: 'A Rainha organiza o plano: quais tarefas existem, quem faz cada uma e em que ordem.', a: { rainha: co('Organizando o plano', 'Dividindo a missão em 7 etapas.') }, l: {}, next: 'p2a' },
+      p2a: { step: 2, dur: 1300, text: 'A Rainha delega a coleta. Documentos e Cadastros começam em paralelo, e Análise já recebe sua tarefa.', a: { rainha: co('Delegando tarefas', 'Enviando instruções, contexto e critérios.'), documentos: ['working', 'Recebendo a tarefa', 'Instruções e critérios recebidos da Rainha.'], cadastros: ['working', 'Recebendo a tarefa', 'Instruções e critérios recebidos da Rainha.'], analise: WA }, l: { 'q-doc': 'out', 'q-cad': 'out', 'q-ana': 'out', 'doc-ana': 'wait', 'cad-ana': 'wait' }, next: 'p2b' },
+      p2b: { step: 2, dur: 3600, subs: 'work', text: 'Documentos extrai informações dos e-mails enquanto Cadastros consulta os registros.', a: { rainha: co('Acompanhando o andamento', '2 operárias trabalhando em paralelo.'), documentos: ['working', 'Extraindo informações', null, [0, 23, 'e-mails lidos']], cadastros: ['working', 'Consultando registros', null, [0, 23, 'clientes consultados']], analise: WA }, l: { 'q-doc': 'del', 'q-cad': 'del', 'q-ana': 'del', 'doc-ana': 'wait', 'cad-ana': 'wait' }, next: 'p2c' },
+      p2c: { step: 2, dur: 1300, subs: 'back', text: 'Documentos e Cadastros encaminham suas entregas para Análise.', a: { rainha: co('Acompanhando o andamento', 'As entregas seguem para Análise.'), documentos: ['done', 'Entrega enviada', '23 pedidos extraídos e enviados para Análise.'], cadastros: ['done', 'Entrega enviada', '23 clientes consultados e enviados para Análise.'], analise: ['working', 'Recebendo as entregas', 'Chegando: pedidos extraídos e registros consultados.'] }, l: { 'q-ana': 'del', 'doc-ana': 'flow', 'cad-ana': 'flow' }, next: 'p3a' },
+      p3a: { step: 3, dur: 3000, text: 'Análise compara as duas entregas e procura divergências de preço, quantidade e cadastro.', a: { ...DC, rainha: co('Acompanhando o andamento', 'Análise está comparando as entregas.'), analise: ['working', 'Comparando as entregas', null, [0, 23, 'pedidos comparados']] }, l: { ...L2, 'q-ana': 'del' }, next: 'p3b' },
+      p3b: { step: 3, dur: 1300, text: 'Análise encontrou {n} divergências e devolve o resultado à Rainha.', a: { ...DC, rainha: co('Recebendo o resultado', 'Análise devolveu a lista de divergências.'), analise: ['done', 'Entrega enviada', '{n} divergências encontradas em 23 pedidos.'] }, l: { ...L2, 'q-ana': 'in' }, next: 'p4a' },
+      p4a: { step: 4, dur: 1300, text: 'A Rainha encaminha as divergências para Revisão, com os critérios de conferência.', a: { ...D3, rainha: co('Delegando a revisão', 'Enviando a lista e os critérios.'), revisao: ['working', 'Recebendo a tarefa', 'Lista de divergências recebida da Rainha.'] }, l: { ...L3, 'q-rev': 'out' }, next: 'p4b' },
+      p4b: { step: 4, dur: 2600, text: 'Revisão confere cada divergência com os critérios definidos.', a: { ...D3, rainha: co('Acompanhando o andamento', 'Revisão está conferindo.'), revisao: ['working', 'Conferindo divergências', null, [0, 'n', 'divergências conferidas']] }, l: { ...L3, 'q-rev': 'del' }, next: 'approval' },
+      approval: { step: 5, text: 'Revisão conferiu as divergências e pede sua aprovação para seguir com o relatório.', a: { ...D3, rainha: ['approval', 'Aguardando sua decisão', 'A missão continua depois da sua escolha.'], revisao: ['approval', 'Aguardando aprovação', '{n} divergências conferidas. Precisa da sua decisão.'] }, l: { ...L3, 'q-rev': 'del' } },
+      adj1: { step: 5, dur: 1200, text: 'Você pediu um ajuste. Revisão devolve suas observações à Rainha.', a: { ...D3, rainha: co('Encaminhando o ajuste', 'Repassando suas observações.'), revisao: ['working', 'Enviando observações', 'Ajuste solicitado por você.'] }, l: { ...L3, 'q-rev': 'in' }, next: 'adj2' },
+      adj2: { step: 5, dur: 1200, text: 'A Rainha pede à Análise que revise a classificação das divergências.', a: { ...DC, rainha: co('Delegando o ajuste', 'Enviando as observações para Análise.'), analise: ['working', 'Recebendo o ajuste', 'Observações recebidas da Rainha.'], revisao: ['waiting', 'Aguardando informação', 'Depende do ajuste da Análise.'] }, l: { ...L2, 'q-ana': 'out', 'q-rev': 'wait' }, next: 'adj3' },
+      adj3: { step: 5, dur: 2200, text: 'Análise revisa as divergências considerando as suas observações.', a: { ...DC, rainha: co('Acompanhando o ajuste', 'Análise está revisando a lista.'), analise: ['working', 'Ajustando a análise', null, [0, 4, 'divergências revistas']], revisao: ['waiting', 'Aguardando informação', 'Depende do ajuste da Análise.'] }, l: { ...L2, 'q-ana': 'del', 'q-rev': 'wait' }, next: 'adj4' },
+      adj4: { step: 5, dur: 1300, text: 'Análise devolve a lista ajustada, e a Rainha encaminha para Revisão.', a: { ...DC, rainha: co('Encaminhando o ajuste', 'Lista ajustada a caminho de Revisão.'), analise: ['done', 'Ajuste entregue', '{n} divergências após o ajuste.'], revisao: ['working', 'Recebendo o ajuste', 'Lista ajustada recebida da Rainha.'] }, l: { ...L2, 'q-ana': 'in', 'q-rev': 'out' }, next: 'adj5' },
+      adj5: { step: 5, dur: 1800, text: 'Revisão confere novamente a lista ajustada.', a: { ...D3, rainha: co('Acompanhando o andamento', 'Revisão está conferindo de novo.'), revisao: ['working', 'Conferindo novamente', null, [0, 'n', 'divergências conferidas']] }, l: { ...L3, 'q-rev': 'del' }, next: 'approval' },
+      p6a: { step: 6, dur: 1300, text: 'Aprovado. Revisão encaminha a lista para Relatórios, e a Rainha delega o relatório.', a: { ...D4, rainha: co('Delegando o relatório', 'Enviando o modelo e o resultado aprovado.'), relatorios: ['working', 'Recebendo a tarefa', 'Resultado aprovado recebido de Revisão.'] }, l: { ...L3, 'rev-rel': 'flow', 'q-rel': 'out' }, next: 'p6b' },
+      p6b: { step: 6, dur: 2600, text: 'Relatórios prepara o relatório de divergências no modelo da empresa.', a: { ...D4, rainha: co('Acompanhando o andamento', 'Relatórios está montando o documento.'), relatorios: ['working', 'Preparando o relatório', null, [0, 4, 'seções prontas']] }, l: { ...L3, 'rev-rel': 'done', 'q-rel': 'del' }, next: 'p7a' },
+      p7a: { step: 7, dur: 1300, text: 'Relatórios entrega o relatório à Rainha.', a: { ...D4, rainha: co('Recebendo a entrega', 'O relatório está chegando.'), relatorios: ['done', 'Entrega enviada', 'Relatório pronto para consolidação.'] }, l: { ...L3, 'rev-rel': 'done', 'q-rel': 'in' }, next: 'p7b' },
+      p7b: { step: 7, dur: 1700, text: 'A Rainha confere se cada tarefa cumpriu seus critérios e consolida o resultado.', a: { ...D5, rainha: co('Consolidando a entrega', 'Conferindo os critérios de cada tarefa.') }, l: { ...L3, 'rev-rel': 'done', 'q-rel': 'ret' }, next: 'done' },
+      done: { step: 8, final: true, text: 'Missão concluída. A entrega de exemplo está pronta para consulta.', a: { ...D5, rainha: ['done', 'Entrega concluída', 'Relatório de divergências pronto.'] }, l: { 'q-doc': 'ret', 'q-cad': 'ret', 'q-ana': 'ret', 'q-rev': 'ret', 'q-rel': 'ret', 'doc-ana': 'done', 'cad-ana': 'done', 'rev-rel': 'done' } },
+      fail: { step: 2, failed: true, subs: 'done', text: 'A coleta falhou: Cadastros não conseguiu consultar o cadastro de clientes.', a: { rainha: ['approval', 'Impedimento encontrado', 'Cadastros não concluiu a consulta. Você pode tentar de novo.'], documentos: ['done', 'Entrega enviada', '23 pedidos extraídos e enviados para Análise.'], cadastros: ['failed', 'Falhou', 'O cadastro de clientes não respondeu após 3 tentativas.'], analise: FA }, l: { 'q-cad': 'fail', 'q-ana': 'del', 'doc-ana': 'done', 'cad-ana': 'wait' } },
+      retry: { step: 2, dur: 2600, subs: 'done', text: 'Cadastros tenta a consulta novamente.', a: { rainha: co('Acompanhando a nova tentativa', 'Cadastros está consultando de novo.'), documentos: ['done', 'Entrega enviada', '23 pedidos extraídos e enviados para Análise.'], cadastros: ['working', 'Consultando registros', null, [0, 23, 'clientes consultados']], analise: FA }, l: { 'q-cad': 'out', 'q-ana': 'del', 'doc-ana': 'done', 'cad-ana': 'wait' }, next: 'retry2' },
+      retry2: { step: 2, dur: 1300, subs: 'done', text: 'Cadastros encaminha sua entrega para Análise.', a: { rainha: co('Acompanhando o andamento', 'As entregas seguem para Análise.'), documentos: ['done', 'Entregue', '23 pedidos extraídos e enviados para Análise.'], cadastros: ['done', 'Entrega enviada', '23 clientes consultados e enviados para Análise.'], analise: ['working', 'Recebendo as entregas', 'Falta pouco para começar a comparação.'] }, l: { 'q-ana': 'del', 'doc-ana': 'done', 'cad-ana': 'flow' }, next: 'p3a' }
+    };
+  }
+
+  componentDidMount() {
+    this.onWin = () => this.fit();
+    window.addEventListener('resize', this.onWin);
+    this.observe();
+    this.iv = setInterval(() => this.tick(), 100);
+  }
+  observe() {
+    const el = this.hiveRef.current;
+    if (el && el !== this._obsEl) {
+      if (this.ro) this.ro.disconnect();
+      if (window.ResizeObserver) { this.ro = new ResizeObserver(() => this.fit()); this.ro.observe(el); }
+      this._obsEl = el;
+    }
+    this.fit();
+  }
+  componentDidUpdate() {
+    if (this.hiveRef.current !== this._obsEl) this.observe();
+    const s = this.state;
+    if ((s.log !== this._pl || s.bo !== this._pb) && this.logRef.current) this.logRef.current.scrollTop = this.logRef.current.scrollHeight;
+    this._pl = s.log; this._pb = s.bo;
+  }
+  componentWillUnmount() { if (this.ro) this.ro.disconnect(); window.removeEventListener('resize', this.onWin); clearInterval(this.iv); clearTimeout(this.dt); }
+  fit() {
+    const el = this.hiveRef.current; if (!el || !el.isConnected || !el.clientWidth || !el.clientHeight) return;
+    if (el.clientWidth !== this.state.hw || el.clientHeight !== this.state.hh) this.setState({ hw: el.clientWidth, hh: el.clientHeight });
+  }
+  tick() {
+    const s = this.state; if (!s.running) return;
+    const ph = this.PH[s.phase]; if (!ph || !ph.dur) return;
+    if (Date.now() - s.startAt >= ph.dur) this.go(ph.next); else this.forceUpdate();
+  }
+  frac() {
+    const s = this.state, ph = this.PH[s.phase];
+    if (!ph.dur) return ph.step > 0 ? 1 : 0;
+    const now = s.running ? Date.now() : (s.pausedAt || s.startAt);
+    return Math.max(0, Math.min(1, (now - s.startAt) / ph.dur));
+  }
+  evt(id, adj) {
+    const ph = this.PH[id], n = adj ? 3 : 4, text = String(ph.text).replace(/\{n\}/g, n);
+    const tag = ph.final ? 'Missão concluída' : 'Etapa ' + ph.step + ' · ' + this.STEPS[ph.step - 1][0] + (ph.failed ? ' · falha' : '');
+    return { type: 'event', id, tag, text, kind: id === 'approval' ? 'approval' : ph.failed ? 'failed' : ph.final ? 'done' : 'working' };
+  }
+  go(id, extra) {
+    const ph = this.PH[id];
+    const st = { phase: id, nonce: this.state.nonce + 1, startAt: Date.now(), pausedAt: 0, ...(extra || {}) };
+    if (id === 'adj4' || (id === 'approval' && this.state.phase.indexOf('adj') === 0)) st.adjusted = true;
+    const adj = st.adjusted !== undefined ? st.adjusted : this.state.adjusted;
+    const base = st.log || this.state.log;
+    st.log = ph.step > 0 ? [...base, this.evt(id, adj)] : base;
+    clearTimeout(this.dt);
+    if (ph.final) { st.running = false; this.dt = setTimeout(() => { if (this.state.phase === 'done') this.setState({ showDelivery: true }); }, this.state.reduced ? 400 : 1600); }
+    this.setState(st);
+  }
+  start = (text) => { if (this.state.scenario === 'empty') return; this.go('p1a', { running: true, adjusted: false, showDelivery: false, link: null, log: [{ type: 'user', text: text || this.MISSION }] }); };
+  pause = () => this.setState({ running: false, pausedAt: Date.now() });
+  resume = () => { const s = this.state; this.setState({ running: true, startAt: s.startAt + (Date.now() - (s.pausedAt || Date.now())), pausedAt: 0 }); };
+  restart = () => { const f = this.state.scenario === 'failed'; this.go(f ? 'fail' : 'idle', { running: false, adjusted: false, showDelivery: false, link: null, log: f ? [{ type: 'user', text: this.MISSION }] : [] }); };
+  retry = () => { if (this.state.phase === 'fail') this.go('retry', { running: true, log: [...this.state.log, { type: 'user', text: 'Tentar novamente' }] }); };
+  approve = () => { if (this.state.phase === 'approval') this.go('p6a', { running: true, log: [...this.state.log, { type: 'user', text: 'Aprovar' }] }); };
+  adjust = () => { if (this.state.phase === 'approval') this.go('adj1', { running: true, log: [...this.state.log, { type: 'user', text: 'Solicitar ajuste' }] }); };
+  nextStep = () => {
+    const cur = this.PH[this.state.phase]; if (!cur.dur || !cur.next) return;
+    let id = cur.next;
+    while (id && this.PH[id].step === cur.step && this.PH[id].dur && this.PH[id].next) id = this.PH[id].next;
+    this.go(id, { running: true });
+  };
+  setScenario(id) {
+    this.setState({ scenario: id, form: false, showSubs: false, sel: null, link: null }, () => this.restart());
+  }
+  freeSlot() {
+    if (this.state.scenario === 'empty' || this.state.added.length >= 3) return null;
+    return this.FREE.find(f => !this.state.added.some(a => a.slot === f)) || null;
+  }
+  submitForm = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const name = this.state.formName.trim();
+    if (!name) { this.setState({ formError: 'Informe um nome para a operária.' }); return; }
+    const slot = this.freeSlot(); if (!slot) { this.setState({ form: false }); return; }
+    const seq = this.state.seq + 1, id = 'demo-' + seq;
+    const rec = { id, slot, name, spec: this.state.formSpec.trim() || 'Especialidade a definir',
+      mission: 'Operária criada por você nesta demonstração. A missão ainda não foi definida.',
+      task: null, duty: 'Sem tarefa nesta missão', from: ['rainha'], to: ['rainha'], skills: [], tools: [] };
+    this.setState({ added: [...this.state.added, rec], seq, form: false, formName: '', formSpec: '', formError: '', sel: id, agentTab: 'geral' });
+  };
+  send = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const s = this.state, ph = this.PH[s.phase], el = this.chatRef.current, v = el ? el.value.trim() : '';
+    if (s.scenario === 'empty') return;
+    if (s.phase === 'idle' || ph.final) { this.start(v); if (el) el.value = ''; }
+    else if (v) { this.setState({ log: [...s.log, { type: 'user', text: v }, { type: 'event', tag: 'Demonstração', text: 'A Rainha recebe um novo pedido quando a missão atual terminar.', kind: 'idle' }] }); el.value = ''; }
+  };
+  pickAgent(id, fromHive) {
+    const a = this.byId[id]; const st = { sel: id, form: false, link: null };
+    if (a && a.kind === 'sub') st.showSubs = true;
+    if (fromHive && (this.props.autoOpen ?? true)) st.lo = true;
+    this.setState(st);
+  }
+
+  agentsList() {
+    if (this.state.scenario === 'empty') return [];
+    return [...this.AGENTS, ...this.state.added.map(a => ({ ...a, kind: 'worker', added: true }))];
+  }
+  subsMode(ph) { return ph.subs || (ph.step >= 3 ? 'done' : 'idle'); }
+  status(id) {
+    const ph = this.PH[this.state.phase], n = this.state.adjusted ? 3 : 4, f = this.frac(), ag = this.byId[id];
+    let r;
+    if (ag && ag.kind === 'sub') {
+      const m = this.subsMode(ph);
+      r = m === 'work' ? ['working', id === 'sub-anexos' ? 'Lendo anexos' : 'Lendo e-mails', null, [0, ag.total, ag.unit]]
+        : m === 'back' ? ['done', 'Entrega enviada', 'Campos devolvidos para Documentos.']
+        : m === 'done' ? ['done', 'Entregue', 'Campos devolvidos para Documentos.']
+        : ['idle', 'Disponível', 'Acionado por Documentos quando houver leitura.'];
+    } else r = ph.a[id] || (id === 'rainha' ? ['idle', 'Aguardando pedido', ''] : ['idle', 'Disponível', ag && ag.added ? 'Sem tarefa nesta missão.' : 'Sem tarefa no momento.']);
+    const sub = v => v == null ? v : String(v).replace(/\{n\}/g, n);
+    let prog = null, detail = sub(r[2]);
+    if (r[3]) {
+      const tot = r[3][1] === 'n' ? n : r[3][1];
+      const cur = Math.min(tot, Math.floor(r[3][0] + (tot - r[3][0]) * f));
+      prog = { cur, tot, text: cur + ' de ' + tot + ' ' + r[3][2] };
+      if (!detail) detail = prog.text;
+    }
+    return { kind: r[0], label: sub(r[1]), detail: detail || '', prog };
+  }
+  shortOf(id, x) {
+    const k = x.kind;
+    if (k === 'working') return 'Trabalhando';
+    if (k === 'coord') return 'Coordenando';
+    if (k === 'waiting') return 'Aguardando';
+    if (k === 'approval') return id === 'rainha' && this.state.phase === 'fail' ? 'Impedimento' : 'Aguarda você';
+    if (k === 'done') return id === 'rainha' ? 'Entrega pronta' : 'Entregue';
+    if (k === 'failed') return 'Falhou';
+    return 'Disponível';
+  }
+
+  P(ax) { return [this.W * (ax[0] + ax[1] / 2), 1.5 * this.R * ax[1]]; }
+  hexPts(cx, cy, R) {
+    const a = R * 0.8660254;
+    return [[cx, cy - R], [cx + a, cy - R / 2], [cx + a, cy + R / 2], [cx, cy + R], [cx - a, cy + R / 2], [cx - a, cy - R / 2]].map(p => p.map(v => +v.toFixed(2)).join(',')).join(' ');
+  }
+  meshPath() {
+    if (this.md) return this.md;
+    let d = '';
+    for (let r = -11; r <= 11; r++) for (let q = -24; q <= 24; q++) {
+      const c = this.P([q, r]); if (Math.abs(c[0]) > 1800 || Math.abs(c[1]) > 1150) continue;
+      d += 'M' + this.hexPts(c[0], c[1], this.R).split(' ').join('L') + 'Z';
+    }
+    return (this.md = d);
+  }
+  meshLayer() {
+    if (this.ml) return this.ml;
+    const h = React.createElement, tones = ['#C2920F', '#BD8C0D', '#B8860B', '#B3820A', '#AD7E09'];
+    const mix = (hex, up, amt) => { const n = parseInt(hex.slice(1), 16), T = up ? 255 : 0, c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v + (T - v) * amt)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
+    const grad = (id, stops) => h('linearGradient', { key: id, id, x1: '0.3', y1: '0', x2: '0.7', y2: '1' }, ...stops.map((s, i) => h('stop', { key: i, offset: s[0], stopColor: s[1] })));
+    const defs = [...tones.map((c, i) => grad('hm-t' + i, [[0, mix(c, 1, 0.07)], [1, mix(c, 0, 0.06)]])),
+      grad('hm-occ', [[0, '#CB9C25'], [0.55, '#B8860B'], [1, '#A27408']]),
+      grad('hm-occ-sel', [[0, '#FBF8F2'], [0.55, '#F1EDE4'], [1, '#E0D7C6']]),
+      grad('hm-queen', [[0, '#3B352E'], [0.5, '#17140F'], [1, '#000000']])];
+    const Wd = this.W, R = this.R, ds = ['', '', '', '', ''];
+    for (let r = -11; r <= 11; r++) for (let q = -24; q <= 24; q++) {
+      const c = this.P([q, r]); if (Math.abs(c[0]) > 1800 || Math.abs(c[1]) > 1150) continue;
+      const v = -(c[0] * 0.00045 + c[1] * 0.0006) + 0.45 * Math.sin(q * 0.85 + r * 0.35) * Math.cos(r * 0.6 - q * 0.25);
+      const lvl = Math.max(0, Math.min(4, Math.round(2 - v * 1.6)));
+      ds[lvl] += 'M' + this.hexPts(c[0], c[1], R).split(' ').join('L') + 'Z';
+    }
+    const tile = [[Wd / 2, R], [0, 2.5 * R], [Wd, 2.5 * R], [0, -0.5 * R], [Wd, -0.5 * R]];
+    const pats = tones.map((t, i) => h('pattern', { key: 'p' + i, id: 'hm-pt' + i, patternUnits: 'userSpaceOnUse', x: -Wd / 2, y: -R, width: Wd, height: 3 * R },
+      ...tile.map((p, j) => h('polygon', { key: j, points: this.hexPts(p[0], p[1], R), style: { fill: 'url(#hm-t' + i + ')' } }))));
+    this.ml = h('svg', { width: 3600, height: 2300, viewBox: '-1800 -1150 3600 2300', style: { position: 'absolute', left: -1800, top: -1150, pointerEvents: 'none' } },
+      h('defs', null, ...defs, ...pats), ...ds.map((d, i) => h('path', { key: 't' + i, d, style: { fill: 'url(#hm-pt' + i + ')' } })), h('path', { key: 'm', d: this.meshPath(), style: { fill: 'none', stroke: 'rgba(0,0,0,0.13)', strokeWidth: 1 } }));
+    return this.ml;
+  }
+  buildGraph() {
+    const V = {}, adj = {}, cellV = {}, key = (x, y) => Math.round(x * 10) + ',' + Math.round(y * 10);
+    for (let r = -6; r <= 6; r++) for (let q = -10; q <= 10; q++) {
+      const c = this.P([q, r]); if (Math.abs(c[0]) > 900) continue;
+      const ks = [];
+      for (let i = 0; i < 6; i++) { const a = (-90 + 60 * i) * Math.PI / 180, x = c[0] + this.R * Math.cos(a), y = c[1] + this.R * Math.sin(a), k = key(x, y); V[k] = [+x.toFixed(2), +y.toFixed(2)]; ks.push(k); }
+      for (let i = 0; i < 6; i++) { const a = ks[i], b = ks[(i + 1) % 6]; (adj[a] = adj[a] || new Set()).add(b); (adj[b] = adj[b] || new Set()).add(a); }
+      cellV[q + ',' + r] = ks;
+    }
+    this.G = { V, adj, cellV };
+  }
+  route(A, B, blocked, used) {
+    const G = this.G, As = G.cellV[A.join(',')] || [], Bs = new Set(G.cellV[B.join(',')] || []);
+    const dist = {}, prev = {}, done = new Set(), open = [];
+    As.forEach(k => { dist[k] = 0; open.push(k); });
+    while (open.length) {
+      let bi = 0; for (let i = 1; i < open.length; i++) if (dist[open[i]] < dist[open[bi]]) bi = i;
+      const u = open.splice(bi, 1)[0]; if (done.has(u)) continue; done.add(u);
+      if (Bs.has(u)) { const keys = [u]; let c = u; while (prev[c]) { c = prev[c]; keys.unshift(c); } return { keys, pts: keys.map(k => G.V[k]) }; }
+      G.adj[u].forEach(v => {
+        if (done.has(v)) return;
+        const ek = u < v ? u + '|' + v : v + '|' + u;
+        const nd = dist[u] + 1 + (blocked.has(v) && !Bs.has(v) ? 8 : 0) + (used.has(ek) ? 2.5 : 0);
+        if (dist[v] === undefined || nd < dist[v]) { dist[v] = nd; prev[v] = u; open.push(v); }
+      });
+    }
+    return { keys: [], pts: [] };
+  }
+  getRoutes(defs, visible) {
+    if (!this.G) this.buildGraph();
+    const occ = visible.map(a => this.AX[a.slot]);
+    const key = defs.map(d => d.id + ':' + this.byId[d.from].slot + '>' + this.byId[d.to].slot).join(';') + '|' + occ.map(o => o.join(',')).join(';');
+    if (this.rk === key) return this.rc;
+    const used = new Set(), out = {};
+    defs.forEach(d => {
+      const A = this.AX[this.byId[d.from].slot], B = this.AX[this.byId[d.to].slot], blocked = new Set();
+      occ.forEach(o => { if ((o[0] === A[0] && o[1] === A[1]) || (o[0] === B[0] && o[1] === B[1])) return; (this.G.cellV[o.join(',')] || []).forEach(k => blocked.add(k)); });
+      const r = this.route(A, B, blocked, used); out[d.id] = r.pts;
+      for (let i = 1; i < r.keys.length; i++) { const a = r.keys[i - 1], b = r.keys[i]; used.add(a < b ? a + '|' + b : b + '|' + a); }
+    });
+    this.rk = key; this.rc = out; return out;
+  }
+  along(pts, t) {
+    const n = pts.length - 1; if (n < 1) return pts[0] || [0, 0];
+    const tg = t * n, i = Math.min(n - 1, Math.floor(tg)), f = tg - i;
+    return [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * f, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * f];
+  }
+  linkDefs(list) {
+    const has = id => list.some(a => a.id === id), defs = [], add = (id, from, to) => defs.push({ id, from, to });
+    [['q-doc', 'documentos'], ['q-ana', 'analise'], ['q-cad', 'cadastros'], ['q-rev', 'revisao'], ['q-rel', 'relatorios']].forEach(([id, t]) => { if (has(t)) add(id, 'rainha', t); });
+    if (has('documentos') && has('analise')) add('doc-ana', 'documentos', 'analise');
+    if (has('cadastros') && has('analise')) add('cad-ana', 'cadastros', 'analise');
+    if (has('revisao') && has('relatorios')) add('rev-rel', 'revisao', 'relatorios');
+    if (this.state.showSubs && has('documentos')) { add('doc-s1', 'documentos', 'sub-anexos'); add('doc-s2', 'documentos', 'sub-mensagens'); }
+    list.filter(a => a.added).forEach(a => add('q-' + a.id, 'rainha', a.id));
+    return defs;
+  }
+  trailStyle(st) {
+    if (st === 'out' || st === 'in' || st === 'flow') return { stroke: '#6500C9', strokeWidth: 3 };
+    if (st === 'del') return { stroke: '#000000', strokeWidth: 3.5 };
+    if (st === 'wait') return { stroke: '#000000', strokeWidth: 2, strokeDasharray: '6 5' };
+    if (st === 'done' || st === 'ret') return { stroke: '#000000', strokeWidth: 2 };
+    if (st === 'fail') return { stroke: '#000000', strokeWidth: 2, strokeDasharray: '4 4' };
+    return { stroke: 'rgba(0,0,0,0.5)', strokeWidth: 1.6, strokeDasharray: '1.5 5', strokeLinecap: 'round' };
+  }
+  trailSample(st, anim, dur) {
+    const h = React.createElement, D = 'M2 6 L34 6', active = st === 'out' || st === 'in' || st === 'flow', kids = [];
+    kids.push(h('path', { key: 'l', d: D, style: { fill: 'none', ...this.trailStyle(st) } }));
+    if (active) {
+      const dash = st === 'out' ? '6 12' : '3 2 3 10', a = anim ? { '--cyc': '-18px', animation: 'hm-flow ' + dur + 's linear infinite' } : {};
+      kids.push(h('path', { key: 'p1', d: D, style: { fill: 'none', stroke: '#6500C9', strokeWidth: 7, strokeDasharray: dash, ...a } }));
+      kids.push(h('path', { key: 'p2', d: D, style: { fill: 'none', stroke: '#F1EDE4', strokeWidth: 2, strokeDasharray: dash, ...a } }));
+    }
+    const col = active ? '#6500C9' : st === 'idle' ? 'rgba(0,0,0,0.5)' : '#000000';
+    if (st !== 'idle') kids.push(h('polygon', { key: 'c', points: '43,6 35,1.5 35,10.5', style: { fill: col } }));
+    if (st === 'fail') kids.push(h('rect', { key: 'x0', x: 12, y: 0, width: 12, height: 12, style: { fill: '#F1EDE4', stroke: '#000000', strokeWidth: 1 } }), h('path', { key: 'x', d: 'M15 3 L21 9 M21 3 L15 9', style: { stroke: '#000000', strokeWidth: 1.6 } }));
+    return h('svg', { width: 44, height: 12, viewBox: '0 0 44 12', style: { display: 'block', overflow: 'visible' } }, ...kids);
+  }
+  linksLayer(defs, routes, L, o) {
+    const h = React.createElement, base = [], top = [], hits = [], fx = [], ps = o.paused ? 'paused' : 'running';
+    const V = '#6500C9', K = '#000000', I = '#F1EDE4';
+    if (o.queenCoord && o.anim) this.NB.forEach((ax, i) => { const c = this.P(ax); fx.push(h('polygon', { key: 'sw' + i, points: this.hexPts(c[0], c[1], 56), style: { fill: 'none', stroke: K, strokeWidth: 2, opacity: 0, animation: 'hm-sweep 1.8s linear ' + (i * 0.3) + 's infinite ' + ps } })); });
+    defs.forEach(d => {
+      let pts = routes[d.id]; if (!pts || pts.length < 2) return;
+      const st = L[d.id] || 'idle';
+      if (st === 'in' || st === 'ret') pts = [...pts].reverse();
+      const D = 'M' + pts.map(p => p[0] + ' ' + p[1]).join(' L');
+      const active = st === 'out' || st === 'in' || st === 'flow';
+      if (o.sel === d.id) base.push(h('path', { key: d.id + 's', d: D, style: { fill: 'none', stroke: I, strokeWidth: 11, strokeLinejoin: 'round', strokeLinecap: 'square' } }));
+      base.push(h('path', { key: d.id + 'l', d: D, style: { fill: 'none', strokeLinejoin: 'round', ...this.trailStyle(st) } }));
+      if (active) {
+        const dash = st === 'out' ? '12 60' : '6 4 6 56';
+        const an = o.anim ? { '--cyc': '-72px', animation: 'hm-flow ' + o.dur + 's linear infinite ' + ps } : {};
+        top.push(h('path', { key: d.id + 'p1', d: D, style: { fill: 'none', stroke: V, strokeWidth: 9, strokeDasharray: dash, strokeLinejoin: 'round', ...an } }));
+        top.push(h('path', { key: d.id + 'p2', d: D, style: { fill: 'none', stroke: I, strokeWidth: 3, strokeDasharray: dash, strokeLinejoin: 'round', ...an } }));
+      }
+      const a = pts[0], b = pts[pts.length - 1], p = pts[pts.length - 2];
+      const col = active ? V : st === 'idle' ? 'rgba(0,0,0,0.5)' : K;
+      if (st !== 'idle') {
+        const len = Math.hypot(b[0] - p[0], b[1] - p[1]) || 1, ux = (b[0] - p[0]) / len, uy = (b[1] - p[1]) / len, px = -uy, py = ux;
+        const tx = b[0] - ux * 8, ty = b[1] - uy * 8, bx = b[0] - ux * 22, by = b[1] - uy * 22;
+        top.push(h('polygon', { key: d.id + 'c', points: tx + ',' + ty + ' ' + (bx + px * 6.5) + ',' + (by + py * 6.5) + ' ' + (bx - px * 6.5) + ',' + (by - py * 6.5), style: { fill: col } }));
+      }
+      top.push(h('rect', { key: d.id + 'a', x: a[0] - 3.5, y: a[1] - 3.5, width: 7, height: 7, style: { fill: col } }));
+      top.push(h('rect', { key: d.id + 'b', x: b[0] - 3.5, y: b[1] - 3.5, width: 7, height: 7, style: { fill: col } }));
+      if (st === 'fail') {
+        const m = this.along(pts, 0.5);
+        top.push(h('rect', { key: d.id + 'x0', x: m[0] - 9, y: m[1] - 9, width: 18, height: 18, style: { fill: I, stroke: K, strokeWidth: 1.5 } }));
+        top.push(h('path', { key: d.id + 'x', d: 'M' + (m[0] - 4.5) + ' ' + (m[1] - 4.5) + ' L' + (m[0] + 4.5) + ' ' + (m[1] + 4.5) + ' M' + (m[0] + 4.5) + ' ' + (m[1] - 4.5) + ' L' + (m[0] - 4.5) + ' ' + (m[1] + 4.5), style: { stroke: K, strokeWidth: 2 } }));
+      }
+      hits.push(h('path', { key: d.id + 'h', d: D, onClick: e => { e.stopPropagation(); o.onLink(d.id); }, style: { fill: 'none', stroke: 'rgba(0,0,0,0)', strokeWidth: 18, pointerEvents: 'stroke', cursor: 'pointer' } }));
+    });
+    if (o.ripple && o.anim) {
+      const big = o.ripple === 'big';
+      (big ? [0, 1, 2] : [0]).forEach(i => fx.push(h('polygon', { key: 'rp' + o.nonce + '-' + i, points: this.hexPts(0, 0, 72), vectorEffect: 'non-scaling-stroke', style: { fill: 'none', stroke: K, strokeWidth: big ? 2.5 : 2, transformBox: 'fill-box', transformOrigin: 'center', '--k': big ? 6.5 : 1.8, opacity: 0, animation: 'hm-ripple ' + (big ? 2.4 : 1.1) + 's cubic-bezier(.2,.6,.3,1) ' + (i * 0.4) + 's 1 both' } })));
+    }
+    return h('svg', { width: 1600, height: 1200, viewBox: '-800 -600 1600 1200', style: { position: 'absolute', left: -800, top: -600, overflow: 'visible', pointerEvents: 'none' } }, ...fx, ...base, ...top, ...hits);
+  }
+  sym(kind, size, color) {
+    const h = React.createElement, C = color || '#000000';
+    let el;
+    if (kind === 'working' || kind === 'coord') el = h('circle', { cx: 5, cy: 5, r: 4.5, style: { fill: C } });
+    else if (kind === 'approval') el = h('polygon', { points: '5,0 10,5 5,10 0,5', style: { fill: C } });
+    else if (kind === 'waiting') el = h('path', { d: 'M1.5 1 H8.5 L1.5 9 H8.5 Z', style: { fill: 'none', stroke: C, strokeWidth: 1.5, strokeLinejoin: 'round' } });
+    else if (kind === 'done') el = h('polyline', { points: '0.8,5.4 3.9,8.5 9.4,1.6', style: { fill: 'none', stroke: C, strokeWidth: 2 } });
+    else if (kind === 'failed') el = h('g', null, h('rect', { x: 0.75, y: 0.75, width: 8.5, height: 8.5, style: { fill: 'none', stroke: C, strokeWidth: 1.5 } }), h('path', { d: 'M3 3 L7 7 M7 3 L3 7', style: { stroke: C, strokeWidth: 1.5 } }));
+    else el = h('rect', { x: 1, y: 1, width: 8, height: 8, style: { fill: 'none', stroke: C, strokeWidth: 1.5 } });
+    const sz = size || 10;
+    return h('svg', { width: sz, height: sz, viewBox: '0 0 10 10', style: { display: 'block', flexShrink: 0, overflow: 'visible' } }, el);
+  }
+  bee(o) {
+    const h = React.createElement, q = !!o.queen, B = o.body, G = o.gap, ps = o.paused ? 'paused' : 'running';
+    const org = q ? '32px 27px' : '32px 22px';
+    const wg = d => {
+      const b = { transformBox: 'view-box', transformOrigin: org };
+      if (o.flutter) return { ...b, animation: 'hm-flap-' + d + ' ' + (q ? '.24s' : '.17s') + ' ease-in-out infinite alternate ' + ps };
+      if (o.folded) return { ...b, transform: 'rotate(' + (d === 'l' ? -30 : 30) + 'deg)' };
+      return b;
+    };
+    const ws = { fill: B, stroke: G, strokeWidth: 1.5 }, bs = { fill: B, stroke: G, strokeWidth: 1.4 };
+    const E = (cx, cy, rx, ry, rot, k) => h('ellipse', { key: k, cx, cy, rx, ry, transform: 'rotate(' + rot + ' ' + cx + ' ' + cy + ')', style: ws });
+    const vein = (x1, y1, x2, y2, k) => h('line', { key: k, x1, y1, x2, y2, style: { stroke: G, strokeWidth: 1.1, strokeLinecap: 'round' } });
+    const Rr = (x, y, w, hh, k) => h('rect', { key: k, x, y, width: w, height: hh, rx: hh / 2, style: bs });
+    const ant = { fill: 'none', stroke: B, strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
+    const eye = (cx, cy, r, k) => h('circle', { key: k, cx, cy, r, style: { fill: G } });
+    let kids;
+    if (!q) kids = [
+      h('g', { key: 'wl', style: wg('l') }, E(18.5, 19.5, 13.5, 6.4, 24, 'a'), vein(28, 23.5, 11.5, 16.2, 'v'), E(21.8, 29.6, 8.4, 4.2, -14, 'b')),
+      h('g', { key: 'wr', style: wg('r') }, E(45.5, 19.5, 13.5, 6.4, -24, 'a'), vein(36, 23.5, 52.5, 16.2, 'v'), E(42.2, 29.6, 8.4, 4.2, 14, 'b')),
+      h('path', { key: 'an', d: 'M29.6 8 L26.6 3.6 L23.2 3 M34.4 8 L37.4 3.6 L40.8 3', style: ant }),
+      h('circle', { key: 'd1', cx: 23.2, cy: 3, r: 1.7, style: { fill: B } }), h('circle', { key: 'd2', cx: 40.8, cy: 3, r: 1.7, style: { fill: B } }),
+      h('circle', { key: 'hd', cx: 32, cy: 11.2, r: 5.3, style: bs }), eye(29.9, 10.6, 1.15, 'e1'), eye(34.1, 10.6, 1.15, 'e2'),
+      h('polygon', { key: 'th', points: this.hexPts(32, 22.4, 7.6), style: { ...bs, strokeLinejoin: 'round' } }),
+      Rr(23.2, 30.8, 17.6, 7, 's1'), Rr(24, 38.9, 16, 6.4, 's2'), Rr(25.6, 46.4, 12.8, 5.6, 's3'), Rr(28, 53.2, 8, 4.4, 's4'),
+      h('polygon', { key: 'st', points: '30.4,58.4 33.6,58.4 32,62.4', style: { fill: B } })
+    ];
+    else kids = [
+      h('g', { key: 'wl', style: wg('l') }, E(17, 24.5, 14.8, 7, 24, 'a'), vein(28, 28.5, 9, 20.5, 'v'), E(20.6, 35.2, 9.4, 4.6, -14, 'b')),
+      h('g', { key: 'wr', style: wg('r') }, E(47, 24.5, 14.8, 7, -24, 'a'), vein(36, 28.5, 55, 20.5, 'v'), E(43.4, 35.2, 9.4, 4.6, 14, 'b')),
+      h('path', { key: 'an', d: 'M28.4 11.6 L23.6 7.8 L20 8 M35.6 11.6 L40.4 7.8 L44 8', style: ant }),
+      h('circle', { key: 'd1', cx: 20, cy: 8, r: 1.8, style: { fill: B } }), h('circle', { key: 'd2', cx: 44, cy: 8, r: 1.8, style: { fill: B } }),
+      h('circle', { key: 'hd', cx: 32, cy: 14.6, r: 5.8, style: bs }), eye(29.7, 14.2, 1.25, 'e1'), eye(34.3, 14.2, 1.25, 'e2'),
+      h('polygon', { key: 'cr', points: '25.6,10.2 25.8,2.6 29.2,6 32,1 34.8,6 38.2,2.6 38.4,10.2', style: { ...bs, strokeLinejoin: 'round' } }),
+      h('polygon', { key: 'th', points: this.hexPts(32, 27, 8.4), style: { ...bs, strokeLinejoin: 'round' } }),
+      Rr(22.2, 36.2, 19.6, 7.6, 's1'), Rr(23, 44.6, 18, 7, 's2'), Rr(24.4, 52.4, 15.2, 6.4, 's3'), Rr(26.6, 59.6, 10.8, 5.2, 's4'), Rr(29, 65.6, 6, 3.6, 's5'),
+      h('polygon', { key: 'st', points: '30.6,69.6 33.4,69.6 32,72.6', style: { fill: B } })
+    ];
+    const body = h('g', { style: o.bob ? { animation: 'hm-bob .9s ease-in-out infinite alternate ' + ps } : undefined }, ...kids);
+    return h('svg', { x: o.x, y: o.y, width: o.w, height: o.h, viewBox: q ? '0 0 64 72' : '0 0 64 64', style: { display: 'block', overflow: 'visible', flexShrink: 0 } }, body);
+  }
+  cellFx(x, R, w, hh, anim, paused) {
+    const h = React.createElement, ps = paused ? 'paused' : 'running', kids = [], cx = w / 2, cy = hh / 2, ri = R - 9;
+    if (x.kind === 'working') {
+      const seg = 6 * ri / 24;
+      kids.push(h('polygon', { key: 'm', points: this.hexPts(cx, cy, ri), style: { fill: 'none', stroke: '#000000', strokeWidth: 1.5, strokeDasharray: (seg * 0.5).toFixed(2) + ' ' + (seg * 0.5).toFixed(2), ...(anim ? { '--off': (-seg * 2).toFixed(2) + 'px', animation: 'hm-march 1.2s linear infinite ' + ps } : {}) } }));
+      if (x.prog) { const per = 6 * R; kids.push(h('path', { key: 'p', d: 'M' + this.hexPts(cx, cy, R).split(' ').join(' L') + ' Z', style: { fill: 'none', stroke: '#000000', strokeWidth: 5, strokeDasharray: (per * x.prog.cur / x.prog.tot).toFixed(1) + ' ' + per, strokeLinejoin: 'round' } })); }
+    } else if (x.kind === 'approval') kids.push(h('polygon', { key: 'a', points: this.hexPts(cx, cy, ri), style: { fill: 'none', stroke: '#000000', strokeWidth: 1.5 } }));
+    else if (x.kind === 'failed') kids.push(h('polygon', { key: 'f', points: this.hexPts(cx, cy, ri), style: { fill: 'none', stroke: '#000000', strokeWidth: 1.5, strokeDasharray: '4 4' } }));
+    if (!kids.length) return null;
+    return h('svg', { width: w, height: hh, viewBox: '0 0 ' + w + ' ' + hh, style: { position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' } }, ...kids);
+  }
+  queenFx(qx, qSel, dbl, anim, paused, nonce) {
+    const h = React.createElement, ps = paused ? 'paused' : 'running', kids = [], C = dbl ? '#000000' : '#B8860B', ri = dbl ? 58 : 62, per = 6 * ri;
+    if (qx.kind === 'coord') { const seg = per / 12; kids.push(h('polygon', { key: 'o', points: this.hexPts(62.35, 72, ri), style: { fill: 'none', stroke: C, strokeWidth: 2.5, strokeDasharray: (seg * 0.56).toFixed(2) + ' ' + (seg * 0.44).toFixed(2), ...(anim ? { '--off': (-seg * 2).toFixed(2) + 'px', animation: 'hm-march 1.8s linear infinite ' + ps } : {}) } })); }
+    if (qx.kind === 'done') kids.push(h('polygon', { key: 'd' + nonce, points: this.hexPts(62.35, 72, ri), style: { fill: 'none', stroke: C, strokeWidth: 3, ...(anim ? { strokeDasharray: per.toFixed(1), '--per': per.toFixed(1) + 'px', animation: 'hm-draw 1.1s ease-out both' } : {}) } }));
+    if (qSel && !dbl) kids.push(h('polygon', { key: 's', points: this.hexPts(62.35, 72, 67), style: { fill: 'none', stroke: '#F1EDE4', strokeWidth: 3 } }));
+    if (!kids.length) return null;
+    return h('svg', { width: 124.71, height: 144, viewBox: '0 0 124.71 144', style: { position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' } }, ...kids);
+  }
+  rowIcon(a, x, anim, paused) {
+    const h = React.createElement, isQ = a.kind === 'queen', w = 34, hh = 39.26;
+    return h('svg', { width: w, height: hh, viewBox: '0 0 ' + w + ' ' + hh, style: { display: 'block', overflow: 'visible' } },
+      h('polygon', { points: this.hexPts(w / 2, hh / 2, 18.8), style: { fill: isQ ? '#000000' : 'none', stroke: '#000000', strokeWidth: 1.5, strokeDasharray: a.kind === 'sub' ? '3 2.5' : undefined } }),
+      this.bee({ queen: isQ, body: isQ ? '#B8860B' : '#000000', gap: isQ ? '#000000' : '#F1EDE4', flutter: (x.kind === 'working' || x.kind === 'coord') && anim, folded: x.kind === 'idle' || x.kind === 'waiting', paused, x: isQ ? 6 : 6, y: isQ ? 7 : 8, w: 22, h: isQ ? 24.75 : 22 }));
+  }
+
+  renderVals() {
+    const s = this.state, K = '#000000', M = '#B8860B', I = '#F1EDE4';
+    const list = this.agentsList();
+    this.byId = {}; list.forEach(a => { this.byId[a.id] = a; });
+    const isEmpty = s.scenario === 'empty';
+    const ph = this.PH[s.phase] || this.PH.idle;
+    const anim = !s.reduced, paused = !s.running && !!ph.dur, n = s.adjusted ? 3 : 4;
+    const visible = list.filter(a => a.kind !== 'sub' || s.showSubs);
+    const sel = s.sel && this.byId[s.sel] ? s.sel : null;
+    const st = {}; list.forEach(a => { st[a.id] = this.status(a.id); });
+    const dbl = (this.props.queenStyle ?? 'Célula preta') === 'Contorno duplo';
+    const dur = ({ 'Lenta': 1.0, 'Normal': 0.62, 'Rápida': 0.4 })[this.props.pulseSpeed ?? 'Normal'] || 0.62;
+    const nm = id => id === 'rainha' ? 'Rainha' : (this.byId[id] ? this.byId[id].name : '');
+    const pos = slot => this.P(this.AX[slot]);
+    const openAgent = id => () => { this.pickAgent(id, false); this.setState({ lo: true }); };
+
+    const DW = this.DW, BH = this.BH, lo = s.lo, ro = s.ro, bo = s.bo;
+    const visW = s.hw - (lo ? DW : 0) - (ro ? DW : 0), visH = s.hh - (bo ? BH : 0);
+    const ws = Math.max(0.5, Math.min(1, (visW - 60) / 820, (visH - 40) / 740));
+    const hasAlert = s.phase === 'approval' || s.phase === 'fail';
+    const wx = (lo ? DW : 0) + visW / 2, wy = visH / 2 + ((s.showSubs ? 54 : 24) + (hasAlert ? 22 : 0)) * ws;
+    const tr = s.reduced ? 'none' : 'left .4s cubic-bezier(.2,.7,.2,1), top .4s cubic-bezier(.2,.7,.2,1), transform .4s cubic-bezier(.2,.7,.2,1)';
+
+    const cells = list.filter(a => a.kind === 'worker').map(a => {
+      const c = pos(a.slot), x = st[a.id], isSel = sel === a.id, working = x.kind === 'working';
+      return { left: (c[0] - 62.35) + 'px', top: (c[1] - 72) + 'px', name: a.name, short: this.shortOf(a.id, x), sym: this.sym(x.kind, 10),
+        hasProg: !!x.prog, progText: x.prog ? x.prog.cur + ' de ' + x.prog.tot : '', onPick: () => this.pickAgent(a.id, true),
+        fill: isSel ? 'url(#hm-occ-sel)' : 'url(#hm-occ)', hl: isSel ? 'rgba(255,255,255,0.95)' : 'rgba(255,238,190,0.6)', sw: isSel ? 3 : 2, dash: x.kind === 'waiting' ? '6 5' : 'none',
+        fx: this.cellFx(x, 72, 124.71, 144, anim, paused),
+        bee: this.bee({ body: K, gap: isSel ? I : M, flutter: working && anim, folded: x.kind === 'idle' || x.kind === 'waiting', bob: working && anim, paused, w: 40, h: 40 }) };
+    });
+    const subs = list.filter(a => a.kind === 'sub');
+    const subCells = s.showSubs ? subs.map(a => {
+      const c = pos(a.slot), x = st[a.id], isSel = sel === a.id, working = x.kind === 'working';
+      return { left: (c[0] - 50.23) + 'px', top: (c[1] - 58) + 'px', name: a.name, short: this.shortOf(a.id, x), sym: this.sym(x.kind, 9), onPick: () => this.pickAgent(a.id, true),
+        fill: isSel ? 'url(#hm-occ-sel)' : 'url(#hm-occ)', hl: isSel ? 'rgba(255,255,255,0.95)' : 'rgba(255,238,190,0.6)', sw: isSel ? 2.5 : 1.5, fx: this.cellFx(x, 58, 100.46, 116, anim, paused),
+        bee: this.bee({ body: K, gap: isSel ? I : M, flutter: working && anim, folded: x.kind === 'idle', bob: working && anim, paused, w: 28, h: 28 }) };
+    }) : [];
+
+    const qx = this.byId.rainha ? st.rainha : { kind: 'idle', label: '', detail: '' };
+    const qSel = sel === 'rainha';
+    const queen = { fill: dbl ? (qSel ? 'url(#hm-occ-sel)' : 'url(#hm-occ)') : 'url(#hm-queen)', hl: dbl ? (qSel ? 'rgba(255,255,255,0.95)' : 'rgba(255,238,190,0.6)') : 'rgba(241,237,228,0.32)', sw: dbl ? 3 : 2, double: dbl, fg: dbl ? K : I,
+      short: this.shortOf('rainha', qx), sym: this.sym(qx.kind, 10, dbl ? K : I),
+      bee: this.bee({ queen: true, body: dbl ? K : M, gap: dbl ? (qSel ? I : M) : K, flutter: qx.kind === 'coord' && anim, folded: qx.kind === 'idle', paused, w: 50, h: 56 }),
+      fx: this.queenFx(qx, qSel, dbl, anim, paused, s.nonce) };
+
+    const L = { ...ph.l }, sm = this.subsMode(ph);
+    const subL = sm === 'work' ? 'out' : sm === 'back' ? 'in' : sm === 'done' ? 'ret' : 'idle';
+    L['doc-s1'] = subL; L['doc-s2'] = subL;
+    const defs = isEmpty ? [] : this.linkDefs(list);
+    const routes = this.getRoutes(defs, visible);
+    const ripple = ph.final ? 'big' : (s.phase === 'p1a' || Object.keys(L).some(k => k.indexOf('q-') === 0 && L[k] === 'in')) ? 'small' : null;
+    const linkSel = s.link && defs.some(d => d.id === s.link) ? s.link : null;
+    const linksLayer = this.linksLayer(defs, routes, L, { anim, paused, dur, sel: linkSel, queenCoord: qx.kind === 'coord', ripple, nonce: s.nonce, onLink: id => this.setState({ link: this.state.link === id ? null : id }) });
+
+    const linkTitle = d => { const lst = L[d.id] || 'idle', rev = lst === 'in' || lst === 'ret'; return nm(rev ? d.to : d.from) + ' → ' + nm(rev ? d.from : d.to); };
+    const connOf = d => ({ sample: this.trailSample(L[d.id] || 'idle', anim, dur), title: linkTitle(d), state: this.STATE_INFO[L[d.id] || 'idle'][0], bg: linkSel === d.id ? '#FFFFFF' : 'transparent', onPick: () => this.setState({ link: this.state.link === d.id ? null : d.id }) });
+    let lc = { show: false, x: '0px', y: '0px', title: '', state: '', stateText: '', text: '', sample: null };
+    if (linkSel && routes[linkSel] && routes[linkSel].length > 1) {
+      const d = defs.find(x => x.id === linkSel), lst = L[d.id] || 'idle', info = this.STATE_INFO[lst];
+      lc = { show: true, x: ((lo ? DW : 0) + 24) + 'px', y: ((bo ? BH : 0) + 24) + 'px', title: linkTitle(d), state: info[0], stateText: info[1], text: this.LINK_INFO[d.id] || this.LINK_INFO.demo, sample: this.trailSample(lst, anim, dur) };
+    }
+
+    const cat = k => (k === 'working' || k === 'coord') ? 'w' : (k === 'waiting' || k === 'approval') ? 'a' : k === 'done' ? 'd' : k === 'failed' ? 'f' : 'i';
+    const cnt = { w: 0, a: 0, i: 0, d: 0, f: 0 }; visible.forEach(a => { cnt[cat(st[a.id].kind)]++; });
+    const counts = isEmpty ? [] : [
+      { sym: this.sym('working', 10, I), text: cnt.w + ' trabalhando' },
+      { sym: this.sym('waiting', 10, I), text: cnt.a + ' aguardando' },
+      { sym: this.sym('idle', 10, I), text: cnt.i + (cnt.i === 1 ? ' disponível' : ' disponíveis') },
+      { sym: this.sym('done', 10, I), text: cnt.d + (cnt.d === 1 ? ' entregue' : ' entregues') }
+    ];
+    if (cnt.f) counts.push({ sym: this.sym('failed', 10, I), text: cnt.f + ' com falha' });
+    const nw = list.filter(a => a.kind === 'worker').length;
+    const compText = isEmpty ? 'Nenhum agente neste exemplo.' : '1 rainha, ' + nw + (nw === 1 ? ' operária' : ' operárias') + ' e ' + subs.length + ' subagentes';
+
+    const cur = ph.step;
+    const steps = this.STEPS.map((t, i) => {
+      const k = i + 1, o = { fill: '0%', bg: '#CFC6B4', border: '0' };
+      if (cur === 8 || k < cur) o.fill = '100%';
+      else if (k === cur) {
+        if (ph.failed) { o.bg = I; o.border = '1.5px dashed #000000'; }
+        else if (s.phase === 'approval') { o.bg = I; o.border = '1.5px solid #000000'; }
+        else { const arr = this.STEP_PH[k] || []; const idx = arr.indexOf(s.phase); o.fill = (idx < 0 ? 50 : ((idx + this.frac()) / arr.length) * 100).toFixed(0) + '%'; }
+      }
+      return o;
+    });
+    const hudSteps = this.STEPS.map((t, i) => {
+      const k = i + 1;
+      if (cur === 8 || k < cur) return { fill: K, stroke: K, sw: 1.4, dash: 'none' };
+      if (k === cur) return ph.failed ? { fill: I, stroke: K, sw: 1.6, dash: '2 1.6' } : s.phase === 'approval' ? { fill: I, stroke: K, sw: 2.2, dash: 'none' } : { fill: M, stroke: K, sw: 2.2, dash: 'none' };
+      return { fill: 'none', stroke: '#8A8273', sw: 1.2, dash: 'none' };
+    });
+    let stepTag = cur === 0 ? 'Pronta.' : cur === 8 ? 'Concluída.' : 'Etapa ' + cur + ' de 7.';
+    if (ph.failed) stepTag = 'Etapa 2 de 7 falhou.';
+    if (paused) stepTag += ' Pausada.';
+    let phaseText = String(ph.text).replace(/\{n\}/g, n);
+    let hudText = cur === 0 ? 'Pronta para começar' : cur === 8 ? 'Missão concluída' : 'Etapa ' + cur + ' de 7 · ' + this.STEPS[cur - 1][0] + (ph.failed ? ' · falhou' : '');
+    if (paused) hudText += ' · Pausada';
+    if (isEmpty) { stepTag = 'Sem agentes.'; phaseText = 'Este exemplo não tem agentes, então não há missão para simular.'; hudText = 'Sem agentes'; }
+
+    let primary = { show: false, wait: false, label: '', onClick: null, waitLabel: '' };
+    if (!isEmpty) {
+      if (s.phase === 'approval') primary = { show: false, wait: true, waitLabel: 'Aguardando sua decisão' };
+      else if (s.phase === 'fail') primary = { show: true, wait: false, label: 'Tentar novamente', onClick: this.retry };
+      else if (ph.final) primary = { show: true, wait: false, label: 'Simular novamente', onClick: () => this.start() };
+      else if (!ph.dur) primary = { show: true, wait: false, label: 'Simular missão', onClick: () => this.start() };
+      else if (s.running) primary = { show: true, wait: false, label: 'Pausar', onClick: this.pause };
+      else primary = { show: true, wait: false, label: 'Continuar', onClick: this.resume };
+    }
+    const nextDisabled = isEmpty || !ph.dur;
+    const openR = () => this.setState({ ro: true });
+    let alert = { show: false, sym: null, title: '', text: '', cta: '', onOpen: null };
+    if (s.phase === 'approval') alert = { show: true, sym: this.sym('approval', 11, I), title: 'Aprovação pendente.', text: 'Revisão pede sua decisão sobre ' + n + ' divergências.', cta: 'Ver aprovação', onOpen: openR };
+    else if (s.phase === 'fail') alert = { show: true, sym: this.sym('failed', 11, I), title: 'Falha na etapa Coleta.', text: 'Cadastros não conseguiu consultar o cadastro de clientes.', cta: 'Ver detalhes', onOpen: openR };
+
+    const plan = this.STEPS.map((t, i) => {
+      const k = i + 1, isCur = k === cur && cur !== 8;
+      const kind = cur === 8 || k < cur ? 'done' : isCur ? (ph.failed ? 'failed' : s.phase === 'approval' ? 'approval' : 'working') : 'idle';
+      return { num: k, title: t[1], who: t[2], sym: this.sym(kind), weight: isCur ? 700 : 400 };
+    });
+    const duties = list.filter(a => a.kind === 'worker').map(a => ({ name: a.name, duty: a.duty, sym: this.sym(st[a.id].kind), label: st[a.id].label, short: this.shortOf(a.id, st[a.id]), onPick: openAgent(a.id) }));
+
+    const tabsFor = isQ => (isQ ? [['geral', 'Visão geral'], ['tarefas', 'Tarefas'], ['relacoes', 'Relações']] : [['geral', 'Visão geral'], ['tarefas', 'Tarefas'], ['skills', 'Skills'], ['ferramentas', 'Ferramentas'], ['relacoes', 'Relações']]);
+    const details = a => {
+      const x = st[a.id], isQ = a.kind === 'queen', tabs = tabsFor(isQ);
+      const at = tabs.some(t => t[0] === s.agentTab) ? s.agentTab : 'geral';
+      const conns = defs.filter(d => d.from === a.id || d.to === a.id).map(connOf);
+      const d = { isQueen: isQ, isWorker: !isQ, sym: this.sym(x.kind, 12), label: x.label, detail: x.detail,
+        hasProg: !!x.prog, segs: x.prog ? Array.from({ length: x.prog.tot }, (_, i) => ({ c: i < x.prog.cur ? K : '#CFC6B4' })) : [],
+        tabs: tabs.map(t => ({ label: t[1], bc: t[0] === at ? M : 'transparent', fw: t[0] === at ? 700 : 500, onPick: () => this.setState({ agentTab: t[0] }) })),
+        t: { geral: at === 'geral', tarefas: at === 'tarefas', skills: at === 'skills', ferramentas: at === 'ferramentas', relacoes: at === 'relacoes' },
+        conns, hasConns: conns.length > 0 };
+      if (isQ) return { ...d, plan, duties, isDone: !!ph.final, openDelivery: () => this.setState({ showDelivery: true }) };
+      const delegated = x.kind !== 'idle', fromId = a.from[0], toId = a.to[0];
+      return { ...d, role: a.kind === 'sub' ? 'Subagente de Documentos' : a.added ? 'Operária de demonstração' : 'Operária', spec: a.spec, mission: a.mission,
+        task: a.task ? (delegated ? a.task : 'Sem tarefa no momento.') : 'Sem tarefa nesta missão.', hasPlanned: !!a.task && !delegated, planned: a.task || '',
+        fromLabel: a.from.map(nm).join(' e '), toLabel: a.to.map(nm).join(' e '),
+        goFrom: () => { if (fromId) this.pickAgent(fromId, false); }, goTo: () => { if (toId) this.pickAgent(toId, false); },
+        hasSubs: a.id === 'documentos', subsBtnLabel: s.showSubs ? 'Ocultar subagentes' : 'Mostrar subagentes', toggleSubs: () => this.setState({ showSubs: !this.state.showSubs }),
+        skills: a.skills, hasSkills: a.skills.length > 0, noSkills: a.skills.length === 0,
+        tools: a.tools.map(t => ({ name: t[0], access: t[1], tagBg: /escrita/.test(t[1]) ? M : 'transparent', tagFg: /escrita/.test(t[1]) ? K : '#4A443B' })), hasTools: a.tools.length > 0, noTools: a.tools.length === 0 };
+    };
+    const order = [];
+    if (!isEmpty) { order.push(this.byId.rainha); list.filter(a => a.kind === 'worker').forEach(a => { order.push(a); if (a.id === 'documentos') subs.forEach(x => order.push(x)); }); }
+    const EMPTY_D = { tabs: [], t: {}, isQueen: false, isWorker: false };
+    const rows = order.map(a => {
+      const x = st[a.id], open = sel === a.id;
+      return { name: a.name, label: x.label, sym: this.sym(x.kind, 10), prog: x.prog ? x.prog.cur + '/' + x.prog.tot : '', kindTag: a.kind === 'sub' ? 'Subagente' : a.added ? 'Demo' : '',
+        indent: a.kind === 'sub' ? '22px' : '0px', open, openStr: open ? 'true' : 'false', bg: open ? '#E7DFCE' : 'transparent', band: open ? 'inset 4px 0 0 #B8860B' : 'none',
+        icon: this.rowIcon(a, x, anim, paused), onPick: () => open ? this.setState({ sel: null }) : this.pickAgent(a.id, false), d: open ? details(a) : EMPTY_D };
+    });
+
+    const free = this.freeSlot(), FS = free ? pos(free) : [0, 0];
+    const selA = sel ? this.byId[sel] : null, canDelete = !!(selA && selA.added);
+    const footNote = isEmpty ? 'Sem colmeia ativa neste exemplo.' : !free ? 'Limite de 3 operárias de demonstração atingido.' : canDelete ? 'Excluir remove “' + selA.name + '” desta demonstração.' : 'Somente operárias criadas nesta demonstração podem ser excluídas.';
+
+    const mTabsDef = [['plano', 'Plano'], ['resp', 'Responsabilidades'], ['conex', 'Conexões'], ['entrega', 'Entrega']];
+    const mtab = s.missionTab;
+    const legendStates = ['out', 'flow', 'del', 'wait', 'done', 'idle', 'fail'];
+    const legend = legendStates.map(k => ({ sample: this.trailSample(k, anim, dur), label: this.STATE_INFO[k][0], text: this.STATE_INFO[k][1] }));
+
+    const approved = !s.phase.startsWith('adj') && cur >= 6;
+    const approvalIdle = s.phase !== 'approval' && s.phase !== 'fail';
+    const approvalNote = isEmpty ? 'Sem missão neste exemplo.' : approved ? (s.adjusted ? 'Aprovado por você, depois de um ajuste.' : 'Aprovado por você.') : s.phase.startsWith('adj') ? 'Ajuste em andamento. Revisão pedirá sua aprovação de novo.' : 'Nenhuma aprovação pendente. A aprovação humana acontece na etapa 5.';
+
+    const lastApproval = s.log.map(e => e.id).lastIndexOf('approval'), lastFail = s.log.map(e => e.id).lastIndexOf('fail');
+    const log = s.log.map((e, i) => ({ isUser: e.type === 'user', isEvent: e.type === 'event', justify: e.type === 'user' ? 'flex-end' : 'flex-start', text: e.text, tag: e.tag || '', sym: e.type === 'event' ? this.sym(e.kind, 10) : null,
+      decide: s.phase === 'approval' && i === lastApproval, onApprove: this.approve, onAdjust: this.adjust,
+      failAct: s.phase === 'fail' && i === lastFail, onRetry: this.retry, onRestart: this.restart }));
+
+    return {
+      scenarios: [['mission', 'Missão'], ['empty', 'Colmeia vazia'], ['failed', 'Etapa com falha']].map(([id, label]) => ({ label, bg: s.scenario === id ? K : 'transparent', fg: s.scenario === id ? I : K, onPick: () => this.setScenario(id) })),
+      reducedStr: s.reduced ? 'true' : 'false', toggleReduced: () => this.setState({ reduced: !s.reduced }),
+      swBg: s.reduced ? K : I, swKnob: s.reduced ? '14px' : '2px', swKnobColor: s.reduced ? I : K,
+      hiveRef: this.hiveRef, logRef: this.logRef, chatRef: this.chatRef,
+      onHiveBg: e => { if (e.target === e.currentTarget && this.state.link) this.setState({ link: null }); },
+      stop: e => e.stopPropagation(),
+      wx: wx + 'px', wy: wy + 'px', ws, worldTr: tr, meshLayer: this.meshLayer(), pullL: lo ? M : I, pullR: ro ? M : I, pullB: bo ? M : I, shL: lo ? '8px 0 26px rgba(0,0,0,0.28)' : 'none', shR: ro ? '-8px 0 26px rgba(0,0,0,0.28)' : 'none', shB: bo ? '0 -8px 26px rgba(0,0,0,0.24)' : 'none',
+      hudX: wx + 'px', hudTr: s.reduced ? 'none' : 'left .4s cubic-bezier(.2,.7,.2,1), bottom .4s cubic-bezier(.2,.7,.2,1)',
+      emptySlots: isEmpty ? ['Q', 'NW', 'NE', 'E', 'SE', 'SW'].map(k => { const c = pos(k); return { left: (c[0] - 50.23) + 'px', top: (c[1] - 58) + 'px' }; }) : [],
+      showFree: s.form && !!free, freeLeft: (FS[0] - 50.23) + 'px', freeTop: (FS[1] - 58) + 'px',
+      freeLabel: free === 'W' ? 'célula à esquerda da Rainha' : free === 'X1' ? 'célula no alto, à direita' : 'célula embaixo, à direita',
+      cells, subCells, hasQueen: !!this.byId.rainha, queen, pickQueen: () => this.pickAgent('rainha', true),
+      linksLayer, lc, closeLink: () => this.setState({ link: null }), isEmpty, toMission: () => this.setScenario('mission'),
+      hudSteps, hudText, primary, alert, stepTag, phaseText, steps,
+      nextStep: this.nextStep, nextDisabled, nextColor: nextDisabled ? '#8A8273' : K, nextCursor: nextDisabled ? 'default' : 'pointer', restart: this.restart, retry: this.retry, approve: this.approve, adjust: this.adjust,
+      drawerTr: s.reduced ? 'none' : 'transform .4s cubic-bezier(.2,.7,.2,1), left .4s cubic-bezier(.2,.7,.2,1), right .4s cubic-bezier(.2,.7,.2,1)',
+      dL: lo ? '0' : '-100%', dR: ro ? '0' : '100%', dB: bo ? '0' : '100%', bL: (lo ? DW : 0) + 'px', bR: (ro ? DW : 0) + 'px', bCaret: bo ? 'rotate(180deg)' : 'none',
+      loStr: lo ? 'true' : 'false', roStr: ro ? 'true' : 'false', boStr: bo ? 'true' : 'false',
+      toggleL: () => this.setState({ lo: !this.state.lo }), toggleR: () => this.setState({ ro: !this.state.ro }), toggleB: () => this.setState({ bo: !this.state.bo }),
+      agentCount: visible.length, compText, counts, pEmpty: isEmpty, rows,
+      notForm: !s.form, form: s.form, openForm: () => this.setState({ form: true, formError: '', lo: true, link: null }), cancelForm: () => this.setState({ form: false, formError: '' }),
+      createDisabled: !free, createBg: free ? K : '#8A8273', createCursor: free ? 'pointer' : 'default',
+      deleteDisabled: !canDelete, deleteColor: canDelete ? K : '#8A8273', deleteCursor: canDelete ? 'pointer' : 'default', footNote,
+      removeSel: () => { if (canDelete) this.setState({ added: this.state.added.filter(a => a.id !== sel), sel: null }); },
+      formName: s.formName, formSpec: s.formSpec, formError: s.formError, hasFormError: !!s.formError,
+      onFormName: e => this.setState({ formName: e.target.value.slice(0, 16), formError: '' }),
+      onFormSpec: e => this.setState({ formSpec: e.target.value.slice(0, 40) }),
+      submitForm: this.submitForm,
+      stepBadge: isEmpty ? '–' : cur === 0 ? '0/7' : cur === 8 ? '7/7' : cur + '/7',
+      bApproval: s.phase === 'approval', bFail: s.phase === 'fail', approvalIdle, approvalNote, approvalSym: this.sym(approved ? 'done' : 'idle', 10),
+      approvalText: n === 4 ? '4 divergências em 23 pedidos: 1 de preço, 1 de quantidade, 1 de cadastro e 1 item repetido. Ao aprovar, Relatórios prepara o relatório.' : '3 divergências em 23 pedidos após o ajuste: 1 de preço, 1 de quantidade e 1 de cadastro. Ao aprovar, Relatórios prepara o relatório.',
+      mTabs: mTabsDef.map(t => ({ label: t[1], bc: t[0] === mtab ? M : 'transparent', fw: t[0] === mtab ? 700 : 500, onPick: () => this.setState({ missionTab: t[0] }) })),
+      mt: { plano: mtab === 'plano', resp: mtab === 'resp', conex: mtab === 'conex', entrega: mtab === 'entrega' },
+      plan, duties, legend, connList: defs.map(connOf),
+      isDone: !!ph.final, notDone: !ph.final, openDelivery: () => this.setState({ showDelivery: true }),
+      showDelivery: s.showDelivery && !!ph.final, closeDelivery: () => this.setState({ showDelivery: false }),
+      okCount: 23 - n, divCount: n, adjusted: s.adjusted,
+      divRows: (s.adjusted ? this.DIV.slice(0, 3) : this.DIV).map(r => ({ ped: r[0], cli: r[1], div: r[2], next: r[3] })),
+      log, logEmpty: log.length === 0, logCount: log.length, hasLogCount: log.length > 0 && !bo, send: this.send
+    };
+  }
+}
+</script>
+</body>
+</html>

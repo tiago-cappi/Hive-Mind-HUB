@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#000000;}
+a{color:#DAA00B;}
+a:hover{color:#FFFFFF;}
+input::placeholder{color:#8C8C8C;}
+</style>
+</helmet>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <symbol id="hm-worker" viewBox="0 0 64 64">
+      <ellipse cx="19" cy="22" rx="12" ry="7" transform="rotate(25 19 22)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="45" cy="22" rx="12" ry="7" transform="rotate(-25 45 22)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="22" cy="31" rx="8" ry="4.5" transform="rotate(-15 22 31)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="42" cy="31" rx="8" ry="4.5" transform="rotate(15 42 31)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <path d="M29.5 9 L25 3.5 M34.5 9 L39 3.5" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"></path>
+      <circle cx="25" cy="3.5" r="1.8" style="fill:currentColor"></circle>
+      <circle cx="39" cy="3.5" r="1.8" style="fill:currentColor"></circle>
+      <circle cx="32" cy="12" r="5.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></circle>
+      <circle cx="32" cy="24" r="7" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></circle>
+      <rect x="23.5" y="32.5" width="17" height="7" rx="3.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <rect x="24.5" y="41" width="15" height="6.5" rx="3.25" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <rect x="26.5" y="49" width="11" height="5.5" rx="2.75" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <polygon points="29.5,56 34.5,56 32,61" style="fill:currentColor"></polygon>
+    </symbol>
+    <symbol id="hm-queen" viewBox="0 0 64 72">
+      <ellipse cx="18" cy="25" rx="13" ry="7.5" transform="rotate(25 18 25)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="46" cy="25" rx="13" ry="7.5" transform="rotate(-25 46 25)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="21" cy="35" rx="8.5" ry="4.8" transform="rotate(-15 21 35)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <ellipse cx="43" cy="35" rx="8.5" ry="4.8" transform="rotate(15 43 35)" style="fill:#FFFFFF;stroke:#000000;stroke-width:1.5"></ellipse>
+      <path d="M28.5 13 L21.5 8.5 M35.5 13 L42.5 8.5" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"></path>
+      <circle cx="21.5" cy="8.5" r="1.8" style="fill:currentColor"></circle>
+      <circle cx="42.5" cy="8.5" r="1.8" style="fill:currentColor"></circle>
+      <circle cx="32" cy="15" r="5.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></circle>
+      <polygon points="25.5,10 26,2 29.5,6 32,1 34.5,6 38,2 38.5,10" style="fill:currentColor;stroke:#000000;stroke-width:1.5;stroke-linejoin:round"></polygon>
+      <circle cx="32" cy="27" r="7.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></circle>
+      <rect x="22.5" y="36" width="19" height="7.5" rx="3.75" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <rect x="23" y="45" width="18" height="7" rx="3.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <rect x="24.5" y="53.5" width="15" height="6.5" rx="3.25" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <rect x="27" y="61.5" width="10" height="5" rx="2.5" style="fill:currentColor;stroke:#000000;stroke-width:1.5"></rect>
+      <polygon points="30,67.5 34,67.5 32,71.5" style="fill:currentColor"></polygon>
+    </symbol>
+  </defs>
+</svg>
+<div data-screen-label="Hive Mind" style="width:100%;height:100vh;min-height:820px;min-width:1200px;background:#000000;color:#FFFFFF;display:grid;grid-template-rows:52px minmax(0,1fr);font-family:'Source Sans 3',sans-serif;overflow:hidden">
+  <header style="display:flex;align-items:stretch;justify-content:space-between;border-bottom:1px solid #404040;padding:0 24px 0 8px">
+    <nav style="display:flex;align-items:stretch">
+      <div style="display:flex;align-items:center;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;color:#FFFFFF;cursor:pointer;border-top:2px solid transparent;border-bottom:2px solid transparent">Claude Code</div>
+      <div style="width:1px;height:16px;background:#404040;align-self:center"></div>
+      <div style="display:flex;align-items:center;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;color:#FFFFFF;cursor:pointer;border-top:2px solid transparent;border-bottom:2px solid transparent">Codex</div>
+      <div style="width:1px;height:16px;background:#404040;align-self:center"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 16px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#DAA00B;border-top:2px solid transparent;border-bottom:2px solid #DAA00B">
+        <svg width="11" height="12" viewBox="0 0 11 12"><polygon points="5.5,0 11,3 11,9 5.5,12 0,9 0,3" style="fill:#DAA00B"></polygon></svg>
+        <span>Hive Mind</span>
+      </div>
+    </nav>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:8px;font-size:13px">
+        <span>Projeto</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500">Operação de pedidos</span>
+      </div>
+      <div style="width:1px;height:18px;background:#404040"></div>
+      <div style="border:1px solid #DAA00B;color:#DAA00B;font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px">Demonstração</div>
+    </div>
+  </header>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:0">
+    <main style="display:flex;flex-direction:column;min-height:0;min-width:0">
+      <section style="display:grid;grid-template-columns:minmax(0,1fr) 490px;gap:36px;align-items:end;padding:20px 32px;border-bottom:1px solid #404040">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <span style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#DAA00B">Missão atual</span>
+            <span style="font-size:13px">Iniciada hoje às 09:12</span>
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:500;line-height:1.28;letter-spacing:-0.01em;text-wrap:pretty;max-width:520px">Conferir pedidos recebidos por e-mail e preparar um relatório de divergências.</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+            <div style="display:flex;align-items:baseline;gap:10px">
+              <span style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Andamento</span>
+              <span style="font-size:13px">Etapa 4 de 6</span>
+            </div>
+            <button type="button" onClick="{{ pick.cadastros }}" style="display:flex;align-items:center;gap:8px;background:#000000;border:1px solid #DAA00B;color:#FFFFFF;font-family:'Source Sans 3',sans-serif;font-size:13px;padding:5px 10px;cursor:pointer" style-hover="border-color:#FFFFFF">
+              <svg width="9" height="9" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#DAA00B"></polygon></svg>
+              <span>Cadastros aguarda sua aprovação</span>
+              <span style="color:#DAA00B;font-weight:600">Ver</span>
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;font-size:12px">
+            <div><div style="height:6px;background:#DAA00B"></div><div style="margin-top:7px">Pedido</div></div>
+            <div><div style="height:6px;background:#DAA00B"></div><div style="margin-top:7px">Planejamento</div></div>
+            <div><div style="height:6px;background:#DAA00B"></div><div style="margin-top:7px">Delegação</div></div>
+            <div><div style="height:6px;background:#404040;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:55%;background:#DAA00B"></div></div><div style="margin-top:7px;color:#DAA00B;font-weight:700">Execução</div></div>
+            <div><div style="height:6px;background:#404040"></div><div style="margin-top:7px">Conferência</div></div>
+            <div><div style="height:6px;background:#404040"></div><div style="margin-top:7px">Entrega</div></div>
+          </div>
+        </div>
+      </section>
+
+      <div ref="{{ hiveRef }}" style="flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;top:20px;left:32px;z-index:2;background:#000000;padding:0 12px 8px 0;max-width:250px">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600">Sua colmeia</div>
+          <div style="font-size:13.5px;line-height:1.4;margin-top:3px;text-wrap:pretty">1 rainha e 5 operárias. Clique em uma célula para ver o que cada agente faz.</div>
+        </div>
+
+        <div style="position:relative;flex-shrink:0;width:660px;height:620px;transform:scale({{ hiveScale }})">
+          <sc-if value="{{ showComb }}" hint-placeholder-val="{{ true }}">
+            <svg width="660" height="620" viewBox="0 0 660 620" style="position:absolute;left:0;top:0;overflow:visible;pointer-events:none">
+              <polygon transform="translate(-150 310)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(-30 102.15)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(-30 517.85)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(-270 102.15)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(-270 517.85)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(810 310)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(690 102.15)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(690 517.85)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(930 102.15)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+              <polygon transform="translate(930 517.85)" points="0,-96 83.14,-48 83.14,48 0,96 -83.14,48 -83.14,-48" style="fill:none;stroke:#404040;stroke-width:1"></polygon>
+            </svg>
+          </sc-if>
+
+          <svg width="660" height="620" viewBox="0 0 660 620" style="position:absolute;left:0;top:0;overflow:visible;pointer-events:none">
+            <line x1="273.5" y1="212.14" x2="258.5" y2="186.1" style="stroke:#DAA00B;stroke-width:3"></line>
+            <circle cx="273.5" cy="212.14" r="4" style="fill:#DAA00B"></circle>
+            <polygon points="254.5,179.2 262.4,183.85 254.6,188.35" style="fill:#DAA00B"></polygon>
+            <line x1="386.5" y1="212.14" x2="401.5" y2="186.1" style="stroke:#DAA00B;stroke-width:3"></line>
+            <circle cx="386.5" cy="212.14" r="4" style="fill:#DAA00B"></circle>
+            <polygon points="405.5,179.2 405.4,188.35 397.6,183.85" style="fill:#DAA00B"></polygon>
+            <line x1="443" y1="310" x2="473" y2="310" style="stroke:#DAA00B;stroke-width:3"></line>
+            <circle cx="443" cy="310" r="4" style="fill:#DAA00B"></circle>
+            <polygon points="481,310 473,314.5 473,305.5" style="fill:#DAA00B"></polygon>
+            <line x1="386.5" y1="407.86" x2="405.5" y2="440.8" style="stroke:#404040;stroke-width:2"></line>
+            <circle cx="386.5" cy="407.86" r="3.5" style="fill:#404040"></circle>
+            <circle cx="405.5" cy="440.8" r="3.5" style="fill:#404040"></circle>
+            <line x1="273.5" y1="407.86" x2="254.5" y2="440.8" style="stroke:#404040;stroke-width:2"></line>
+            <circle cx="273.5" cy="407.86" r="3.5" style="fill:#404040"></circle>
+            <circle cx="254.5" cy="440.8" r="3.5" style="fill:#404040"></circle>
+            <line x1="299" y1="102.15" x2="353" y2="102.15" style="stroke:#FFFFFF;stroke-width:2"></line>
+            <circle cx="299" cy="102.15" r="3.5" style="fill:#FFFFFF"></circle>
+            <polygon points="361,102.15 353,106.65 353,97.65" style="fill:#FFFFFF"></polygon>
+            <line x1="494.5" y1="179.2" x2="521.5" y2="226" style="stroke:#FFFFFF;stroke-width:2;stroke-dasharray:5 4"></line>
+            <circle cx="494.5" cy="179.2" r="3.5" style="fill:#000000;stroke:#FFFFFF;stroke-width:1.5"></circle>
+            <polygon points="525.5,232.9 517.6,228.25 525.4,223.75" style="fill:#FFFFFF"></polygon>
+            <line x1="525.5" y1="387.1" x2="494.5" y2="440.8" style="stroke:#404040;stroke-width:2"></line>
+            <circle cx="525.5" cy="387.1" r="3.5" style="fill:#404040"></circle>
+            <circle cx="494.5" cy="440.8" r="3.5" style="fill:#404040"></circle>
+            <line x1="361" y1="517.85" x2="299" y2="517.85" style="stroke:#404040;stroke-width:2"></line>
+            <circle cx="361" cy="517.85" r="3.5" style="fill:#404040"></circle>
+            <circle cx="299" cy="517.85" r="3.5" style="fill:#404040"></circle>
+          </svg>
+
+          <div style="position:absolute;left:6.86px;top:214px;width:166.28px;height:192px">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5;stroke-dasharray:6 5"></polygon></svg>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Célula livre</div>
+              <div style="font-size:12.5px;line-height:1.35;max-width:110px">Espaço para uma nova especialidade</div>
+            </div>
+          </div>
+
+          <div onClick="{{ pick.documentos }}" style="position:absolute;left:126.86px;top:6.15px;width:166.28px;height:192px;cursor:pointer">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5"></polygon></svg>
+            <sc-if value="{{ isSel.documentos }}" hint-placeholder-val="{{ true }}"><svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:none;stroke:#DAA00B;stroke-width:3;stroke-linejoin:round"></polygon></svg></sc-if>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <svg width="46" height="46" viewBox="0 0 64 64" style="color:#DAA00B;display:block"><use href="#hm-worker" width="64" height="64"></use></svg>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-top:8px">Documentos</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:500;white-space:nowrap">
+                <svg width="9" height="9" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" style="fill:#DAA00B"></circle></svg>
+                <span>Conferindo documentos</span>
+              </div>
+              <div style="font-size:12.5px;margin-top:2px">14 de 23 e-mails</div>
+            </div>
+          </div>
+
+          <div onClick="{{ pick.cadastros }}" style="position:absolute;left:366.86px;top:6.15px;width:166.28px;height:192px;cursor:pointer">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5"></polygon></svg>
+            <sc-if value="{{ isSel.cadastros }}" hint-placeholder-val="{{ false }}"><svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:none;stroke:#DAA00B;stroke-width:3;stroke-linejoin:round"></polygon></svg></sc-if>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <svg width="46" height="46" viewBox="0 0 64 64" style="color:#DAA00B;display:block"><use href="#hm-worker" width="64" height="64"></use></svg>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-top:8px">Cadastros</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:500;white-space:nowrap">
+                <svg width="9" height="9" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#DAA00B"></polygon></svg>
+                <span>Aguardando aprovação</span>
+              </div>
+            </div>
+          </div>
+
+          <div onClick="{{ pick.analise }}" style="position:absolute;left:486.86px;top:214px;width:166.28px;height:192px;cursor:pointer">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5"></polygon></svg>
+            <sc-if value="{{ isSel.analise }}" hint-placeholder-val="{{ false }}"><svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:none;stroke:#DAA00B;stroke-width:3;stroke-linejoin:round"></polygon></svg></sc-if>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <svg width="46" height="46" viewBox="0 0 64 64" style="color:#DAA00B;display:block"><use href="#hm-worker" width="64" height="64"></use></svg>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-top:8px">Análise</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:500;white-space:nowrap">
+                <svg width="9" height="9" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" style="fill:none;stroke:#FFFFFF;stroke-width:1.5"></circle></svg>
+                <span>Aguardando informação</span>
+              </div>
+            </div>
+          </div>
+
+          <div onClick="{{ pick.revisao }}" style="position:absolute;left:366.86px;top:421.85px;width:166.28px;height:192px;cursor:pointer">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5"></polygon></svg>
+            <sc-if value="{{ isSel.revisao }}" hint-placeholder-val="{{ false }}"><svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:none;stroke:#DAA00B;stroke-width:3;stroke-linejoin:round"></polygon></svg></sc-if>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <svg width="46" height="46" viewBox="0 0 64 64" style="color:#DAA00B;display:block"><use href="#hm-worker" width="64" height="64"></use></svg>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-top:8px">Revisão</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:500;white-space:nowrap">
+                <svg width="9" height="9" viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" style="fill:none;stroke:#FFFFFF;stroke-width:1.5"></rect></svg>
+                <span>Disponível</span>
+              </div>
+            </div>
+          </div>
+
+          <div onClick="{{ pick.relatorios }}" style="position:absolute;left:126.86px;top:421.85px;width:166.28px;height:192px;cursor:pointer">
+            <svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:#000000;stroke:#404040;stroke-width:1.5"></polygon></svg>
+            <sc-if value="{{ isSel.relatorios }}" hint-placeholder-val="{{ false }}"><svg width="166.28" height="192" viewBox="0 0 166.28 192" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="83.14,0 166.28,48 166.28,144 83.14,192 0,144 0,48" style="fill:none;stroke:#DAA00B;stroke-width:3;stroke-linejoin:round"></polygon></svg></sc-if>
+            <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+              <svg width="46" height="46" viewBox="0 0 64 64" style="color:#DAA00B;display:block"><use href="#hm-worker" width="64" height="64"></use></svg>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;margin-top:8px">Relatórios</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:5px;font-size:13px;font-weight:500;white-space:nowrap">
+                <svg width="9" height="9" viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" style="fill:none;stroke:#FFFFFF;stroke-width:1.5"></rect></svg>
+                <span>Disponível</span>
+              </div>
+            </div>
+          </div>
+
+          <sc-if value="{{ isSel.rainha }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;left:220.88px;top:184px;width:218.24px;height:252px;pointer-events:none">
+              <svg width="218.24" height="252" viewBox="0 0 218.24 252" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="109.12,0 218.24,63 218.24,189 109.12,252 0,189 0,63" style="fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linejoin:round"></polygon></svg>
+            </div>
+          </sc-if>
+
+          <div onClick="{{ pick.rainha }}" style="position:absolute;left:226.08px;top:190px;width:207.85px;height:240px;cursor:pointer">
+            <sc-if value="{{ queenFilled }}" hint-placeholder-val="{{ true }}">
+              <svg width="207.85" height="240" viewBox="0 0 207.85 240" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="103.92,0 207.85,60 207.85,180 103.92,240 0,180 0,60" style="fill:#DAA00B"></polygon></svg>
+              <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#000000">
+                <svg width="64" height="72" viewBox="0 0 64 72" style="color:#000000;display:block"><use href="#hm-queen" width="64" height="72"></use></svg>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;margin-top:8px;letter-spacing:-0.01em">Rainha</div>
+                <div style="font-size:14px;font-weight:600;margin-top:2px">Coordenando a missão</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ queenOutline }}" hint-placeholder-val="{{ false }}">
+              <svg width="207.85" height="240" viewBox="0 0 207.85 240" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="103.92,0 207.85,60 207.85,180 103.92,240 0,180 0,60" style="fill:#000000;stroke:#DAA00B;stroke-width:4;stroke-linejoin:round"></polygon></svg>
+              <div style="position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#FFFFFF">
+                <svg width="64" height="72" viewBox="0 0 64 72" style="color:#DAA00B;display:block"><use href="#hm-queen" width="64" height="72"></use></svg>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;margin-top:8px;letter-spacing:-0.01em">Rainha</div>
+                <div style="font-size:14px;font-weight:600;margin-top:2px;color:#DAA00B">Coordenando a missão</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <sc-if value="{{ showLegend }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:32px;bottom:20px;z-index:2;background:#000000;padding:10px 14px 2px 0;display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Conexões</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13.5px">
+              <svg width="30" height="10" viewBox="0 0 30 10"><line x1="2" y1="5" x2="22" y2="5" style="stroke:#DAA00B;stroke-width:3"></line><polygon points="30,5 22,9.5 22,0.5" style="fill:#DAA00B"></polygon></svg>
+              <span>Tarefa delegada pela Rainha</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13.5px">
+              <svg width="30" height="10" viewBox="0 0 30 10"><line x1="2" y1="5" x2="22" y2="5" style="stroke:#FFFFFF;stroke-width:2"></line><polygon points="30,5 22,9.5 22,0.5" style="fill:#FFFFFF"></polygon></svg>
+              <span>Resultado encaminhado</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13.5px">
+              <svg width="30" height="10" viewBox="0 0 30 10"><line x1="2" y1="5" x2="22" y2="5" style="stroke:#FFFFFF;stroke-width:2;stroke-dasharray:5 4"></line><polygon points="30,5 22,9.5 22,0.5" style="fill:#FFFFFF"></polygon></svg>
+              <span>Aguardando etapa anterior</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13.5px">
+              <svg width="30" height="10" viewBox="0 0 30 10"><line x1="4" y1="5" x2="26" y2="5" style="stroke:#404040;stroke-width:2"></line><circle cx="4" cy="5" r="3.5" style="fill:#404040"></circle><circle cx="26" cy="5" r="3.5" style="fill:#404040"></circle></svg>
+              <span>Sem atividade no momento</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding:16px 32px 22px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin-bottom:10px">
+          <label for="hm-ask" style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600">O que você quer que sua colmeia faça?</label>
+          <span style="font-size:13.5px">A Rainha divide o pedido em tarefas e escolhe as operárias.</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <input id="hm-ask" type="text" placeholder="Ex.: Conferir as notas fiscais de setembro e avisar se algum valor estiver diferente" style="flex:1;min-width:0;height:52px;box-sizing:border-box;background:#000000;border:1px solid #404040;color:#FFFFFF;font-family:'Source Sans 3',sans-serif;font-size:16px;padding:0 16px;outline:none;border-radius:0" style-focus="border-color:#DAA00B">
+          <button type="button" style="height:52px;padding:0 22px;background:#DAA00B;color:#000000;border:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;white-space:nowrap" style-hover="background:#FFFFFF">Enviar para a Rainha</button>
+        </div>
+      </div>
+    </main>
+
+    <aside style="border-left:1px solid #404040;overflow-y:auto;padding:20px 28px 20px;display:flex;flex-direction:column;gap:13px;min-height:0">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#DAA00B">{{ a.role }}</div>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:10px">
+          <div style="position:relative;width:62.35px;height:72px;flex-shrink:0">
+            <sc-if value="{{ isQueen }}" hint-placeholder-val="{{ false }}">
+              <svg width="62.35" height="72" viewBox="0 0 62.35 72" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="31.18,0 62.35,18 62.35,54 31.18,72 0,54 0,18" style="fill:#DAA00B"></polygon></svg>
+              <svg width="36" height="40" viewBox="0 0 64 72" style="position:absolute;left:13.18px;top:16px;color:#000000"><use href="#hm-queen" width="64" height="72"></use></svg>
+            </sc-if>
+            <sc-if value="{{ isWorker }}" hint-placeholder-val="{{ true }}">
+              <svg width="62.35" height="72" viewBox="0 0 62.35 72" style="position:absolute;left:0;top:0;overflow:visible"><polygon points="31.18,0 62.35,18 62.35,54 31.18,72 0,54 0,18" style="fill:#000000;stroke:#DAA00B;stroke-width:2"></polygon></svg>
+              <svg width="38" height="38" viewBox="0 0 64 64" style="position:absolute;left:12.18px;top:17px;color:#DAA00B"><use href="#hm-worker" width="64" height="64"></use></svg>
+            </sc-if>
+          </div>
+          <div style="min-width:0">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;letter-spacing:-0.01em;line-height:1.1">{{ a.name }}</div>
+            <div style="font-size:15px;margin-top:4px;line-height:1.35">{{ a.spec }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding-top:13px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Estado</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <sc-if value="{{ st.working }}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" style="fill:#DAA00B"></circle></svg></sc-if>
+          <sc-if value="{{ st.approval }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#DAA00B"></polygon></svg></sc-if>
+          <sc-if value="{{ st.waiting }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" style="fill:none;stroke:#FFFFFF;stroke-width:1.5"></circle></svg></sc-if>
+          <sc-if value="{{ st.available }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" style="fill:none;stroke:#FFFFFF;stroke-width:1.5"></rect></svg></sc-if>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600">{{ a.state }}</div>
+        </div>
+        <div style="font-size:14.5px;margin-top:5px;line-height:1.4;text-wrap:pretty">{{ a.detail }}</div>
+        <sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:3px;margin-top:10px">
+            <sc-for list="{{ progressSegs }}" as="s" hint-placeholder-count="23"><div style="flex:1;height:10px;background:{{ s.color }}"></div></sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding-top:13px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Missão</div>
+        <div style="font-size:14.5px;line-height:1.4;margin-top:6px;text-wrap:pretty">{{ a.mission }}</div>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding-top:13px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Tarefa atual</div>
+        <div style="font-size:14.5px;line-height:1.4;margin-top:6px;text-wrap:pretty">{{ a.task }}</div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:center;gap:10px;margin-top:10px">
+          <button type="button" onClick="{{ goFrom }}" style="text-align:left;background:#000000;border:1px solid #404040;color:#FFFFFF;padding:6px 12px;cursor:pointer;font-family:'Source Sans 3',sans-serif" style-hover="border-color:#DAA00B">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Recebe de</div>
+            <div style="font-size:15px;font-weight:600;margin-top:2px">{{ fromLabel }}</div>
+          </button>
+          <svg width="18" height="10" viewBox="0 0 18 10"><line x1="0" y1="5" x2="11" y2="5" style="stroke:#FFFFFF;stroke-width:2"></line><polygon points="18,5 11,9.5 11,0.5" style="fill:#FFFFFF"></polygon></svg>
+          <button type="button" onClick="{{ goTo }}" style="text-align:left;background:#000000;border:1px solid #404040;color:#FFFFFF;padding:6px 12px;cursor:pointer;font-family:'Source Sans 3',sans-serif" style-hover="border-color:#DAA00B">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Entrega para</div>
+            <div style="font-size:15px;font-weight:600;margin-top:2px">{{ toLabel }}</div>
+          </button>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding-top:13px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Capacidades</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+          <sc-for list="{{ a.skills }}" as="sk" hint-placeholder-count="4"><span style="border:1px solid #404040;padding:4px 9px;font-size:13.5px">{{ sk }}</span></sc-for>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #404040;padding-top:13px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase">Ferramentas</div>
+        <div style="margin-top:4px">
+          <sc-for list="{{ tools }}" as="t" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid #404040;font-size:14px">
+              <span>{{ t.name }}</span>
+              <sc-if value="{{ t.isPending }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;color:#DAA00B;white-space:nowrap;font-size:13.5px;font-weight:600"><svg width="8" height="8" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" style="fill:#DAA00B"></polygon></svg>Aguardando permissão</span></sc-if>
+              <sc-if value="{{ t.isPlain }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap;font-size:13.5px">{{ t.access }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showComb&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showLegend&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;queenStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Célula mostarda&quot;,&quot;Contorno mostarda&quot;],&quot;default&quot;:&quot;Célula mostarda&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { sel: 'documentos', hiveScale: 1 };
+  hiveRef = React.createRef();
+  agents = {
+    rainha: { role: 'Rainha · agente coordenador', name: 'Rainha', spec: 'Coordena o trabalho da colmeia', st: 'working', state: 'Coordenando a missão', detail: '3 operárias com tarefa ativa e 2 disponíveis.',
+      mission: 'Entender o que você pediu, dividir o trabalho em tarefas e entregar cada uma à operária mais adequada.',
+      task: 'Acompanhar a conferência dos pedidos, tratar impedimentos e reunir os resultados no relatório final.',
+      from: ['Você', null], to: ['Você', null],
+      skills: ['Planejar etapas', 'Distribuir tarefas', 'Acompanhar dependências', 'Reunir resultados', 'Pedir aprovação'],
+      tools: [['Quadro de tarefas da colmeia', 'Leitura e escrita'], ['Avisos para você', 'Envio de mensagens']] },
+    documentos: { role: 'Operária selecionada', name: 'Documentos', spec: 'Leitura e extração de documentos', st: 'working', state: 'Conferindo documentos', detail: '14 de 23 e-mails lidos', progress: [14, 23],
+      mission: 'Ler os documentos que chegam à empresa e transformar o conteúdo em informações organizadas.',
+      task: 'Extrair número do pedido, cliente, itens, quantidades e valores dos e-mails recebidos nesta semana.',
+      from: ['Rainha', 'rainha'], to: ['Cadastros', 'cadastros'],
+      skills: ['Ler e-mails', 'Abrir anexos em PDF', 'Extrair campos do pedido', 'Separar documentos ilegíveis'],
+      tools: [['Caixa de e-mail de pedidos', 'Somente leitura'], ['Pasta de anexos', 'Somente leitura'], ['Planilha de pedidos', 'Leitura e escrita']] },
+    cadastros: { role: 'Operária selecionada', name: 'Cadastros', spec: 'Consulta e conferência de cadastros', st: 'approval', state: 'Aguardando aprovação', detail: 'Precisa da sua permissão para consultar o cadastro de clientes no sistema.',
+      mission: 'Manter as informações de clientes e produtos consistentes com os registros da empresa.',
+      task: 'Comparar os pedidos extraídos com o cadastro de clientes e a tabela de preços vigente.',
+      from: ['Documentos', 'documentos'], to: ['Análise', 'analise'],
+      skills: ['Comparar registros', 'Localizar duplicidades', 'Validar CNPJ', 'Conferir tabela de preços'],
+      tools: [['Cadastro de clientes', 'Aguardando permissão'], ['Tabela de preços', 'Somente leitura'], ['Planilha de pedidos', 'Somente leitura']] },
+    analise: { role: 'Operária selecionada', name: 'Análise', spec: 'Análise de dados e divergências', st: 'waiting', state: 'Aguardando informação', detail: 'Começa quando Cadastros terminar a conferência.',
+      mission: 'Encontrar diferenças, padrões e desvios nos dados da operação.',
+      task: 'Identificar divergências de preço, quantidade e cliente entre cada pedido e o cadastro.',
+      from: ['Cadastros', 'cadastros'], to: ['Revisão', 'revisao'],
+      skills: ['Comparar valores', 'Classificar divergências', 'Calcular diferenças', 'Indicar prioridades'],
+      tools: [['Planilha de pedidos', 'Somente leitura'], ['Planilha de divergências', 'Leitura e escrita']] },
+    revisao: { role: 'Operária selecionada', name: 'Revisão', spec: 'Revisão de resultados', st: 'available', state: 'Disponível', detail: 'Será acionada depois da análise.',
+      mission: 'Conferir cada resultado antes da entrega, seguindo os critérios que você definiu.',
+      task: 'Sem tarefa no momento. Próxima: revisar a lista de divergências.',
+      from: ['Análise', 'analise'], to: ['Relatórios', 'relatorios'],
+      skills: ['Verificar critérios', 'Revisar amostras', 'Sinalizar inconsistências'],
+      tools: [['Planilha de divergências', 'Somente leitura'], ['Critérios de conferência', 'Somente leitura']] },
+    relatorios: { role: 'Operária selecionada', name: 'Relatórios', spec: 'Relatórios e comunicação', st: 'available', state: 'Disponível', detail: 'Será acionada depois da revisão.',
+      mission: 'Transformar resultados revisados em relatórios claros e mensagens prontas para envio.',
+      task: 'Sem tarefa no momento. Próxima: preparar o relatório de divergências.',
+      from: ['Revisão', 'revisao'], to: ['Rainha', 'rainha'],
+      skills: ['Montar relatórios', 'Resumir resultados', 'Seguir o modelo da empresa'],
+      tools: [['Modelo de relatório', 'Somente leitura'], ['Pasta de relatórios', 'Leitura e escrita']] }
+  };
+  componentDidMount() {
+    this.fit();
+    if (window.ResizeObserver && this.hiveRef.current) {
+      this.ro = new ResizeObserver(() => this.fit());
+      this.ro.observe(this.hiveRef.current);
+    }
+  }
+  componentWillUnmount() { if (this.ro) this.ro.disconnect(); }
+  fit() {
+    const el = this.hiveRef.current;
+    if (!el) return;
+    const s = Math.max(0.5, Math.min(1, (el.clientHeight - 8) / 620, (el.clientWidth - 24) / 660));
+    if (Math.abs(s - this.state.hiveScale) > 0.002) this.setState({ hiveScale: s });
+  }
+  renderVals() {
+    const sel = this.state.sel;
+    const a = this.agents[sel];
+    const pick = {}, isSel = {};
+    Object.keys(this.agents).forEach(k => { pick[k] = () => this.setState({ sel: k }); isSel[k] = k === sel; });
+    const outline = (this.props.queenStyle ?? 'Célula mostarda') === 'Contorno mostarda';
+    return {
+      a, pick, isSel,
+      isQueen: sel === 'rainha', isWorker: sel !== 'rainha',
+      st: { working: a.st === 'working', approval: a.st === 'approval', waiting: a.st === 'waiting', available: a.st === 'available' },
+      hasProgress: !!a.progress,
+      progressSegs: a.progress ? Array.from({ length: a.progress[1] }, (_, i) => ({ color: i < a.progress[0] ? '#DAA00B' : '#404040' })) : [],
+      tools: a.tools.map(([name, access]) => ({ name, access, isPending: access === 'Aguardando permissão', isPlain: access !== 'Aguardando permissão' })),
+      fromLabel: a.from[0], toLabel: a.to[0],
+      goFrom: () => { if (a.from[1]) this.setState({ sel: a.from[1] }); },
+      goTo: () => { if (a.to[1]) this.setState({ sel: a.to[1] }); },
+      queenFilled: !outline, queenOutline: outline,
+      showComb: this.props.showComb ?? true,
+      showLegend: this.props.showLegend ?? true,
+      hiveRef: this.hiveRef, hiveScale: this.state.hiveScale
+    };
+  }
+}
+</script>
+</body>
+</html>

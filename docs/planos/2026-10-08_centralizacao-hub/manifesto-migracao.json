@@ -1,0 +1,540 @@
+{
+  "schema": 1,
+  "date": "2026-10-08",
+  "projectRoot": "C:/Users/m.rafael/Desktop/Projetos Pessoais/core-voice-hub-v2-main/core-voice-hub-v2-main",
+  "vaultRoot": "C:/Users/m.rafael/Documents/Obsidian Vault",
+  "cycle": 2,
+  "status": "concluido-aprovado",
+  "approval": {
+    "plan": true,
+    "claudeTechnicalOnly": true
+  },
+  "projectBackups": [
+    {
+      "source": "AGENTS.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/AGENTS.md",
+      "sha256": "7e2bb2caad4759af0a74f13151a356236391a38afb7a92e8588966f4f18c3c60",
+      "bytes": 7831
+    },
+    {
+      "source": "CLAUDE.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/CLAUDE.md",
+      "sha256": "c47eaac873e6b930d62052d5092c3d0eeb0b9a68ce16167b03286c1d29d2c8fd",
+      "bytes": 6302
+    },
+    {
+      "source": "server.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/server.py",
+      "sha256": "de316e2116f27e5b3f9c339c78e5186ef29ed12a3b37590aba841408df650895",
+      "bytes": 62144
+    },
+    {
+      "source": "index.html",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/index.html",
+      "sha256": "337a97eaa265af33773c9a86164d71bbfc291d86be671b484f790692649c5d17",
+      "bytes": 166737
+    },
+    {
+      "source": "launch.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/launch.py",
+      "sha256": "17def8d33dbb7ffcbef95247496fa05a40a3f717a25a355b1a89569098368d42",
+      "bytes": 1945
+    },
+    {
+      "source": "launch_hub.vbs",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/launch_hub.vbs",
+      "sha256": "665cd3d3d08858e0de7db27cd834d26bead0ca07138b7d6d6d138859159530e5",
+      "bytes": 432
+    },
+    {
+      "source": "restart_hub.ps1",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/restart_hub.ps1",
+      "sha256": "b6fbc831a2844fe3099a599966af4f538ebdc4a97acdba7141ce9ef37a891cf3",
+      "bytes": 3839
+    },
+    {
+      "source": "stop.cmd",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/stop.cmd",
+      "sha256": "5eb813cd1a3f79d3cca9df9c2070886258bdf44e198dffe066a008aa97d1f687",
+      "bytes": 570
+    },
+    {
+      "source": "requirements.txt",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/requirements.txt",
+      "sha256": "3bf1f5fb59b9864306d082f46cd75f310bfff8c3b6eb64c5a1906d402db68e5a",
+      "bytes": 35
+    },
+    {
+      "source": "README.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/README.md",
+      "sha256": "89fc467473a30dc5b89f3a5462373a2f05383124f7640a0a45211db9e1b07a13",
+      "bytes": 5459
+    },
+    {
+      "source": "mobile/config.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/mobile/config.py",
+      "sha256": "2bf2df5d6f2cd8291fa16543541592622e4fce72909d24d8ed26bee3faa05215",
+      "bytes": 3123
+    },
+    {
+      "source": "mobile/history.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/mobile/history.py",
+      "sha256": "2718d85a7010db662e675cb1700a64ec859f9218c1cd62a173068e762908e06b",
+      "bytes": 1776
+    },
+    {
+      "source": "docs/arquitetura.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/arquitetura.md",
+      "sha256": "e1b5f2fbe64d30f1a6dbcb898a80b71632b9951d866df55963d3622e6416949a",
+      "bytes": 12792
+    },
+    {
+      "source": "docs/desenvolvimento.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/desenvolvimento.md",
+      "sha256": "7752dd87cd911eb77dee80cbaa80fb7e1fce21654a5159f6d16d396ab5920bc7",
+      "bytes": 22134
+    },
+    {
+      "source": "docs/forestos.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/forestos.md",
+      "sha256": "31096db6be70b0651b5e85e2d8f1ce6802cf7d929637bce17607ca433ddd8988",
+      "bytes": 12329
+    },
+    {
+      "source": "docs/frontend.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/frontend.md",
+      "sha256": "a9dc865f8db5a98e13638796441e3b5b0c4c0b868f650e04faa82b9a9a2f2718",
+      "bytes": 26807
+    },
+    {
+      "source": "docs/issues.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/issues.md",
+      "sha256": "56a00a6b8891f9b8f5d3bf903a7a2ba30675b6ee95fe7e6ddcf4b336ddd95754",
+      "bytes": 9150
+    },
+    {
+      "source": "docs/mobile.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/mobile.md",
+      "sha256": "b39baa98a7242959fa77c22b8464ac59cf46d0f37870190f912892030e4d1748",
+      "bytes": 12912
+    },
+    {
+      "source": "docs/operacao.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/operacao.md",
+      "sha256": "87c161a6ed70114c9d7371a7665e7e50836280d93e95bb27b823f5a505245afe",
+      "bytes": 12499
+    },
+    {
+      "source": "docs/prd.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/prd.md",
+      "sha256": "2f15a9e722b42a6c1b3a8a02f0c8df838ae61e61ab228ea18d53da90886b303f",
+      "bytes": 11346
+    },
+    {
+      "source": "docs/relatorios.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/relatorios.md",
+      "sha256": "6c410d2ea1794ca53537160b0c3d8bda4595577e6908cf1e672f4b0a981ab092",
+      "bytes": 7428
+    },
+    {
+      "source": "docs/servidor-api.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/servidor-api.md",
+      "sha256": "5cac3170c83f596ae1c0827aaad89303a2b26cf6eeaa93ce8451eaa072307f52",
+      "bytes": 28933
+    },
+    {
+      "source": "docs/voz-tts.md",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/docs/voz-tts.md",
+      "sha256": "9d5caef14543437e88f4057a59e1d1a7463ae7fc56a61007d746d5a203588685",
+      "bytes": 16028
+    },
+    {
+      "source": "tests/conftest.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/conftest.py",
+      "sha256": "8c0de72ff9694f394b03139d89a724bc1ec59e981b81fe179b56575307ca6622",
+      "bytes": 246
+    },
+    {
+      "source": "tests/test_autoquit.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_autoquit.py",
+      "sha256": "47e388c4fc03e6dc27eca6f6a425b1ca87e6e3c580981a3638c5996e6e7b8730",
+      "bytes": 4940
+    },
+    {
+      "source": "tests/test_concorrencia.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_concorrencia.py",
+      "sha256": "2ac8f34e99324cbc54cd7c3a6fe4070f6ffd7fe2234d88b1bab4ac04355f59aa",
+      "bytes": 11728
+    },
+    {
+      "source": "tests/test_dock_redesign.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_dock_redesign.py",
+      "sha256": "b36b4d5cc61f65dd1fb63f07d5a6ec8eb4308c97f60931f8fc738fe873d7133f",
+      "bytes": 4800
+    },
+    {
+      "source": "tests/test_effort_server.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_effort_server.py",
+      "sha256": "a04c119826b064e1761f4220bc750e04397f8f178dbff27dce92ac55cc828fae",
+      "bytes": 7792
+    },
+    {
+      "source": "tests/test_frontend_static.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_frontend_static.py",
+      "sha256": "d110ae84024cba67385eb8383ca7d29c68f2ba795efcf45079a9ad05418c6e3e",
+      "bytes": 14924
+    },
+    {
+      "source": "tests/test_mobile.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_mobile.py",
+      "sha256": "f6197b393695a1420ee2a77b022a30f224a8648762f0b734748f1d87fde22ea5",
+      "bytes": 16803
+    },
+    {
+      "source": "tests/test_progress.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_progress.py",
+      "sha256": "a8a425f7db63822ab713e5063219d3cc910a24a8386957a618b4a22d30952c5a",
+      "bytes": 5850
+    },
+    {
+      "source": "tests/test_reports.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_reports.py",
+      "sha256": "a7c7df8036cd1ae18840a7724f1fe27933c26a74f4704e1887a80c1438ba4eda",
+      "bytes": 6187
+    },
+    {
+      "source": "tests/test_session_watch.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_session_watch.py",
+      "sha256": "97652a8b4428736deb55448afa908e3ccdb2ce698da87f096ae8eded4bce7b08",
+      "bytes": 2843
+    },
+    {
+      "source": "tests/test_speak_stream.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_speak_stream.py",
+      "sha256": "c5d891b8202e04c73d27a576c63650034254d9fe3c21cc8d2f4fe023aaf44a8d",
+      "bytes": 7473
+    },
+    {
+      "source": "tests/test_stt.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_stt.py",
+      "sha256": "1558927f37e78de79b08835a16c932c5418873787c1cddd11d80de343ec909fa",
+      "bytes": 7408
+    },
+    {
+      "source": "tests/test_watchdog.py",
+      "backup": ".migration-backups/2026-10-08_centralizacao-hub/project/tests/test_watchdog.py",
+      "sha256": "2917d83fe7dee876ffe07aef8965fd158c23382473b2576d58ad4e1733fa2cc5",
+      "bytes": 5241
+    }
+  ],
+  "external": [
+    {
+      "origin": "C:\\Users\\m.rafael\\Documents\\Obsidian Vault\\CLAUDE.md",
+      "type": "mixed",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\vault\\CLAUDE.md",
+      "sha256": "43ac30b727d9412ccf5402f4dfc020e56870672e9f11c67aacb2fb201aa72095",
+      "bytes": 13223,
+      "status": "mixed-separated-technical-origin-removed"
+    },
+    {
+      "origin": "C:\\Users\\m.rafael\\Documents\\Obsidian Vault\\.claude\\settings.local.json",
+      "type": "classify-settings",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\vault\\.claude\\settings.local.json",
+      "sha256": "3d590b00a1c3bfee26deb89909658b77de706993ca7d5591e36343e3a2854234",
+      "bytes": 749,
+      "status": "preserved-generic-not-used-by-Hub"
+    },
+    {
+      "origin": "C:\\Users\\m.rafael\\Documents\\Obsidian Vault\\.claude\\skills\\forestos-ops\\SKILL.md",
+      "type": "technical-history",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\vault\\.claude\\skills\\forestos-ops\\SKILL.md",
+      "sha256": "46edc7b002b9f1bc25694825b55aa638ba9988c3101c66211c370eb4fc8d149d",
+      "bytes": 7022,
+      "status": "archived-in-project-origin-removed"
+    },
+    {
+      "origin": "C:\\Users\\m.rafael\\Documents\\Obsidian Vault\\forestos\\ForestOS - Documentação Completa.md",
+      "type": "technical-history",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\vault\\forestos\\ForestOS - Documentação Completa.md",
+      "sha256": "a421a9e9138b62e72c56325d26b5828b70e6556e93ca3c22a237767b3953de08",
+      "bytes": 23291,
+      "status": "archived-in-project-origin-removed"
+    },
+    {
+      "origin": "C:\\Users\\m.rafael\\Documents\\Obsidian Vault\\forestos\\Modelo de Dados ForestOS.md",
+      "type": "technical-history",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\vault\\forestos\\Modelo de Dados ForestOS.md",
+      "sha256": "d4373168bf27475bbafb9b2cc9377ef437336c36a27c4ebe2c6b1b453cec101a",
+      "bytes": 6280,
+      "status": "archived-in-project-origin-removed"
+    },
+    {
+      "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\speak_server.py",
+      "backup": ".migration-backups\\2026-10-08_centralizacao-hub\\global\\speak_server.py",
+      "sha256": "67d4006caa205da801be182da96664388ab38d223af754a9174b527ca29fa72d",
+      "bytes": 14654,
+      "type": "voice-source",
+      "status": "unused-original-archived-origin-removed-generic-voice-preserved"
+    }
+  ],
+  "activeShortcut": {
+    "file": "C:/Users/m.rafael/Desktop/C.O.R.E. Hub.lnk",
+    "target": "wscript.exe",
+    "arguments": "<PROJECT>/launch_hub.vbs",
+    "canonical": true
+  },
+  "oldCopyGit": {
+    "head": "49ff940",
+    "modified": [
+      "index.html"
+    ],
+    "indexSha256": "898f4283e4c30aeb7f530f681e9d9de684b0bf7bee5e72f017a7e81acd67b3f1",
+    "archive": ".migration-backups/2026-10-08_centralizacao-hub/old-checkout",
+    "verifiedAfterMove": true
+  },
+  "globalConsumerCandidates": [
+    "voice-hub\\forestos\\test\\forestos-ops-skill.test.js",
+    "voice-hub\\launch_hub.vbs",
+    "voice-hub\\server.py",
+    "voice-input\\voice_hub.ps1"
+  ],
+  "runtimeProof": {
+    "session": "6aba5e50-7278-4385-be08-43c4962fe64f",
+    "status": "success",
+    "denials": 0,
+    "costUSD": 0.0249604,
+    "noteValue": "2",
+    "reportCreated": true,
+    "globalHooksLoaded": false
+  },
+  "baselineIntegratedTests": {
+    "passed": 199,
+    "seconds": 9.61
+  },
+  "runtimeCLI": {
+    "version": "2.1.289",
+    "authPreserved": true,
+    "guardCoverage": "Read/Write/Edit/MultiEdit/NotebookEdit, shell síncrono e MCP; exclusão mútua + versão lida. Não é sandbox contra comandos maliciosos ou escritores externos."
+  },
+  "mobileHistory": {
+    "source": {
+      "exists": true,
+      "bytes": 4,
+      "records": 0,
+      "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "jsonType": "null",
+      "note": "Estado vazio aceito pelo loader atual; bytes preservados na migração."
+    },
+    "destination": {
+      "exists": true,
+      "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "bytes": 4,
+      "records": 0
+    },
+    "sourceRemoved": true
+  },
+  "personalLinkEditsCount": 2,
+  "genericVaultSettings": {
+    "hubRules": 0,
+    "status": "preserved-generic-not-used-by-Hub"
+  },
+  "voiceModels": [
+    {
+      "name": "kokoro-v1.0.onnx",
+      "bytes": 325532387,
+      "sha256": "7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5",
+      "equalsOriginal": true
+    },
+    {
+      "name": "voices-v1.0.bin",
+      "bytes": 28214398,
+      "sha256": "bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d",
+      "equalsOriginal": true
+    }
+  ],
+  "integrityAfterCut": {
+    "personal": {
+      "unchanged": 118,
+      "expectedLinkEdits": 2,
+      "unexpected": 0
+    },
+    "external": [
+      {
+        "type": "mixed",
+        "exists": false,
+        "backupValid": true,
+        "sourceUnchanged": null
+      },
+      {
+        "type": "classify-settings",
+        "exists": true,
+        "backupValid": true,
+        "sourceUnchanged": true
+      },
+      {
+        "type": "technical-history",
+        "exists": false,
+        "backupValid": true,
+        "sourceUnchanged": null
+      },
+      {
+        "type": "technical-history",
+        "exists": false,
+        "backupValid": true,
+        "sourceUnchanged": null
+      },
+      {
+        "type": "technical-history",
+        "exists": false,
+        "backupValid": true,
+        "sourceUnchanged": null
+      },
+      {
+        "type": "voice-source",
+        "exists": true,
+        "backupValid": true,
+        "sourceUnchanged": true
+      }
+    ],
+    "oldSourceAbsent": true,
+    "archivedGit": true,
+    "archivedIndexValid": true,
+    "mobileSourceAbsent": true,
+    "mobileDestinationValid": true
+  },
+  "restoreProof": {
+    "filesVerified": 45,
+    "personalOverwrite": false
+  },
+  "finalImplementationTests": {
+    "passed": 220,
+    "seconds": 13.27,
+    "exitCode": 0
+  },
+  "realProofs": {
+    "voice": {
+      "ready": true,
+      "started": true,
+      "done": true,
+      "envelope": true,
+      "residentPid": 16560
+    },
+    "live": {
+      "identity": true,
+      "reports": true,
+      "stt": true,
+      "ask": true,
+      "stopped": true,
+      "serverPid": 2384,
+      "sttText": "Teste de emigração da voz concluído.",
+      "stopExit": 0
+    },
+    "resume": {
+      "success": true,
+      "costUSD": 0.029199000000000003,
+      "session": "6aba5e50-7278-4385-be08-43c4962fe64f"
+    }
+  },
+  "reviewCycle1": {
+    "verdict": "reprovado",
+    "report": "revisao-independente-ciclo-1.md",
+    "findings": [
+      "REV-C1-01",
+      "REV-C1-02",
+      "REV-C1-03",
+      "REV-C1-04",
+      "REV-C1-05"
+    ]
+  },
+  "prototypeArchive": {
+    "files": [
+      {
+        "file": "voice_hub.ps1",
+        "bytes": 6265,
+        "sha256": "592a0eb942a6a2460b56ba5269587b703c9c4eb5710988a94da99cf494708177",
+        "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\voice_hub.ps1",
+        "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\voice_hub.ps1",
+        "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\voice_hub.ps1",
+        "status": "archived-origin-removed"
+      },
+      {
+        "file": "launch_voice_hub.cmd",
+        "bytes": 236,
+        "sha256": "ddaa86d12587f534b93bae0feed3652b515868f1ac6931d5bc661c4281536650",
+        "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\launch_voice_hub.cmd",
+        "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\launch_voice_hub.cmd",
+        "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\launch_voice_hub.cmd",
+        "status": "archived-origin-removed"
+      },
+      {
+        "file": "launch_voice_hub.vbs",
+        "bytes": 304,
+        "sha256": "ed6fbf44094d542677649bba2b2070dc8119bc3ab6aa9b3480cdbf8839ff0f6c",
+        "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\launch_voice_hub.vbs",
+        "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\launch_voice_hub.vbs",
+        "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\launch_voice_hub.vbs",
+        "status": "archived-origin-removed"
+      }
+    ],
+    "consumerScan": "rg hooks: somente seus2launchers; zero processos, atalhos desktop/startmenus ou tarefas encontrados na retirada",
+    "sharedVoicePreserved": true,
+    "restoredFilesVerified": 3,
+    "originalResident": {
+      "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\speak_server.py",
+      "archive": "docs/historico/voice-hub-winforms/speak_server-original.py",
+      "sha256": "67d4006caa205da801be182da96664388ab38d223af754a9174b527ca29fa72d",
+      "originAbsent": true,
+      "consumerScan": "zero após retirar ambos os Hubs antigos; say.py/speak.py sintetizam diretamente"
+    }
+  },
+  "cycle2Tests": {
+    "passed": 220,
+    "seconds": 13.27,
+    "exitCode": 0,
+    "focusedPassed": 51,
+    "focusedSeconds": 6.12,
+    "environment": "ambiente do usuário; sandbox recusou taskkill da árvore de fixture"
+  },
+  "integrityFinal": {
+    "personalNotes": {
+      "unchanged": 117,
+      "expectedLinkEdits": 2,
+      "managedTranscriptAppend": 1,
+      "unexpected": 0
+    },
+    "preferencesEqual": true,
+    "mobileEqual": true,
+    "indexUnchanged": true,
+    "genericVaultSettingsUnchanged": true,
+    "oldRepositoryAbsent": true,
+    "prototypeOriginalsAbsent": true,
+    "oldResidentAbsent": true,
+    "managedTranscript": {
+      "appendOnly": true,
+      "originalBytes": 123781,
+      "currentBytes": 126871,
+      "originalPrefixSha256": "0732344a80d9c74dfa7ddf5e111d9d41cbce434e7c09e3f5b35e1666b891e21c",
+      "originalPrefixVerified": true,
+      "newDataPreserved": true
+    }
+  },
+  "productionCycle2": {
+    "identity": 3800,
+    "reportsStatus": 200,
+    "restartExit": 0,
+    "stopDryRunExit": 0
+  },
+  "cyclesUsed": 2,
+  "reviewCycle2": {
+    "verdict": "aprovado",
+    "model": "gpt-6.1-sol",
+    "effort": "xhigh",
+    "independent": true,
+    "report": "revisao-independente-ciclo-2.md",
+    "tests": {
+      "passed": 220,
+      "seconds": 13.08,
+      "exitCode": 0
+    }
+  }
+}

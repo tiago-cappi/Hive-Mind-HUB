@@ -1,0 +1,3351 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C.O.R.E. — Claude Obsidian Reasoning Engine</title>
+
+<!-- Fontes Hive Mind: Space Grotesk (display) + JetBrains Mono (telemetria/HUD) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   C.O.R.E. — HUD de voz (Jarvis / V.A.U.L.T.)
+   Arquivo único, CSS + JS vanilla. Seções comentadas abaixo.
+   ===================================================================== */
+
+/* ---------- 0. TOKENS / PALETA — HIVE MIND (honey + ink, dark HUD) ---------- */
+:root{
+  /* superfícies — preto quente (warm ink) em vez de preto puro */
+  --bg:#14120c; --bg2:#1c1913;
+  --ink:#ECE4D4;       /* texto base (paper quente)        */
+  --ink-bright:#FBF9F5;/* realce                            */
+  --ink-dim:#9A9079;   /* rótulos secundários (warm grey)   */
+  --ink-faint:#645C4B; /* legendas/apagado                  */
+  --ink-faint-2:#8A8069; /* Etapa 3: meio-termo p/ textos pequenos da gaveta —
+    --ink-faint sozinho ficava escuro demais nas fontes maiores do minimalista */
+  --line:#332e22; --line-soft:#26221a;
+  --panel: rgba(28,25,18,0.66);
+  --panel-2: rgba(20,18,12,0.55);
+  --ink-deep:#1C1C20;  /* texto sobre o honey (botão primário) */
+
+  /* paleta Hive Mind reaproveitada nos papéis do HUD */
+  --teal:#6FA89C;      /* sage — linhas do EU              */
+  --blue:#6FA89C;      /* sage                             */
+  --amber:#E8B658;     /* honey                            */
+  --green:#7FC4A6;     /* sage-verde — CLAUDE / online / falando */
+  --err:#C45656;       /* danger suave — SISTEMA           */
+
+  /* Acento dinâmico — trocado por JS conforme o estado (idle honey-deep) */
+  --accent:#B88A3F;
+  --accent-rgb:184,138,63;
+
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --display:"Space Grotesk", system-ui, sans-serif;
+  --chamf:11px;          /* tamanho do canto chanfrado dos painéis */
+  --dock-w:clamp(420px, 34vw, 760px);  /* largura das gavetas do modo minimalista (9b); a
+    gaveta esquerda vira ajustável na Etapa 1 (JS 7b), este valor é só o ponto de partida */
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:var(--mono);
+  color:var(--ink);
+  background:
+    radial-gradient(120% 90% at 50% -10%, #221c11 0%, var(--bg) 55%, #0c0a0600 100%),
+    var(--bg);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:.02em;
+}
+::selection{ background:rgba(var(--accent-rgb),.3); color:var(--ink-bright); }
+
+/* ---------- 1. FUNDO HUD: chão em grade com perspectiva, scanlines, vinheta ---------- */
+.fx{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+
+/* Chão em grade com perspectiva (recua no horizonte) */
+.floor{
+  position:fixed; left:50%; bottom:-12vh; width:320vw; height:62vh;
+  transform:translateX(-50%) perspective(440px) rotateX(70deg);
+  transform-origin:50% 100%;
+  background-image:
+    linear-gradient(to right, rgba(var(--accent-rgb),.12) 1px, transparent 1px),
+    linear-gradient(to top,   rgba(var(--accent-rgb),.12) 1px, transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:linear-gradient(to top,#000 0%, #000 18%, transparent 72%);
+          mask-image:linear-gradient(to top,#000 0%, #000 18%, transparent 72%);
+  opacity:.55; z-index:0; pointer-events:none;
+  animation:floorflow 7s linear infinite;
+  transition:opacity .6s ease;
+}
+@keyframes floorflow{ from{ background-position:0 0,0 0; } to{ background-position:0 46px,0 46px; } }
+
+/* Scanlines + leve granulação por gradiente */
+.scan{
+  background:repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,.16) 2px 3px);
+  mix-blend-mode:multiply; opacity:.5; z-index:60;
+}
+/* Vinheta para focar o centro */
+.vign{
+  background:radial-gradient(120% 95% at 50% 42%, transparent 52%, rgba(0,0,0,.55) 100%);
+  z-index:5;
+}
+
+/* ---------- 2. GRID PRINCIPAL ---------- */
+.grid{
+  position:relative; z-index:10;
+  height:100vh; width:100vw;
+  display:grid;
+  grid-template-rows:54px 1fr 224px;
+  gap:11px; padding:13px;
+}
+/* linhas travadas explicitamente: sem isso, ocultar .topbar via display:none no
+   modo minimalista o remove da lista de itens do grid e o auto-placement empurra
+   .stage/.console para as linhas erradas (o núcleo "some", os controles esticam) */
+.grid > .topbar{ grid-row:1; }
+.grid > .stage{ grid-row:2; }
+.grid > .console{ grid-row:3; }
+.stage{
+  display:grid;
+  grid-template-columns:288px 1fr 288px;
+  gap:12px; min-height:0;
+}
+/* colunas travadas: mesmo motivo do grid-row acima — ocultar .col via
+   display:none tira o item da lista do grid e desloca .core de coluna */
+.stage > .col.left{ grid-column:1; }
+.stage > .core{ grid-column:2; }
+.stage > .col.right{ grid-column:3; }
+.console > .transcript{ grid-column:1; }
+.console > .controls{ grid-column:2; }
+.col{ display:flex; flex-direction:column; gap:11px; min-height:0; overflow:auto; scrollbar-width:thin; }
+.col::-webkit-scrollbar{ width:6px; }
+.col::-webkit-scrollbar-thumb{ background:var(--line); }
+
+/* ---------- 3. PAINEL CHANFRADO (moldura fina via mask) ---------- */
+.panel{
+  position:relative;
+  background:linear-gradient(rgba(var(--accent-rgb),.018), rgba(var(--accent-rgb),.018)), var(--panel);
+  clip-path:polygon(var(--chamf) 0, 100% 0, 100% calc(100% - var(--chamf)), calc(100% - var(--chamf)) 100%, 0 100%, 0 var(--chamf));
+  padding:12px 13px 13px;
+  filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.05));
+  transition:filter .45s ease;
+}
+/* moldura fina chanfrada (anel de 1px desenhado via mask-composite) */
+.panel::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  padding:1px; background:var(--line);
+  clip-path:polygon(var(--chamf) 0, 100% 0, 100% calc(100% - var(--chamf)), calc(100% - var(--chamf)) 100%, 0 100%, 0 var(--chamf));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+}
+.panel > h3{
+  margin:0 0 11px; font-size:10.5px; font-weight:600; letter-spacing:.26em;
+  color:var(--ink-dim); display:flex; align-items:center; gap:8px; text-transform:uppercase;
+}
+.panel > h3::before{ content:""; width:3px; height:11px; background:var(--accent); box-shadow:0 0 7px var(--accent); }
+.panel > h3 .tag{ margin-left:auto; font-size:8.5px; letter-spacing:.18em; color:var(--accent); opacity:.7; flex:0 0 auto; }
+
+/* ---------- 3b. PAINÉIS EXPANSÍVEIS / MINIMIZÁVEIS ---------- */
+.panel > h3{ cursor:pointer; user-select:none; transition:color .15s ease; }
+.panel > h3:hover{ color:var(--ink); }
+.panel > h3 .chev{           /* seta de recolher; margin-left:auto a empurra p/ direita */
+  margin-left:auto; font-size:9px; color:var(--ink-faint);
+  transition:transform .22s cubic-bezier(.2,.8,.2,1), color .15s ease; line-height:1;
+}
+.panel > h3:hover .chev{ color:var(--accent); }
+.panel > h3 .tag + .chev{ margin-left:8px; }   /* quando há tag, a seta fica logo após */
+.panel.collapsed{ padding-bottom:11px; filter:none; }
+.panel.collapsed > h3{ margin-bottom:0; }
+.panel.collapsed > h3 .chev{ transform:rotate(-90deg); }
+.panel.collapsed > :not(h3){ display:none; }   /* esconde o corpo, mantém o cabeçalho */
+.col .panel{ transition:padding .2s ease; }
+
+/* ---------- 4. TOP BAR ---------- */
+.topbar{
+  display:flex; align-items:center; gap:18px;
+  padding:0 14px; min-width:0;
+  background:linear-gradient(180deg, rgba(var(--accent-rgb),.05), transparent 80%), var(--panel-2);
+  clip-path:polygon(var(--chamf) 0, 100% 0, 100% 100%, 0 100%, 0 var(--chamf));
+  position:relative;
+}
+.topbar::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(var(--accent-rgb),.5), transparent);
+}
+.brand{ display:flex; align-items:center; gap:11px; flex:0 0 auto; }
+.mark{
+  width:36px; height:36px; flex:0 0 auto; display:block; object-fit:contain;
+  filter:drop-shadow(0 0 10px rgba(232,182,88,.35));
+}
+.brand .t{ font-family:var(--display); font-size:17px; font-weight:700; letter-spacing:.16em; color:var(--ink-bright); text-shadow:0 0 13px rgba(var(--accent-rgb),.4); line-height:1; }
+.brand .s{ font-size:8.5px; letter-spacing:.22em; color:var(--ink-faint); margin-top:3px; }
+
+/* fila de status no centro */
+.status-row{ display:flex; align-items:center; gap:16px; margin:0 auto; flex-wrap:wrap; justify-content:center; }
+.st{ display:inline-flex; align-items:center; gap:6px; font-size:10px; letter-spacing:.2em; color:var(--ink-faint); }
+.st .dot{ width:6px; height:6px; border-radius:50%; background:var(--ink-faint); }
+.st.on{ color:var(--green); }
+.st.on .dot{ background:var(--green); box-shadow:0 0 7px var(--green); }
+#liveStat{ color:var(--accent); }
+#liveStat .dot{ background:var(--accent); box-shadow:0 0 9px var(--accent); animation:pulsedot 1.6s ease-in-out infinite; }
+@keyframes pulsedot{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+/* relógio + data + seletor de modelo */
+.tools{ display:flex; align-items:center; gap:16px; flex:0 0 auto; margin-left:auto; }
+.clock{ text-align:right; }
+.clock .time{ font-family:var(--display); font-size:22px; font-weight:500; letter-spacing:.06em; color:var(--ink-bright); text-shadow:0 0 11px rgba(var(--accent-rgb),.28); line-height:1; font-variant-numeric:tabular-nums; }
+.clock .date{ font-size:8.5px; letter-spacing:.24em; color:var(--ink-faint); margin-top:3px; }
+.select{ position:relative; }
+.select::after{ content:"▾"; position:absolute; right:9px; top:50%; transform:translateY(-50%); color:var(--accent); font-size:10px; pointer-events:none; }
+.select select{
+  appearance:none; -webkit-appearance:none; cursor:pointer;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; font-weight:600;
+  color:var(--accent); background:rgba(var(--accent-rgb),.05);
+  border:1px solid var(--line); padding:8px 28px 8px 11px;
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  text-shadow:0 0 8px rgba(var(--accent-rgb),.4); outline:none;
+}
+.select select option{ background:#0a0f12; color:var(--ink); }
+
+/* ---------- 5. NÚCLEO (centro) ---------- */
+.core{ display:flex; flex-direction:column; min-height:0; gap:9px; }
+.canvas-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden; }
+#core-canvas{ display:block; width:100%; height:100%; }
+
+/* molduras de canto (brackets) decorativos do núcleo */
+.bracket{ position:absolute; width:26px; height:26px; border:1px solid rgba(var(--accent-rgb),.4); pointer-events:none; }
+.bracket.tl{ top:4px; left:4px; border-right:0; border-bottom:0; }
+.bracket.tr{ top:4px; right:4px; border-left:0; border-bottom:0; }
+.bracket.bl{ bottom:4px; left:4px; border-right:0; border-top:0; }
+.bracket.br{ bottom:4px; right:4px; border-left:0; border-top:0; }
+.corelabel{ position:absolute; top:8px; left:36px; font-size:8.5px; letter-spacing:.28em; color:var(--ink-faint); }
+.corelabel.r{ left:auto; right:36px; }
+
+/* rótulo de etapa + cronômetro (estado PENSANDO) */
+#step{
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  font-size:11px; letter-spacing:.2em; color:var(--accent);
+  text-shadow:0 0 11px rgba(var(--accent-rgb),.5); opacity:0; transition:opacity .3s ease;
+  white-space:nowrap; padding:5px 12px; background:rgba(0,0,0,.35);
+  border:1px solid rgba(var(--accent-rgb),.25);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+}
+
+/* status grande + medidor de microfone */
+.readout{ text-align:center; }
+#state{
+  font-family:var(--display); font-size:26px; font-weight:600; letter-spacing:.18em; color:var(--accent);
+  text-shadow:0 0 18px rgba(var(--accent-rgb),.5); text-transform:uppercase; line-height:1.1;
+  transition:color .4s ease;
+}
+.meter-track{
+  position:relative; height:7px; margin:10px auto 0; max-width:560px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  clip-path:polygon(4px 0,100% 0,100% 100%,0 100%,0 4px);
+  overflow:hidden;
+}
+.meter-track::after{ /* marcas finas */
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image:linear-gradient(90deg, rgba(0,0,0,.5) 1px, transparent 1px);
+  background-size:5% 100%;
+}
+#meter{
+  height:100%; width:0%;
+  background:linear-gradient(90deg, rgba(var(--accent-rgb),.3), var(--accent));
+  box-shadow:0 0 12px rgba(var(--accent-rgb),.6);
+  transition:width .09s linear;
+}
+.meter-cap{ display:flex; justify-content:space-between; max-width:560px; margin:5px auto 0; font-size:8px; letter-spacing:.22em; color:var(--ink-faint); }
+
+/* ---------- 6. COLUNA ESQUERDA (placeholders) ---------- */
+.metric{ margin-bottom:13px; }
+.metric:last-child{ margin-bottom:0; }
+.m-label{ font-size:9px; letter-spacing:.22em; color:var(--ink-faint); margin-bottom:3px; }
+.m-row{ display:flex; align-items:flex-end; gap:10px; }
+.m-num{ font-family:var(--display); font-size:28px; font-weight:600; color:var(--ink-bright); line-height:.92; min-width:62px; font-variant-numeric:tabular-nums; text-shadow:0 0 12px rgba(var(--accent-rgb),.18); }
+.m-row .spark{ flex:1; height:30px; }
+
+.directives{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+.directives li{ display:flex; align-items:center; gap:9px; font-size:11px; color:var(--ink); }
+.directives .cbx{
+  width:12px; height:12px; flex:0 0 auto; border:1px solid var(--line);
+  clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px);
+  position:relative;
+}
+.directives li.done .cbx{ background:rgba(var(--accent-rgb),.18); border-color:var(--accent); }
+.directives li.done .cbx::after{ content:""; position:absolute; inset:2px; background:var(--accent); box-shadow:0 0 7px var(--accent); clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px); }
+.directives li.done{ color:var(--ink-dim); }
+
+.vault{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+.vault li{ display:flex; align-items:center; gap:8px; font-size:11px; padding:7px 0; border-bottom:1px solid var(--line-soft); color:var(--ink); }
+.vault li:last-child{ border-bottom:0; }
+.vault li::before{ content:"›"; color:var(--accent); opacity:.7; }
+.vault .vt{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vault .vtime{ font-size:9px; letter-spacing:.12em; color:var(--ink-faint); }
+
+/* ---------- 7. COLUNA DIREITA: COMMAND DECK + AUDIO I/O ---------- */
+.deck{ flex:0 0 auto; }
+.skills{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.skill{
+  position:relative; cursor:pointer; text-align:left;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; font-weight:600;
+  color:var(--ink-dim); background:rgba(255,255,255,.018);
+  border:1px solid var(--line); padding:11px 9px 10px;
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  transition:.18s ease; overflow:hidden;
+}
+.skill .idx{ display:block; font-size:7.5px; letter-spacing:.18em; color:var(--ink-faint); margin-bottom:5px; }
+.skill:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.6); background:rgba(var(--accent-rgb),.07); box-shadow:0 0 14px rgba(var(--accent-rgb),.18) inset; }
+.skill:hover .idx{ color:var(--accent); }
+.skill.queued{ color:var(--ink-bright); border-color:var(--accent); background:rgba(var(--accent-rgb),.12); }
+.skill.queued::after{ content:"› QUEUED"; position:absolute; top:9px; right:9px; font-size:7px; letter-spacing:.16em; color:var(--accent); }
+.skill:active{ transform:translateY(1px); }
+
+.io{ flex:0 0 auto; }
+.io-row{ display:flex; align-items:center; gap:9px; font-size:11px; letter-spacing:.14em; color:var(--ink); margin-bottom:11px; }
+.io-led{ width:9px; height:9px; flex:0 0 auto; background:var(--ink-faint); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); transition:.25s; }
+.io.speaking .io-led{ background:var(--green); box-shadow:0 0 11px var(--green); animation:pulsedot .7s ease-in-out infinite; }
+.io.speaking #tts{ color:var(--green); }
+.io-keys{ display:flex; flex-direction:column; gap:6px; font-size:9.5px; color:var(--ink-faint); letter-spacing:.08em; }
+.io-keys kbd{
+  font-family:var(--mono); font-size:8.5px; color:var(--accent); background:rgba(var(--accent-rgb),.08);
+  border:1px solid var(--line); padding:1px 6px; margin-right:7px; letter-spacing:.1em;
+  clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px);
+}
+
+/* ---------- 8. RODAPÉ: TRANSCRIPT + CONTROLES ---------- */
+.console{ display:grid; grid-template-columns:1fr 250px; gap:12px; min-height:0; }
+.transcript{ position:relative; display:flex; flex-direction:column; min-height:0; }
+.transcript h3{ flex:0 0 auto; }
+/* transcript recolhido → encolhe a faixa do rodapé p/ o núcleo crescer */
+body.tx-collapsed .grid{ grid-template-rows:54px 1fr auto; }
+body.tx-collapsed .console{ align-items:start; }
+#log{
+  flex:1 1 auto; min-height:0; overflow:auto; scrollbar-width:thin;
+  display:flex; flex-direction:column; gap:5px; padding-right:6px;
+  font-size:12px; line-height:1.5;
+}
+#log::-webkit-scrollbar{ width:6px; }
+#log::-webkit-scrollbar-thumb{ background:var(--line); }
+.line{ display:flex; gap:10px; animation:linein .24s ease; } /* slide-in só por transform: nunca esconde a linha */
+@keyframes linein{ from{ transform:translateY(6px); } }
+.line .who{ flex:0 0 64px; font-size:10px; letter-spacing:.14em; padding-top:1px; user-select:none; }
+.line .txt{ flex:1; color:var(--ink); }
+.line.eu .who{ color:var(--teal); }
+.line.eu .txt{ color:var(--ink-bright); }
+.line.claude .who{ color:var(--green); }
+.line.sys .who{ color:var(--err); opacity:.85; }
+.line.sys .txt{ color:#A39A86; font-size:11px; }
+/* linha viva: o que o Claude está fazendo AGORA (substituída pela resposta) */
+.line.activity .txt{ color:var(--ink-dim); font-style:italic; opacity:.75; }
+.line .cur{ display:inline-block; width:7px; height:13px; background:var(--accent); margin-left:2px; transform:translateY(2px); animation:blink .8s step-end infinite; box-shadow:0 0 8px var(--accent); }
+@keyframes blink{ 50%{ opacity:0; } }
+
+/* F1 — timeline de atividade empilhada (etapas concluídas + atual pulsando) */
+.line.activity.done .txt{ color:var(--ink-faint); font-style:normal; opacity:.6; }
+.line.activity.cur  .txt{ color:var(--accent); opacity:1; }
+.line.activity.cur  .txt::after{ content:'…'; animation:blink 1s step-end infinite; }
+
+/* F2 — faixas do watchdog no #step + banner de erro + botão cancelar */
+#step.warn{ color:#E8B658; border-color:rgba(232,182,88,.5); }
+#step.crit{ color:var(--err); border-color:rgba(224,90,74,.6); text-shadow:0 0 11px rgba(224,90,74,.55); }
+.err-banner{
+  position:absolute; top:40px; left:50%; transform:translateX(-50%); z-index:6;
+  max-width:88%; padding:7px 30px 7px 12px;
+  background:rgba(60,20,16,.92); border:1px solid var(--err); color:#F1C9C2;
+  font-size:10.5px; letter-spacing:.05em; line-height:1.35;
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+}
+.err-banner .x{ position:absolute; top:3px; right:7px; cursor:pointer; opacity:.7; }
+.err-banner .x:hover{ opacity:1; }
+.cancel-btn{
+  position:absolute; bottom:10px; right:10px; z-index:7;
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; font-weight:600;
+  color:var(--err); background:rgba(224,90,74,.1); border:1px solid var(--err);
+  padding:6px 12px; cursor:pointer;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  animation:pulsedot 1.2s ease-in-out infinite;
+}
+.cancel-btn:hover{ background:rgba(224,90,74,.22); }
+
+/* F3 — legenda "resposta ao vivo" sobre o rodapé do núcleo */
+.live-resp{
+  position:absolute; bottom:10px; left:12px; right:12px; z-index:5;
+  max-height:38%; overflow:hidden; pointer-events:none;
+  font-size:11.5px; line-height:1.45; color:var(--ink-dim);
+  background:linear-gradient(0deg, rgba(0,0,0,.45), transparent); padding:18px 6px 6px;
+}
+.live-resp .lr-think{ display:block; margin-bottom:3px; color:var(--accent); font-size:10px; letter-spacing:.14em; opacity:.85; }
+.live-resp .lr-txt{ color:var(--ink); }
+
+/* F4 — painel de plano vivo (checklist do TodoWrite) */
+.plan-panel{
+  position:absolute; top:40px; left:10px; z-index:5; max-width:46%;
+  padding:8px 11px; background:rgba(0,0,0,.44); border:1px solid rgba(var(--accent-rgb),.25);
+  font-size:10.5px; line-height:1.5;
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+}
+.plan-panel h4{ margin:0 0 5px; font-size:8.5px; letter-spacing:.26em; color:var(--ink-faint); font-weight:600; }
+.plan-panel .pi{ display:flex; gap:7px; color:var(--ink-dim); }
+.plan-panel .pi.done{ opacity:.55; }
+.plan-panel .pi.doing{ color:var(--accent); }
+.plan-panel .pi .mk{ flex:0 0 auto; }
+
+/* F5 — toggle de feedback sonoro */
+.sound-toggle{ margin-top:8px; width:100%; font-size:9.5px !important; letter-spacing:.14em; }
+.sound-toggle.on{ color:var(--accent); border-color:rgba(var(--accent-rgb),.5); }
+
+/* abas TRANSCRIPT / DEBUG (substituem o título do painel) — rolagem horizontal
+   quando não cabem todas (ex.: gaveta esquerda estreita no modo minimalista),
+   senão a aba RELATÓRIOS fica cortada sem nenhuma forma de alcançá-la. */
+.tabs{
+  gap:16px !important; overflow-x:auto; overflow-y:hidden; flex-wrap:nowrap !important;
+  scrollbar-width:thin; -webkit-overflow-scrolling:touch;
+}
+.tabs::-webkit-scrollbar{ height:4px; }
+.tabs::-webkit-scrollbar-thumb{ background:var(--line); }
+.tab{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.26em;
+  text-transform:uppercase; cursor:pointer; background:none; border:0; padding:0 0 3px;
+  color:var(--ink-faint); border-bottom:1px solid transparent; transition:color .15s ease, border-color .15s ease;
+  flex:0 0 auto;
+}
+.tab:hover{ color:var(--ink-dim); }
+.tab.on{ color:var(--accent); border-bottom-color:var(--accent); }
+/* o atributo [hidden] precisa vencer o display:flex dos painéis, senão TRANSCRIPT/DEBUG/CONVERSAS empilham */
+#log[hidden],#debug[hidden],#convs[hidden],#chg[hidden],#reps[hidden]{ display:none !important; }
+
+/* F6 — painel ALTERAÇÕES: arquivos tocados (com diff) + comandos rodados */
+#chg{
+  flex:1 1 auto; min-height:0; overflow:auto; scrollbar-width:thin;
+  display:flex; flex-direction:column; gap:1px; padding-right:6px;
+  font-size:11.5px; font-family:var(--mono);
+}
+#chg::-webkit-scrollbar{ width:6px; }
+#chg::-webkit-scrollbar-thumb{ background:var(--line); }
+.chg-sum{
+  display:flex; gap:16px; flex:0 0 auto; padding:7px 8px; margin-bottom:4px;
+  border-bottom:1px solid var(--line); font-size:9.5px; letter-spacing:.18em;
+  color:var(--ink-faint); text-transform:uppercase;
+}
+.chg-sum b{ color:var(--ink-bright); font-weight:600; }
+.chg-sum .plus{ color:var(--green); }
+.chg-sum .minus{ color:var(--err); }
+.chg-row{
+  display:flex; align-items:center; gap:9px; cursor:pointer;
+  padding:6px 8px; border-bottom:1px solid var(--line-soft); transition:.15s ease;
+}
+.chg-row:hover{ background:rgba(var(--accent-rgb),.06); }
+.chg-row .ck{ flex:0 0 54px; font-size:8.5px; letter-spacing:.14em; color:var(--accent); }
+.chg-row.cmd .ck{ color:var(--amber); }
+.chg-row.fail .ck{ color:var(--err); }
+.chg-row .cf{ flex:1; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chg-row .cn{ flex:0 0 auto; font-size:10px; letter-spacing:.06em; }
+.chg-row .cn .plus{ color:var(--green); } .chg-row .cn .minus{ color:var(--err); margin-left:6px; }
+.chg-diff{
+  display:flex; flex-direction:column; padding:5px 8px 9px 62px;
+  border-bottom:1px solid var(--line-soft); background:rgba(0,0,0,.24);
+  font-size:10.5px; line-height:1.45; white-space:pre-wrap; word-break:break-word;
+}
+.chg-diff .df-hunk{ color:var(--ink-faint); margin-top:4px; }
+.chg-diff .df-add{ color:var(--green); }
+.chg-diff .df-del{ color:#E8B0B0; }
+.chg-diff .df-ctx{ color:var(--ink-dim); opacity:.75; }
+.chg-diff .df-more{ color:var(--amber); font-size:9.5px; letter-spacing:.14em; margin-top:5px; }
+.chg-empty{ color:var(--ink-faint); font-size:11px; padding:10px 4px; letter-spacing:.06em; }
+
+/* console de debug estruturado */
+#debug{
+  flex:1 1 auto; min-height:0; overflow:auto; scrollbar-width:thin;
+  display:flex; flex-direction:column; gap:1px; padding-right:6px;
+  font-size:11px; line-height:1.4; font-family:var(--mono);
+}
+#debug::-webkit-scrollbar{ width:6px; }
+#debug::-webkit-scrollbar-thumb{ background:var(--line); }
+.dl{ display:flex; gap:9px; white-space:pre-wrap; word-break:break-word; padding:1px 0; }
+.dl .dt{ flex:0 0 auto; color:var(--ink-faint); }
+.dl .dlv{ flex:0 0 46px; letter-spacing:.06em; font-weight:600; }
+.dl .dm{ flex:1; color:var(--ink-dim); }
+.dl.info .dlv{ color:var(--blue); }
+.dl.ok   .dlv{ color:var(--green); }   .dl.ok .dm{ color:var(--ink); }
+.dl.warn .dlv{ color:var(--amber); }
+.dl.err  .dlv{ color:var(--err); }     .dl.err .dm{ color:#E8B0B0; }
+.dl.net  .dlv{ color:var(--amber); }
+.dl.step .dlv{ color:var(--green); }
+
+/* lista de conversas da sessão (aba CONVERSAS) */
+#convs{
+  flex:1 1 auto; min-height:0; overflow:auto; scrollbar-width:thin;
+  display:flex; flex-direction:column; gap:2px; padding-right:6px; font-size:12px;
+}
+#convs::-webkit-scrollbar{ width:6px; }
+#convs::-webkit-scrollbar-thumb{ background:var(--line); }
+.conv-item{
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  padding:9px 8px; border-bottom:1px solid var(--line-soft); transition:.15s ease;
+}
+.conv-item:hover{ background:rgba(var(--accent-rgb),.06); }
+.conv-item::before{ content:"›"; color:var(--accent); opacity:.7; }
+.conv-item .ct{ flex:1; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.conv-item.active .ct{ color:var(--ink-bright); }
+.conv-item .cmeta{ font-size:9px; letter-spacing:.12em; color:var(--ink-faint); }
+.conv-back{
+  align-self:flex-start; cursor:pointer; background:none; border:0; padding:4px 0 8px;
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--accent);
+}
+.conv-empty{ color:var(--ink-faint); font-size:11px; padding:10px 4px; letter-spacing:.06em; }
+
+/* aba RELATÓRIOS — lista dos relatórios visuais gerados pelo Claude (8e).
+   Mesma anatomia da lista de conversas; clicar numa linha abre o visor. */
+#reps{
+  flex:1 1 auto; min-height:0; overflow:auto; scrollbar-width:thin;
+  display:flex; flex-direction:column; gap:2px; padding-right:6px; font-size:12px;
+}
+#reps::-webkit-scrollbar{ width:6px; }
+#reps::-webkit-scrollbar-thumb{ background:var(--line); }
+.rep-item{
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  padding:9px 8px; border-bottom:1px solid var(--line-soft); transition:.15s ease;
+}
+.rep-item:hover{ background:rgba(var(--accent-rgb),.06); }
+.rep-item::before{ content:"◳"; color:var(--accent); opacity:.7; }
+.rep-item .rt{ flex:1; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rep-item .rmeta{ font-size:9px; letter-spacing:.12em; color:var(--ink-faint); }
+.rep-empty{ color:var(--ink-faint); font-size:11px; padding:10px 4px; letter-spacing:.06em; }
+
+.controls{ display:flex; flex-direction:column; gap:9px; }
+.btn{
+  font-family:var(--mono); cursor:pointer; font-size:12px; letter-spacing:.2em; font-weight:600;
+  color:var(--ink-dim); background:rgba(255,255,255,.02); border:1px solid var(--line);
+  padding:13px 12px; text-transform:uppercase; transition:.18s ease;
+  clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);
+}
+.btn:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.5); }
+.btn:active{ transform:translateY(1px); }
+.btn.primary{
+  color:var(--ink-deep); background:var(--accent); border-color:var(--accent);
+  box-shadow:0 0 18px rgba(var(--accent-rgb),.4); flex:1; font-size:13px;
+  text-shadow:none; transition:background .4s ease, box-shadow .4s ease, color .4s ease;
+}
+.btn.primary:hover{ filter:brightness(1.12); color:var(--ink-deep); }
+.btn.danger{ color:var(--err); border-color:rgba(224,106,106,.4); }
+.btn.danger:hover{ color:var(--ink-bright); border-color:var(--err); box-shadow:0 0 14px rgba(224,106,106,.3); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+.hint{ font-size:8.5px; letter-spacing:.1em; color:var(--ink-faint); line-height:1.6; margin-top:2px; }
+
+/* ---------- 9b. MODO MINIMALISTA — núcleo no centro + duas gavetas ----------
+   Sem markup duplicado: as gavetas SÃO os painéis que já existem — o
+   TRANSCRIPT (com suas abas e sessões) vira a gaveta esquerda e a COLUNA
+   DIREITA (skills) vira a da direita, apenas reposicionados via
+   position:fixed e revelados pelas classes .dock-l / .dock-r no <body>.
+   Toda a lógica de abas, skills e sessões continua sendo a mesma. */
+.minimal-toggle{
+  position:fixed; top:66px; right:14px; z-index:82;
+  font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.18em;
+  text-transform:uppercase; cursor:pointer; color:var(--ink-dim);
+  background:rgba(20,18,12,.72); border:1px solid var(--line); padding:7px 11px;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  transition:.18s ease;
+}
+.minimal-toggle:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.5); }
+body.minimal .minimal-toggle{ top:14px; opacity:.4; }
+body.minimal .minimal-toggle:hover{ opacity:1; }
+
+/* estrutura: some tudo que não é o núcleo */
+body.minimal .topbar{ display:none; }
+body.minimal .grid{ grid-template-rows:0px 1fr 72px; }
+body.minimal .stage{ grid-template-columns:1fr; gap:0; }
+body.minimal .stage > .core{ grid-column:1; }
+body.minimal .col.left{ display:none; }
+body.minimal .col.right > .io{ display:none; }
+body.minimal .console{ grid-template-columns:1fr; }
+body.minimal .console > .controls{ grid-column:1; }
+/* a voz continua animando (medidor + estado), só que discreta */
+body.minimal #state{ font-size:15px; letter-spacing:.24em; opacity:.6; }
+body.minimal .meter-cap{ display:none; }
+body.minimal .meter-track{ max-width:320px; height:5px; }
+
+/* as duas gavetas (mesmos painéis, fora do fluxo) */
+body.minimal .transcript,
+body.minimal .col.right{
+  position:fixed; top:52px; bottom:14px; width:var(--dock-w); z-index:75;
+  opacity:0; pointer-events:none; overflow:auto;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), opacity .25s ease;
+}
+/* o transcript já rola por dentro (#log/#chg/#debug/#convs) — sem scroll duplo */
+body.minimal .transcript{ left:12px; overflow:hidden; transform:translateX(calc(-100% - 20px)); }
+
+/* alça de redimensionamento da gaveta esquerda (Etapa 1). Só existe no
+   minimalista: no painel completo a largura vem do grid, não de --dock-w.
+   .transcript já é position:relative (regra da linha ~320), então basta
+   ancorar aqui dentro. Fica encostada por dentro da borda direita — não
+   nas bordas 0/100% exatas — pra escapar dos dois cantos chanfrados do
+   .panel (clip-path corta topo-direita e baixo-direita). Faixa visível de
+   ~6px (::after), área de clique de ~14px (o próprio elemento). */
+.dock-grip{ display:none; }
+body.minimal .dock-grip{
+  display:block; position:absolute; top:var(--chamf); bottom:var(--chamf); right:1px; width:14px;
+  z-index:3; cursor:col-resize; touch-action:none;
+}
+.dock-grip::after{
+  content:""; position:absolute; top:0; bottom:0; left:50%; width:6px; margin-left:-3px;
+  background:transparent; transition:background .18s ease;
+}
+.dock-grip:hover::after, .dock-grip.dragging::after{ background:rgba(var(--accent-rgb),.55); }
+
+/* seletores de modelo/esforço da gaveta CONVERSA — só aparecem no
+   minimalista, onde a topbar (com os originais) está escondida */
+.dock-selects{ display:none; }
+body.minimal .dock-selects{ display:flex; gap:8px; flex:0 0 auto; padding-top:9px; }
+body.minimal .dock-selects .select{ flex:1; }
+body.minimal .dock-selects select{ width:100%; }
+body.minimal .col.right { right:12px; transform:translateX(calc(100% + 20px)); }
+body.minimal.dock-l .transcript,
+body.minimal.dock-r .col.right{ transform:none; opacity:1; pointer-events:auto; }
+
+/* alças nas bordas — único markup novo do modo */
+.dock-tab{
+  display:none; position:fixed; top:50%; z-index:80; align-items:center; gap:8px;
+  writing-mode:vertical-rl; cursor:pointer;
+  font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ink-faint);
+  background:rgba(20,18,12,.72); border:1px solid var(--line); padding:14px 8px;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), color .18s ease, border-color .18s ease;
+}
+body.minimal .dock-tab{ display:inline-flex; }
+.dock-tab:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.5); }
+.dock-tab.on{ color:var(--accent); border-color:rgba(var(--accent-rgb),.45); }
+.dock-tab.nu::after{                     /* novidade enquanto estava recolhida */
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--amber); box-shadow:0 0 7px var(--amber); animation:pulsedot 1.6s ease-in-out infinite;
+}
+.dock-tab.l{ left:0; transform:translateY(-50%); }
+.dock-tab.r{ right:0; transform:translateY(-50%); }
+body.minimal.dock-l .dock-tab.l{ transform:translate(calc(var(--dock-w) + 18px), -50%); }
+body.minimal.dock-r .dock-tab.r{ transform:translate(calc(-1 * var(--dock-w) - 18px), -50%); }
+
+/* botão de falar: discreto na aparência, generoso na área de clique
+   (o palco inteiro também dispara o mesmo onMain — ver seção 7b do JS) */
+body.minimal .controls{ flex-direction:row; justify-content:center; align-items:center; gap:10px; }
+body.minimal .controls #modeToggle, body.minimal .controls #pause,
+body.minimal .controls #newconv, body.minimal .controls #stop,
+body.minimal .controls .hint{ display:none; }
+body.minimal .controls #main{
+  flex:0 0 auto; min-width:128px; min-height:44px; font-size:9.5px; letter-spacing:.26em;
+  color:var(--ink-dim); background:rgba(20,18,12,.6); border:1px solid var(--line);
+  box-shadow:none; text-shadow:none;
+}
+body.minimal .controls #main:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.55); }
+body.minimal[data-state="listen"] .controls #main{ color:var(--accent); border-color:rgba(var(--accent-rgb),.6); }
+
+/* legenda da última frase — aparece uns segundos e some (só no minimalista).
+   Fica calada enquanto a resposta ao vivo (#liveResp) está ocupando a faixa. */
+.caption{ display:none; }
+body.minimal .caption{
+  display:block; position:absolute; left:8%; right:8%; bottom:12px; z-index:4;
+  text-align:center; font-size:12px; line-height:1.5; color:var(--ink);
+  pointer-events:none; opacity:0; transition:opacity .4s ease;
+  text-shadow:0 0 12px rgba(0,0,0,.85);
+}
+body.minimal .caption.on{ opacity:1; }
+body.minimal .caption.eu{ color:var(--teal); }
+body.minimal .caption.claude{ color:var(--ink-bright); }
+body.minimal .caption.sys{ color:var(--err); }
+body.minimal .live-resp:not([hidden]) ~ .caption{ opacity:0; }
+/* Etapa 5: com a gaveta esquerda aberta a legenda é eco do que já está sendo
+   lido linha a linha ali do lado — duas cópias da mesma frase na tela. */
+body.minimal.dock-l .caption{ display:none; }
+
+/* ---------- 9b-bis. RAIL VERTICAL DE VISÕES + CABEÇALHO (Etapa 2) ----------
+   As 5 abas (TRANSCRIPT/ALTERAÇÕES/DEBUG/CONVERSAS/RELATÓRIOS) não cabem
+   mais na horizontal com a gaveta larga da Etapa 1 e viravam scroll
+   escondido — e ficavam coladas na fileira de sessões (.sessiontabs, 9d),
+   duas abas de significados diferentes uma em cima da outra. Só no
+   minimalista, #txPanel vira grid de 2 colunas: h3.tabs (as abas) ocupa a
+   coluna estreita da esquerda como um rail de ícones (grid-row:1/-1), e
+   todo o resto (cabeçalho da visão, sessões, conteúdo, seletores) cai na
+   coluna de conteúdo. #dockGrip (Etapa 1) é position:absolute — grid não
+   o enquadra em nenhuma célula, continua flutuando na borda direita do
+   painel inteiro como já fazia. Só uma das #log/#chg/#debug/#convs/#reps
+   existe como caixa por vez (as outras têm [hidden] → display:none, regra
+   já existente na F6), então a 3ª linha (1fr) sempre recebe a visão ativa,
+   qualquer que seja ela, e é ela quem estica e rola por dentro. */
+body.minimal #txPanel{
+  display:grid;
+  grid-template-columns:104px 1fr;
+  grid-template-rows:auto auto 1fr auto;
+  column-gap:12px;
+}
+body.minimal #txPanel > h3.tabs{
+  grid-column:1; grid-row:1 / -1;
+  display:flex; flex-direction:column; align-items:stretch;
+  gap:3px !important; overflow-y:auto; overflow-x:hidden;
+  margin:0; padding-right:8px; border-right:1px solid var(--line);
+}
+/* neutraliza o que .panel > h3 (seção 3.) aplica pensando num título
+   horizontal — a barra dourada de ::before não faz sentido virada de lado
+   num rail, e não há mais o que recolher (JS já excluía o txPanel do clique). */
+body.minimal #txPanel > h3.tabs::before{ content:none; }
+body.minimal #txPanel > h3.tabs{ cursor:default; }
+/* a rolagem de sobra vira vertical aqui (a base em 403 pensa em barra horizontal) */
+body.minimal #txPanel > h3.tabs::-webkit-scrollbar{ width:4px; height:auto; }
+
+/* cada aba vira um bloco: ícone em cima (::before por atributo, sem tocar
+   no markup), rótulo embaixo, quebrando linha. Aba ativa ganha uma barra
+   dourada na borda ESQUERDA (o border-bottom de sempre continua valendo
+   no painel completo, ver regra base de .tab na seção "abas"). */
+body.minimal #txPanel .tab{
+  flex:0 0 auto; width:100%; display:flex; flex-direction:column; align-items:center;
+  gap:4px; padding:10px 4px; text-align:center; white-space:normal; line-height:1.25;
+  font-size:8.5px; letter-spacing:.04em; border-bottom:none;
+  border-left:2px solid transparent;
+}
+body.minimal #txPanel .tab::before{ font-size:16px; line-height:1; }
+body.minimal #txPanel .tab[data-tab="log"]::before  { content:"▤"; }
+body.minimal #txPanel .tab[data-tab="chg"]::before  { content:"±"; }
+body.minimal #txPanel .tab[data-tab="debug"]::before{ content:"⌗"; }
+body.minimal #txPanel .tab[data-tab="convs"]::before{ content:"⟲"; }
+body.minimal #txPanel .tab[data-tab="reps"]::before { content:"◳"; }
+body.minimal #txPanel .tab.on{ border-left-color:var(--accent); background:rgba(var(--accent-rgb),.07); }
+
+/* cabeçalho da visão ativa — só existe no minimalista (no painel completo
+   o h3 de sempre já cumpre esse papel; some por padrão pra não vazar lá). */
+.dock-head{ display:none; }
+body.minimal .dock-head{
+  grid-column:2; display:flex; align-items:center; gap:10px;
+  padding-bottom:9px; margin-bottom:2px; border-bottom:1px solid var(--line);
+}
+body.minimal .dock-head .dh-title{
+  font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-dim);
+}
+/* #tabTag migra pra dentro do cabeçalho via JS (setMinimal, seção 7b) — a
+   regra ".panel > h3 .tag" (seção 3.) não alcança mais o elemento depois
+   da mudança de pai, então repete a mesma aparência aqui. */
+body.minimal .dock-head .tag{
+  margin-left:auto; font-size:8.5px; letter-spacing:.18em;
+  color:var(--accent); opacity:.7; flex:0 0 auto;
+}
+
+body.minimal #txPanel > .sessiontabs{ grid-column:2; }
+/* rótulo p/ desfazer a confusão com as abas de visão do rail (isto aqui são
+   sessões paralelas, coisa diferente) — ::before evita markup novo */
+body.minimal .sessiontabs::before{
+  content:"SESSÕES"; flex:0 0 100%; font-size:10px; letter-spacing:.18em;
+  color:var(--ink-faint); text-transform:uppercase;
+}
+body.minimal #txPanel > #log,
+body.minimal #txPanel > #chg,
+body.minimal #txPanel > #debug,
+body.minimal #txPanel > #convs,
+body.minimal #txPanel > #reps{ grid-column:2; min-height:0; }
+body.minimal #txPanel > .dock-selects{ grid-column:2; }
+
+/* ---------- 9b-ter. ESCALA TIPOGRÁFICA, DENSIDADE, DOURADO (Etapa 3) ----------
+   A largura ganha na Etapa 1 sobrava por baixo de letras pequenas demais
+   pro conforto de leitura. Sobe a escala do corpo só na gaveta (o painel
+   completo tem rodapé de altura fixa — mexer na fonte dele quebraria o
+   layout), aperta o tracking do texto corrido (os rótulos/títulos em caixa
+   alta mantêm o deles porque já declaram letter-spacing próprio — a regra
+   ambiente abaixo só alcança quem não declara o seu) e reduz o dourado
+   decorativo que não carrega nenhum estado. */
+body.minimal #txPanel{ letter-spacing:.01em; }
+body.minimal #log{ font-size:13.5px; }
+body.minimal #debug{ font-size:12.5px; }
+body.minimal #chg{ font-size:12.5px; }
+body.minimal .chg-diff{ font-size:11.5px; }
+body.minimal #convs, body.minimal #reps{ font-size:13px; }
+
+/* nada de texto abaixo de 10px na gaveta — rótulos que eram 8.5/9/9.5px
+   sobem pro piso legível (fora da gaveta continuam do tamanho de sempre). */
+body.minimal #txPanel .tab{ font-size:10px; }
+body.minimal .dock-head .tag{ font-size:10px; }
+body.minimal .chg-row .ck{ font-size:10px; }
+body.minimal .chg-diff .df-more{ font-size:10px; }
+
+/* contraste: --ink-faint sozinho fica escuro demais nas fontes maiores de
+   cima; --ink-faint-2 é o meio-termo só pros textos pequenos da gaveta (o
+   resto do HUD, fora dela, continua com --ink-faint sem alteração). */
+body.minimal .line.sys .txt{ color:var(--ink-faint-2); }
+body.minimal .dl .dt{ color:var(--ink-faint-2); }
+body.minimal .conv-item .cmeta{ font-size:10px; color:var(--ink-faint-2); }
+body.minimal .rep-item .rmeta{ font-size:10px; color:var(--ink-faint-2); }
+body.minimal .chg-sum{ font-size:10px; color:var(--ink-faint-2); }
+body.minimal .hint{ color:var(--ink-faint-2); }
+
+/* disciplina do dourado: marcador de lista e realce de hover não carregam
+   nenhum estado — viravam ruído dourado espalhado pela gaveta inteira. O
+   dourado fica reservado só pra aba ativa (regra .tab.on ali em cima),
+   #tabTag, o cursor vivo (.line .cur, seção 8) e a linha de atividade em
+   andamento (.line.activity.cur, seção F1) — os únicos pontos "ao vivo". */
+body.minimal .conv-item::before{ color:var(--ink-faint-2); }
+body.minimal .rep-item::before{ color:var(--ink-faint-2); }
+body.minimal .conv-item:hover,
+body.minimal .rep-item:hover,
+body.minimal .chg-row:hover{ background:rgba(255,255,255,.04); }
+
+/* densidade: confortável (regras acima) é o padrão; body.dense aperta
+   padding/gap/line-height pra caber mais linha sem perder o tamanho de
+   fonte novo. Botão em #dockHead — estilo dos .btn do HUD, só que numa
+   escala menor (a classe .btn ficaria grande demais espremida no cabeçalho
+   da visão ao lado do título e da tag). */
+.dh-btn{
+  font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; cursor:pointer; color:var(--ink-faint-2);
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  padding:4px 9px; transition:.15s ease; flex:0 0 auto;
+  clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+}
+.dh-btn:hover{ color:var(--ink-bright); border-color:rgba(255,255,255,.28); }
+.dh-btn.on{ color:var(--ink-bright); background:rgba(255,255,255,.07); }
+
+body.minimal.dense #log{ gap:2px; line-height:1.35; }
+body.minimal.dense #debug{ line-height:1.25; }
+body.minimal.dense .chg-row{ padding:3px 8px; }
+body.minimal.dense .conv-item,
+body.minimal.dense .rep-item{ padding:5px 8px; }
+body.minimal.dense #txPanel .tab{ padding:6px 4px; }
+body.minimal.dense .dock-head{ padding-bottom:5px; margin-bottom:1px; }
+body.minimal.dense .sessiontabs{ margin-bottom:5px; }
+
+/* ---------- 9b-quinquies. RITMO DO TRANSCRIPT (Etapa 5) ----------
+   A coluna fixa de 64px do rótulo (.who) roubava largura de toda linha e o
+   transcript virava parede de texto. Na gaveta o turno vira bloco: rótulo
+   em cima, texto embaixo em largura cheia, e uma faixa de 2px colorida por
+   autor faz a leitura de quem fala sem precisar ler o rótulo. Só no
+   minimalista — o painel completo mantém as duas colunas de sempre. */
+body.minimal #log .line{
+  display:block; border-left:2px solid var(--line);
+  padding-left:9px; margin-bottom:9px;
+}
+body.minimal #log .line .who{
+  display:block; flex:none; font-size:10px; letter-spacing:.16em;
+  padding-top:0; margin-bottom:3px;
+}
+body.minimal #log .line .txt{ display:block; }
+body.minimal #log .line.eu{ border-left-color:var(--teal); }
+body.minimal #log .line.claude{ border-left-color:var(--green); }
+body.minimal #log .line.sys{ border-left-color:var(--err); }
+/* as etapas de progresso (F1) são um fio contínuo, não turnos: indentadas,
+   sem faixa e sem repetir "CLAUDE" a cada linha, elas param de competir com
+   a conversa em volta. */
+body.minimal #log .line.activity{
+  border-left-color:transparent; margin-left:16px; margin-bottom:2px;
+}
+body.minimal #log .line.activity .who{ display:none; }
+body.minimal.dense #log .line{ margin-bottom:6px; }
+
+/* ---------- 9b-quater. BUSCA, FILTRO E CHIPS DE NÍVEL (Etapa 4) ----------
+   Log longo em coluna estreita só se navegava rolando. O campo filtra a
+   VISÃO ATIVA escondendo o que não casa; os chips ligam/desligam níveis do
+   DEBUG. Tudo escopado em body.minimal — inclusive o .nomatch: assim, se o
+   usuário voltar pro painel completo com um filtro escrito, nada some lá
+   (o campo nem aparece fora da gaveta, ninguém saberia o porquê). */
+.dh-find, .dh-count, .dbg-levels{ display:none; }
+body.minimal .dock-head .dh-find{
+  display:block; flex:1 1 90px; min-width:0; margin-left:4px;
+  font-family:var(--mono); font-size:11px; color:var(--ink-bright);
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  padding:3px 8px; outline:none;
+}
+body.minimal .dock-head .dh-find:focus{ border-color:rgba(var(--accent-rgb),.6); }
+body.minimal .dock-head .dh-find::placeholder{ color:var(--ink-faint); }
+body.minimal .dock-head .dh-find::-webkit-search-cancel-button{ filter:grayscale(1) opacity(.5); }
+body.minimal .dock-head .dh-count{
+  display:block; flex:0 0 auto; font-family:var(--mono); font-size:10px;
+  letter-spacing:.08em; color:var(--ink-faint-2); font-variant-numeric:tabular-nums;
+}
+body.minimal .dock-head .dh-count[hidden]{ display:none; }
+body.minimal .nomatch{ display:none !important; }
+
+/* os chips quebram pra linha de baixo do cabeçalho (flex-basis:100%) em vez
+   de espremer o título e a busca; o #dockHead ganhou wrap por isso. */
+body.minimal .dock-head{ flex-wrap:wrap; row-gap:7px; }
+body.minimal .dock-head .dbg-levels{
+  display:flex; flex:0 0 100%; gap:4px; flex-wrap:wrap;
+}
+body.minimal .dock-head .dbg-levels[hidden]{ display:none; }
+.dbg-chip{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; cursor:pointer;
+  color:var(--ink-bright); background:rgba(255,255,255,.05);
+  border:1px solid var(--line); padding:2px 7px; transition:.15s ease;
+}
+.dbg-chip:hover{ border-color:rgba(255,255,255,.28); }
+.dbg-chip.off{ color:var(--ink-faint); background:transparent; text-decoration:line-through; }
+/* nível desligado some da lista — mesma escopagem em body.minimal do .nomatch */
+body.minimal #debug.hide-info .dl.info,
+body.minimal #debug.hide-ok   .dl.ok,
+body.minimal #debug.hide-warn .dl.warn,
+body.minimal #debug.hide-err  .dl.err,
+body.minimal #debug.hide-net  .dl.net,
+body.minimal #debug.hide-step .dl.step{ display:none; }
+
+/* ---------- 9c. CHAT POR TEXTO (item 4) — alterna com voz p/ testar via navegador ---------- */
+#textForm{ display:flex; gap:8px; flex:0 0 auto; align-items:flex-end; }
+#textForm[hidden]{ display:none !important; }
+#textForm textarea{
+  flex:1; min-width:0; font-family:var(--mono); font-size:13px; line-height:1.4; color:var(--ink-bright);
+  background:rgba(255,255,255,.03); border:1px solid var(--line); padding:9px 11px;
+  outline:none; resize:none; overflow-y:auto; max-height:72px;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+}
+#textForm textarea:focus{ border-color:rgba(var(--accent-rgb),.6); }
+#textForm textarea::placeholder{ color:var(--ink-faint); }
+#textForm button{ padding:9px 14px; font-size:11px; }
+
+/* modal de composição — abre ao focar a caixa de texto pequena */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(4,6,7,.72); backdrop-filter:blur(2px);
+  display:flex; align-items:center; justify-content:center; z-index:90;  /* acima das gavetas/alças (9b) */
+}
+.modal-overlay[hidden]{ display:none !important; }
+.modal-box{
+  width:min(720px,92vw); background:#0a0f12; border:1px solid var(--line);
+  padding:16px; display:flex; flex-direction:column; gap:12px;
+  box-shadow:0 0 40px rgba(0,0,0,.6);
+}
+.modal-head{ display:flex; gap:10px; align-items:center; }
+.modal-head #modalClose{ margin-left:auto; }
+.modal-box textarea{
+  width:100%; height:42vh; font-family:var(--mono); font-size:14px; line-height:1.5;
+  color:var(--ink-bright); background:rgba(255,255,255,.03); border:1px solid var(--line);
+  padding:12px; outline:none; resize:vertical;
+}
+.modal-box textarea:focus{ border-color:rgba(var(--accent-rgb),.6); }
+.modal-foot{ display:flex; justify-content:flex-end; }
+
+/* visor de relatórios (8e) — reusa a estética do modal; o corpo é um iframe
+   com o HTML auto-contido servido por GET /reports/<arquivo> */
+.rep-box{ width:min(1180px,95vw); height:92vh; }
+.rep-box .rep-title{
+  font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--accent);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;
+}
+.rep-box .modal-head .btn{ padding:8px 12px; font-size:10px; text-decoration:none; }
+.rep-frame{ flex:1 1 auto; width:100%; min-height:0; border:1px solid var(--line); background:#0a0f12; }
+
+/* ---------- 9d. ABAS DE SESSÃO (sessões paralelas) — barra de abas vivas,
+   cada uma com seu processo `claude` isolado (sid). Distinta das abas de
+   VIEW (TRANSCRIPT/DEBUG/CONVERSAS) acima — .stab != .tab de propósito. */
+.sessiontabs{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; flex:0 0 auto; }
+.stab{
+  display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+  font-family:var(--mono); font-size:10px; letter-spacing:.08em; font-weight:600;
+  color:var(--ink-faint); background:rgba(255,255,255,.02); border:1px solid var(--line);
+  padding:5px 10px; transition:.15s ease;
+  clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);
+}
+.stab:hover{ color:var(--ink-bright); border-color:rgba(var(--accent-rgb),.5); }
+.stab.on{ color:var(--ink-bright); border-color:var(--accent); background:rgba(var(--accent-rgb),.1); }
+.stab.unread::after{ content:""; width:6px; height:6px; border-radius:50%; background:var(--amber); box-shadow:0 0 6px var(--amber); }
+.stab .sdot{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; background:var(--ink-faint); }
+.stab .sdot.listen{ background:var(--teal); box-shadow:0 0 6px var(--teal); }
+.stab .sdot.think{ background:var(--amber); box-shadow:0 0 6px var(--amber); }
+.stab .sdot.speak{ background:var(--green); box-shadow:0 0 6px var(--green); animation:pulsedot .8s ease-in-out infinite; }
+/* aba CELULAR (espelho da sessão do celular — somente leitura) */
+.stab.mirror .stitulo::before{ content:'📱 '; font-size:10px; }
+.stab.splus{ font-size:13px; padding:5px 12px; color:var(--accent); }
+.stab.splus:disabled{ opacity:.35; cursor:not-allowed; }
+.stab .sclose{ font-style:normal; opacity:.55; padding:0 1px; transition:.15s ease; }
+.stab .sclose:hover{ opacity:1; color:var(--err); }
+
+/* ---------- 9. RESPONSIVO (empilha abaixo de ~1100px) ---------- */
+@media (max-width:1100px){
+  body{ overflow:auto; }
+  .grid{ height:auto; min-height:100vh; grid-template-rows:auto auto auto; }
+  .stage{ grid-template-columns:1fr; }
+  /* colunas únicas aqui: solta os pins de linha (9./9b.) senão .core/.controls
+     forçam uma coluna implícita extra e quebram o empilhamento vertical */
+  .stage > .col.left, .stage > .core, .stage > .col.right{ grid-column:auto; }
+  .console > .transcript, .console > .controls{ grid-column:auto; }
+  .core{ order:-1; min-height:64vh; }
+  .canvas-wrap{ min-height:380px; }
+  .col{ overflow:visible; }
+  .console{ grid-template-columns:1fr; }
+  #log{ max-height:200px; }
+  .topbar{ flex-wrap:wrap; padding:10px 14px; height:auto; }
+  .status-row{ order:3; width:100%; }
+}
+@media (max-width:560px){
+  .skills{ grid-template-columns:1fr; }
+  .clock .time{ font-size:18px; }
+}
+</style>
+</head>
+<body data-state="idle">
+
+  <!-- Camadas de FX do fundo -->
+  <div class="floor" aria-hidden="true"></div>
+  <div class="fx vign" aria-hidden="true"></div>
+  <div class="fx scan" aria-hidden="true"></div>
+
+  <!-- item 1: fora do .grid de propósito — some tudo ao redor, este botão fica -->
+  <button id="minimalToggle" class="minimal-toggle" type="button">MINIMALISTA</button>
+
+  <!-- alças das gavetas do modo minimalista: abrem/fecham os painéis que já
+       existem (transcript à esquerda, skills à direita), sem duplicá-los -->
+  <button id="dockL" class="dock-tab l" type="button" title="conversa · transcript, alterações, debug e histórico">CONVERSA</button>
+  <button id="dockR" class="dock-tab r" type="button" title="skills">SKILLS</button>
+
+  <div class="grid">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="topbar">
+      <div class="brand">
+        <img class="mark" src="assets/hive-mind-logo.webp" alt="Hive Mind" aria-hidden="true">
+        <div>
+          <div class="t">C.O.R.E.</div>
+          <div class="s">CLAUDE OBSIDIAN REASONING ENGINE</div>
+        </div>
+      </div>
+
+      <!-- fila de status; #liveStat reflete o estado atual e muda de cor -->
+      <nav class="status-row" aria-label="status do sistema">
+        <span class="st on"><i class="dot"></i>CORE</span>
+        <span class="st" id="liveStat"><i class="dot"></i><span class="lbl">IDLE</span></span>
+        <span class="st on"><i class="dot"></i>LINK</span>
+        <span class="st on"><i class="dot"></i>ONLINE</span>
+        <span class="st on"><i class="dot"></i>VAULT</span>
+        <span class="st on"><i class="dot"></i>ALIVE</span>
+      </nav>
+
+      <div class="tools">
+        <div class="clock">
+          <div class="time" id="clock">00:00:00</div>
+          <div class="date" id="date">—</div>
+        </div>
+        <div class="select">
+          <select id="model" aria-label="modelo">
+            <option>FABLE 5</option>
+            <option>OPUS 5</option>
+            <option>SONNET 5</option>
+            <option>HAIKU 4.5</option>
+          </select>
+        </div>
+        <div class="select">
+          <select id="effort" aria-label="esforço">
+            <option value="">PADRÃO</option>
+            <option value="low">LOW</option>
+            <option value="medium">MEDIUM</option>
+            <option value="high">HIGH</option>
+            <option value="xhigh">XHIGH</option>
+            <option value="max">MAX</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ PALCO (3 colunas) ============ -->
+    <div class="stage">
+
+      <!-- ----- COLUNA ESQUERDA (PLACEHOLDER — dados fictícios; virão depois) ----- -->
+      <aside class="col left">
+        <!-- NOTA: toda esta coluna é placeholder. Os números/listas abaixo são
+             mockados e serão substituídos pela ponte local (vault/tarefas). -->
+        <section class="panel">
+          <h3>SYSTEM VITALS</h3>
+          <div class="metric"><div class="m-label">TAREFAS PENDENTES</div><div class="m-row"><span class="m-num">12</span><span class="spark" data-spark="a"></span></div></div>
+          <div class="metric"><div class="m-label">HÁBITOS HOJE</div><div class="m-row"><span class="m-num">4/6</span><span class="spark" data-spark="b"></span></div></div>
+          <div class="metric"><div class="m-label">XP SEMANA</div><div class="m-row"><span class="m-num">1.2K</span><span class="spark" data-spark="c"></span></div></div>
+          <div class="metric"><div class="m-label">JANELA CLAUDE</div><div class="m-row"><span class="m-num" id="ctxNum">18%</span><span class="spark" data-spark="d"></span></div></div>
+        </section>
+
+        <section class="panel">
+          <h3>DIRECTIVES</h3>
+          <ul class="directives">
+            <li class="done"><i class="cbx"></i>Sincronizar vault Obsidian</li>
+            <li class="done"><i class="cbx"></i>Compilar resumo da inbox</li>
+            <li><i class="cbx"></i>Fechar relatório ForestOS</li>
+            <li><i class="cbx"></i>Revisar hábitos da noite</li>
+            <li><i class="cbx"></i>Planejar blocos de amanhã</li>
+          </ul>
+        </section>
+
+        <section class="panel">
+          <h3>VAULT <span class="tag">RECENTES</span></h3>
+          <ul class="vault">
+            <li><span class="vt">Reunião ForestOS</span><span class="vtime">12m</span></li>
+            <li><span class="vt">Ideias · C.O.R.E.</span><span class="vtime">2h</span></li>
+            <li><span class="vt">Hábitos · Junho</span><span class="vtime">5h</span></li>
+            <li><span class="vt">Contrato investidor</span><span class="vtime">1d</span></li>
+            <li><span class="vt">Arquitetura do hub</span><span class="vtime">2d</span></li>
+          </ul>
+        </section>
+      </aside>
+
+      <!-- ----- COLUNA CENTRAL: o NÚCLEO (grafo 3D) ----- -->
+      <section class="core">
+        <div class="canvas-wrap">
+          <canvas id="core-canvas"></canvas>
+          <span class="bracket tl"></span><span class="bracket tr"></span>
+          <span class="bracket bl"></span><span class="bracket br"></span>
+          <span class="corelabel">NÚCLEO · CLAUDE</span>
+          <span class="corelabel r">SYNC 0xA3</span>
+          <div id="step"></div>
+          <!-- overlays de progresso (F2/F3/F4) — só a aba ativa os alimenta -->
+          <div id="errBanner" class="err-banner" hidden></div>
+          <div id="planPanel" class="plan-panel" hidden></div>
+          <div id="liveResp" class="live-resp" hidden><span class="lr-think"></span><span class="lr-txt"></span><i class="cur"></i></div>
+          <!-- irmão DEPOIS de #liveResp de propósito: o CSS silencia a legenda
+               enquanto a resposta ao vivo está ocupando a mesma faixa -->
+          <div id="caption" class="caption"></div>
+          <button id="cancelBtn" class="cancel-btn" type="button" hidden>✕ CANCELAR</button>
+        </div>
+        <div class="readout">
+          <div id="state">ONLINE</div>
+          <div class="meter-track"><div id="meter"></div></div>
+          <div class="meter-cap"><span>MIC · LVL</span><span>AUDIO I/O</span></div>
+        </div>
+      </section>
+
+      <!-- ----- COLUNA DIREITA: COMMAND DECK + AUDIO I/O ----- -->
+      <aside class="col right">
+        <section class="panel deck">
+          <h3>COMMAND DECK <span class="tag">SKILLS</span></h3>
+          <div class="skills" id="skills"><!-- preenchido via JS --></div>
+        </section>
+
+        <section class="panel io" id="ioBlock">
+          <h3>AUDIO I/O</h3>
+          <div class="io-row"><span class="io-led" id="ttsLed"></span><span id="tts">TTS · STANDBY</span></div>
+          <div class="io-keys">
+            <div><kbd>ESPAÇO</kbd>pausar / retomar fala</div>
+            <div><kbd>ENTER</kbd>enviar</div>
+            <div><kbd>ESC</kbd>encerrar sessão</div>
+          </div>
+          <div class="hint" id="speakStatus"></div>
+          <button id="soundToggle" class="btn sound-toggle" type="button">SOM PROGRESSO: —</button>
+        </section>
+      </aside>
+    </div>
+
+    <!-- ============ RODAPÉ: TRANSCRIPT + CONTROLES ============ -->
+    <footer class="console">
+      <section class="panel transcript" id="txPanel">
+        <h3 class="tabs">
+          <button class="tab on" data-tab="log">TRANSCRIPT</button>
+          <button class="tab" data-tab="chg">ALTERAÇÕES</button>
+          <button class="tab" data-tab="debug">DEBUG</button>
+          <button class="tab" data-tab="convs">CONVERSAS</button>
+          <button class="tab" data-tab="reps">RELATÓRIOS</button>
+          <span class="tag" id="tabTag">LIVE</span>
+        </h3>
+        <!-- cabeçalho da visão ativa (Etapa 2, só aparece no rail do minimalista);
+             #tabTag muda de casa pra cá via JS quando body.minimal liga (setMinimal) -->
+        <div class="dock-head" id="dockHead"><span class="dh-title" id="dockTitle">TRANSCRIPT</span><input id="dockFind" class="dh-find" type="search" placeholder="buscar…" autocomplete="off"><span id="dockCount" class="dh-count" hidden></span><button id="densToggle" class="dh-btn" type="button">DENSIDADE: CONFORTO</button><div id="dbgLevels" class="dbg-levels" hidden><button class="dbg-chip" data-lv="info" type="button">INFO</button><button class="dbg-chip" data-lv="ok" type="button">OK</button><button class="dbg-chip" data-lv="warn" type="button">WARN</button><button class="dbg-chip" data-lv="err" type="button">ERR</button><button class="dbg-chip" data-lv="net" type="button">NET</button><button class="dbg-chip" data-lv="step" type="button">STEP</button></div></div>
+        <div class="sessiontabs" id="sessiontabs"></div>
+        <div id="log" role="log" aria-live="polite"></div>
+        <div id="chg" hidden></div>
+        <div id="debug" hidden></div>
+        <div id="convs" hidden></div>
+        <div id="reps" hidden></div>
+        <!-- modelo/esforço na gaveta CONVERSA: a topbar (com os seletores
+             originais) some no minimalista — estes espelham os mesmos valores -->
+        <div class="dock-selects">
+          <div class="select">
+            <select id="dockModel" aria-label="modelo">
+              <option>FABLE 5</option>
+              <option>OPUS 5</option>
+              <option>SONNET 5</option>
+              <option>HAIKU 4.5</option>
+            </select>
+          </div>
+          <div class="select">
+            <select id="dockEffort" aria-label="esforço">
+              <option value="">PADRÃO</option>
+              <option value="low">LOW</option>
+              <option value="medium">MEDIUM</option>
+              <option value="high">HIGH</option>
+              <option value="xhigh">XHIGH</option>
+              <option value="max">MAX</option>
+            </select>
+          </div>
+        </div>
+        <!-- alça de largura da gaveta (Etapa 1, só ativa em body.minimal via CSS 9b) -->
+        <div id="dockGrip" class="dock-grip" aria-hidden="true"></div>
+      </section>
+      <div class="controls">
+        <button id="modeToggle" class="btn" type="button">MODO TEXTO</button>
+        <form id="textForm" hidden>
+          <textarea id="textInput" placeholder="Digite… (Enter envia, Shift+Enter quebra linha)" autocomplete="off" rows="1"></textarea>
+          <button id="textSend" type="submit" class="btn primary">ENVIAR</button>
+        </form>
+        <button id="main" class="btn primary">INICIAR</button>
+        <button id="pause" class="btn">PAUSAR</button>
+        <button id="newconv" class="btn">NOVA CONVERSA</button>
+        <button id="stop" class="btn danger">ENCERRAR</button>
+        <div class="hint">ESPAÇO = pausar/retomar fala<br>ENTER = enviar · ESC = encerrar</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ============ MODAL — compor prompt em tela cheia ============ -->
+  <div class="modal-overlay" id="textModalOverlay" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="compor prompt">
+      <div class="modal-head">
+        <div class="select">
+          <select id="modalModel" aria-label="modelo">
+            <option>FABLE 5</option>
+            <option>OPUS 5</option>
+            <option>SONNET 5</option>
+            <option>HAIKU 4.5</option>
+          </select>
+        </div>
+        <div class="select">
+          <select id="modalEffort" aria-label="esforço">
+            <option value="">PADRÃO</option>
+            <option value="low">LOW</option>
+            <option value="medium">MEDIUM</option>
+            <option value="high">HIGH</option>
+            <option value="xhigh">XHIGH</option>
+            <option value="max">MAX</option>
+          </select>
+        </div>
+        <button id="modalClose" class="btn" type="button">FECHAR</button>
+      </div>
+      <textarea id="modalTextInput" placeholder="Digite… (Enter envia, Shift+Enter quebra linha, ESC fecha)" autocomplete="off"></textarea>
+      <div class="modal-foot">
+        <button id="modalSend" type="button" class="btn primary">ENVIAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VISOR DE RELATÓRIOS (8e) — abre sozinho quando o Claude
+       salva um relatório novo em _agentes/relatorios/ do vault ============ -->
+  <div class="modal-overlay" id="repOverlay" hidden>
+    <div class="modal-box rep-box" role="dialog" aria-modal="true" aria-label="relatório">
+      <div class="modal-head">
+        <span class="rep-title" id="repTitle">RELATÓRIO</span>
+        <a id="repOpen" class="btn" target="_blank" rel="noopener">NOVA GUIA</a>
+        <button id="repDelete" class="btn" type="button">EXCLUIR</button>
+        <button id="repClose" class="btn" type="button">FECHAR</button>
+      </div>
+      <iframe id="repFrame" class="rep-frame" title="relatório"></iframe>
+    </div>
+  </div>
+
+<script>
+/* =====================================================================
+   1. ELEMENTOS & ESTADO GLOBAL
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+const els = {
+  state:$('state'), meter:$('meter'), log:$('log'), model:$('model'), effort:$('effort'),
+  main:$('main'), pause:$('pause'), stop:$('stop'), step:$('step'),
+  liveStat:$('liveStat'), tts:$('tts'), io:$('ioBlock'), clock:$('clock'), date:$('date'),
+  ctx:$('ctxNum'), skills:$('skills'), newconv:$('newconv'), convs:$('convs'), chg:$('chg'),
+  minimalToggle:$('minimalToggle'), modeToggle:$('modeToggle'),
+  textForm:$('textForm'), textInput:$('textInput'), textSend:$('textSend'),
+  modalOverlay:$('textModalOverlay'), modalTextInput:$('modalTextInput'),
+  modalModel:$('modalModel'), modalEffort:$('modalEffort'),
+  modalClose:$('modalClose'), modalSend:$('modalSend'),
+  tabbar:$('sessiontabs'), speakStatus:$('speakStatus'),
+  errBanner:$('errBanner'), planPanel:$('planPanel'), liveResp:$('liveResp'),
+  cancelBtn:$('cancelBtn'), soundToggle:$('soundToggle'),
+  // modo minimalista (7b): as gavetas são os painéis que já existem
+  dockL:$('dockL'), dockR:$('dockR'), txPanel:$('txPanel'), caption:$('caption'),
+  dockGrip:$('dockGrip'),
+  // rail vertical de visões (Etapa 2): cabeçalho da coluna de conteúdo
+  dockHead:$('dockHead'), dockTitle:$('dockTitle'),
+  dockModel:$('dockModel'), dockEffort:$('dockEffort'),
+  // densidade da gaveta (Etapa 3)
+  densToggle:$('densToggle'), dockFind:$('dockFind'), dockCount:$('dockCount'),
+  dbgLevels:$('dbgLevels'),
+  // relatórios visuais (8e)
+  reps:$('reps'), repOverlay:$('repOverlay'), repFrame:$('repFrame'),
+  repTitle:$('repTitle'), repOpen:$('repOpen'), repClose:$('repClose'), repDelete:$('repDelete'),
+  colRight:document.querySelector('.col.right'), canvasWrap:document.querySelector('.canvas-wrap')
+};
+
+// Configuração de cada estado: cor de acento + textos.
+const STATES = {
+  idle:   { accent:'#B88A3F', rgb:'184,138,63',  label:'ONLINE',             live:'IDLE'   },
+  listen: { accent:'#6FA89C', rgb:'111,168,156', label:'OUVINDO… FALE AGORA', live:'LISTEN' },
+  think:  { accent:'#E8B658', rgb:'232,182,88',  label:'PROCESSANDO…',        live:'THINK'  },
+  speak:  { accent:'#7FC4A6', rgb:'127,196,166', label:'FALANDO…',            live:'SPEAK'  },
+};
+let currentState = 'idle';
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+/* =====================================================================
+   2. RELÓGIO (HH:MM:SS + data pt-BR)
+   ===================================================================== */
+const WD = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+const MO = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+const p2 = n => String(n).padStart(2,'0');
+function tickClock(){
+  const d = new Date();
+  els.clock.textContent = `${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+  els.date.textContent  = `${WD[d.getDay()]} ${p2(d.getDate())} ${MO[d.getMonth()]} ${d.getFullYear()}`;
+}
+tickClock(); setInterval(tickClock, 1000);
+
+/* =====================================================================
+   3. GRAFO 3D DO NÚCLEO  (Canvas 2D — esfera de nós projetada em 2D)
+   - Distribuição uniforme (Fibonacci sphere) + nós internos = "nuvem".
+   - Rotação contínua, profundidade (z → tamanho/brilho), arestas entre vizinhos.
+   - Parâmetros (expansão, agitação, rotação, brilho, cor) interpolam suavemente
+     entre estados → o núcleo parece "vivo".
+   - Reage ao nível de áudio [0..1] no estado LISTEN e pulsa no estado SPEAK.
+   ===================================================================== */
+class CoreGraph {
+  constructor(canvas){
+    this.cv = canvas; this.ctx = canvas.getContext('2d');
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.t = 0; this.rotY = 0; this.rotX = -0.42;
+    this.mode = 'idle';
+    this.audio = 0; this.audioSm = 0;     // nível do microfone (alvo / suavizado)
+    this.speaking = false;
+    this.pulses = []; this.lastPulse = 0; // anéis concêntricos do estado SPEAK
+
+    // parâmetros correntes (cur) que perseguem os alvos (tgt) a cada frame
+    this.cur = { expand:0, jitter:.016, rot:.0022, bright:.55, edge:.45 };
+    this.col = [184,138,63];               // cor atual (RGB) interpolada
+    this.setMode('idle', true);
+
+    this.build(150);
+    this.resize();
+    new ResizeObserver(() => this.resize()).observe(canvas.parentElement);
+  }
+
+  // alvos por estado
+  setMode(mode, instant=false){
+    this.mode = mode;
+    const T = {
+      idle:   { expand:0,    jitter:.016, rot:.0022, bright:.55, edge:.45, col:[184,138,63] },
+      listen: { expand:.05,  jitter:.022, rot:.0030, bright:.85, edge:.6,  col:[111,168,156] },
+      think:  { expand:.03,  jitter:.115, rot:.0072, bright:.9,  edge:.75, col:[232,182,88] },
+      speak:  { expand:.09,  jitter:.026, rot:.0040, bright:1,   edge:.85, col:[127,196,166] },
+    }[mode];
+    this.tgt = T;
+    if (instant){ Object.assign(this.cur, {expand:T.expand,jitter:T.jitter,rot:T.rot,bright:T.bright,edge:T.edge}); this.col = T.col.slice(); }
+  }
+  setAudioLevel(v){ this.audio = clamp(v,0,1); }   // contrato (a): reage ao áudio
+  setSpeaking(b){ this.speaking = !!b; }           // contrato (b): pulsar no SPEAK
+
+  // Constrói a nuvem de nós + arestas (vizinhos próximos). Topologia fixa.
+  build(n){
+    const nodes = [];
+    const phi = Math.PI * (3 - Math.sqrt(5));      // ângulo áureo
+    for (let i=0;i<n;i++){
+      const y = 1 - (i/(n-1))*2, r = Math.sqrt(1-y*y), th = phi*i;
+      const rad = 0.8 + Math.random()*0.2;         // leve variação radial → "casca grossa"
+      nodes.push({ bx:Math.cos(th)*r*rad, by:y*rad, bz:Math.sin(th)*r*rad,
+                   seed:Math.random()*1000, size:0.8+Math.random()*1.3 });
+    }
+    for (let i=0;i<16;i++){                          // alguns nós internos (volume)
+      const u=Math.random()*2-1, a=Math.random()*6.283, rr=0.18+Math.random()*0.42, r=Math.sqrt(1-u*u);
+      nodes.push({ bx:Math.cos(a)*r*rr, by:u*rr, bz:Math.sin(a)*r*rr, seed:Math.random()*1000, size:0.7+Math.random() });
+    }
+    this.nodes = nodes;
+    this.proj = nodes.map(()=>({sx:0,sy:0,z:0,pf:1,depth:0}));
+    this.order = nodes.map((_,i)=>i);
+
+    // arestas: 2–3 vizinhos mais próximos por nó (dedupe via Set)
+    const set = new Set();
+    for (let i=0;i<nodes.length;i++){
+      const d = [];
+      for (let j=0;j<nodes.length;j++) if (i!==j){
+        const dx=nodes[i].bx-nodes[j].bx, dy=nodes[i].by-nodes[j].by, dz=nodes[i].bz-nodes[j].bz;
+        d.push([dx*dx+dy*dy+dz*dz, j]);
+      }
+      d.sort((a,b)=>a[0]-b[0]);
+      const k = 2 + (Math.random()<0.5?1:0);
+      for (let m=0;m<k;m++){ const j=d[m][1]; set.add(i<j ? i+'_'+j : j+'_'+i); }
+    }
+    this.edges = [...set].map(s=>s.split('_').map(Number));
+  }
+
+  resize(){
+    const r = this.cv.parentElement.getBoundingClientRect();
+    this.w = Math.max(1, r.width); this.h = Math.max(1, r.height);
+    this.cv.width = this.w*this.dpr; this.cv.height = this.h*this.dpr;
+    this.ctx.setTransform(this.dpr,0,0,this.dpr,0,0);
+    this.cx = this.w/2; this.cy = this.h/2;
+    this.scale = Math.min(this.w, this.h) * 0.255;
+  }
+
+  update(dt){
+    this.t += dt;
+    const a = 1 - Math.exp(-dt/170);               // suavização independente de FPS
+    for (const k of ['expand','jitter','rot','bright','edge']) this.cur[k] += (this.tgt[k]-this.cur[k])*a;
+    for (let i=0;i<3;i++) this.col[i] += (this.tgt.col[i]-this.col[i])*a;
+    this.audioSm += (this.audio - this.audioSm) * (1 - Math.exp(-dt/90));
+    this.rotY += this.cur.rot * (dt/16.67);
+
+    // anéis de "fala" emanando do centro
+    if (this.speaking && this.t - this.lastPulse > 520){ this.pulses.push({r:0}); this.lastPulse = this.t; }
+    const max = this.scale*1.75;
+    for (const p of this.pulses) p.r += (max/1400)*dt;
+    this.pulses = this.pulses.filter(p => p.r < max);
+  }
+
+  // projeta um ponto 3D (já rotacionado/perturbado) para a tela
+  project(){
+    const cY=Math.cos(this.rotY), sY=Math.sin(this.rotY), cX=Math.cos(this.rotX), sX=Math.sin(this.rotX);
+    const focal=3.3, jit=this.cur.jitter;
+    let dyn = 1 + this.cur.expand + Math.sin(this.t*0.0017)*0.012;   // respiração
+    if (this.mode==='listen') dyn += this.audioSm*0.32;             // expande com a voz
+    if (this.mode==='speak')  dyn += this.audioSm*0.32 + Math.max(0,Math.sin(this.t*0.013))*0.05;
+    for (let i=0;i<this.nodes.length;i++){
+      const nd = this.nodes[i];
+      const jx = Math.sin(this.t*0.004 + nd.seed)*jit;
+      const jy = Math.cos(this.t*0.005 + nd.seed*1.3)*jit;
+      const jz = Math.sin(this.t*0.006 + nd.seed*0.7)*jit;
+      let x=(nd.bx+jx)*dyn, y=(nd.by+jy)*dyn, z=(nd.bz+jz)*dyn;
+      const x1 = x*cY - z*sY,  z1 = x*sY + z*cY;       // rotação Y
+      const y1 = y*cX - z1*sX, z2 = y*sX + z1*cX;      // rotação X
+      const pf = focal/(focal - z2);
+      const P = this.proj[i];
+      P.sx = this.cx + x1*this.scale*pf;
+      P.sy = this.cy + y1*this.scale*pf;
+      P.z = z2; P.pf = pf; P.depth = clamp((z2+1.25)/2.5, 0, 1);
+    }
+    this.order.sort((a,b)=> this.proj[a].z - this.proj[b].z);  // pinta de trás p/ frente
+  }
+
+  draw(){
+    const ctx=this.ctx, P=this.proj, c=this.col.map(Math.round), C=c[0]+','+c[1]+','+c[2];
+    this.project();
+    ctx.clearRect(0,0,this.w,this.h);
+    ctx.globalCompositeOperation = 'lighter';       // blend aditivo → brilho neon
+
+    // brilho central (pulsa com respiração / fala / áudio)
+    let glow = 0.16 + Math.sin(this.t*0.0019)*0.04 + this.audioSm*0.12*(this.mode==='listen'||this.mode==='speak');
+    if (this.mode==='speak') glow += Math.max(0,Math.sin(this.t*0.013))*0.14;
+    const g = ctx.createRadialGradient(this.cx,this.cy,0,this.cx,this.cy,this.scale*1.9);
+    g.addColorStop(0, `rgba(${C},${clamp(glow,0,.4)})`);
+    g.addColorStop(0.5, `rgba(${C},${clamp(glow*0.35,0,.2)})`);
+    g.addColorStop(1, `rgba(${C},0)`);
+    ctx.fillStyle = g; ctx.fillRect(0,0,this.w,this.h);
+
+    // retícula HUD girando lentamente
+    this.drawReticle(C);
+
+    // arestas
+    ctx.lineWidth = 1;
+    for (const [a,b] of this.edges){
+      const pa=P[a], pb=P[b], dep=(pa.depth+pb.depth)/2;
+      ctx.strokeStyle = `rgba(${C},${(0.05 + dep*0.28)*this.cur.edge})`;
+      ctx.beginPath(); ctx.moveTo(pa.sx,pa.sy); ctx.lineTo(pb.sx,pb.sy); ctx.stroke();
+    }
+
+    // anéis de fala
+    for (const p of this.pulses){
+      const al = Math.max(0, 1 - p.r/(this.scale*1.75)) * 0.5 * this.cur.bright;
+      ctx.strokeStyle = `rgba(${C},${al})`; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(this.cx,this.cy,p.r,0,6.283); ctx.stroke();
+    }
+
+    // nós (de trás para frente) — onda de brilho radial no estado SPEAK
+    for (const i of this.order){
+      const p=P[i], nd=this.nodes[i];
+      let bri = (0.12 + p.depth*0.6) * this.cur.bright;
+      if (this.mode==='speak'){
+        const dist = Math.hypot(p.sx-this.cx, p.sy-this.cy);
+        bri *= 0.6 + 0.4*(0.5+0.5*Math.sin(this.t*0.012 - dist*0.03));
+      }
+      bri = clamp(bri,0,1);
+      const R = nd.size*(0.55 + p.depth*1.35)*p.pf;
+      ctx.fillStyle = `rgba(${C},${bri*0.22})`;                 // halo
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,R*2.4,0,6.283); ctx.fill();
+      ctx.fillStyle = `rgba(${Math.min(255,c[0]+90)},${Math.min(255,c[1]+90)},${Math.min(255,c[2]+90)},${bri})`;
+      ctx.beginPath(); ctx.arc(p.sx,p.sy,R,0,6.283); ctx.fill();  // núcleo brilhante
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  drawReticle(C){
+    const ctx=this.ctx, R=this.scale*1.55;
+    ctx.save(); ctx.translate(this.cx,this.cy);
+    ctx.rotate(this.t*0.00007);
+    for (let i=0;i<72;i++){
+      const an=i/72*6.283, r2=R+(i%6===0?9:4);
+      ctx.strokeStyle = `rgba(${C},${i%6===0?0.22:0.1})`; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(Math.cos(an)*R,Math.sin(an)*R); ctx.lineTo(Math.cos(an)*r2,Math.sin(an)*r2); ctx.stroke();
+    }
+    // arco fino girando ao contrário
+    ctx.rotate(-this.t*0.0003);
+    ctx.strokeStyle=`rgba(${C},0.3)`; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(0,0,R*0.86,0.4,2.0); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,R*0.86,3.5,4.6); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+const graph = new CoreGraph($('core-canvas'));
+window.graph = graph;  // exposto p/ a ponte local (reagir a áudio / pulsar)
+
+// Loop de animação: requestAnimationFrame (60fps) quando a aba está visível.
+let _last = performance.now(), _lastFrame = _last;
+function frame(now){
+  const dt = Math.min(now - _last, 50); _last = now; _lastFrame = performance.now();
+  graph.update(dt); graph.draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// Resiliência: se o rAF estiver pausado (aba/preview oculto), mantém o
+// núcleo "vivo" via timer. Só age com a aba REALMENTE oculta (document.hidden) —
+// item 2: antes disparava também durante travas passageiras do main thread com
+// a aba visível (ex.: rajada de eventos de debug), causando um "salto" extra
+// fora do ritmo do rAF (2 updates quase simultâneos) — a trava relatada.
+setInterval(() => {
+  if (document.hidden && performance.now() - _lastFrame > 200){
+    const now = performance.now(), dt = Math.min(now - _last, 50); _last = now;
+    graph.update(dt); graph.draw();
+  }
+}, 33);
+
+/* =====================================================================
+   4. CONTRATO DE INTEGRAÇÃO  (NÃO renomear — a ponte local depende disto)
+   Funções globais expostas para o backend conectar depois.
+   ===================================================================== */
+
+// setState(s): pinta TODA a UI conforme o estado e ajusta o comportamento do grafo.
+window.setState = function(s){
+  if (!STATES[s]) return;
+  currentState = s;
+  const cfg = STATES[s];
+  document.documentElement.style.setProperty('--accent', cfg.accent);
+  document.documentElement.style.setProperty('--accent-rgb', cfg.rgb);
+  document.body.dataset.state = s;
+  els.state.textContent = cfg.label;
+  els.liveStat.querySelector('.lbl').textContent = cfg.live;
+  graph.setMode(s);
+  if (s !== 'think') setStep('', 0);     // esconde rótulo de etapa fora do "pensar"
+  if (s !== 'listen' && s !== 'speak') graph.setAudioLevel(0);
+  window.hubProviders?.stateChanged(s);
+};
+
+// setMeter(pct): barra de nível 0–100% + alimenta o nível de áudio do grafo.
+window.setMeter = function(pct){
+  window.hubProviders?.setAudioLevel(pct);
+  pct = clamp(pct, 0, 100);
+  els.meter.style.width = pct + '%';
+  graph.setAudioLevel(pct/100);          // o grafo só usa isto no estado LISTEN
+};
+
+// setStep(texto, segundos): rótulo de etapa + cronômetro perto do núcleo.
+window.setStep = function(text, seconds){
+  if (!text){ els.step.style.opacity = 0; els.step.textContent=''; return; }
+  els.step.style.opacity = 1;
+  els.step.textContent = `${text} · ${Math.round(seconds)}s`;
+};
+
+// appendLine: só o DOM (sem gravar). Usado no replay ao trocar de aba.
+const CLS = { 'EU':'eu', 'CLAUDE':'claude', 'SISTEMA':'sys' };
+function appendLine(who, text){
+  const div = document.createElement('div');
+  div.className = 'line ' + (CLS[who] || 'sys');
+  div.innerHTML = `<span class="who">${who}</span><span class="txt"></span>`;
+  div.querySelector('.txt').textContent = text;
+  els.log.appendChild(div);
+  while (els.log.children.length > 200) els.log.removeChild(els.log.firstChild);
+  els.log.scrollTop = els.log.scrollHeight;
+  return div.querySelector('.txt');
+}
+// recordTurn(aba,quem,texto): grava o turno NA ABA DONA e só desenha no DOM
+// se essa aba for a ativa (sessões paralelas — Fase 4). addLine(quem,texto)
+// é o atalho de compatibilidade que grava/desenha sempre na aba ativa.
+function recordTurn(tab, who, text){
+  if (who === 'EU' || who === 'CLAUDE') tab.turns.push({ who, text });
+  if (tab !== activeTab()) return;
+  showCaption(who, text);              // legenda passageira do modo minimalista (7b)
+  if (who !== 'EU') dockNotify('l');   // avisa se a gaveta da conversa está recolhida
+  return appendLine(who, text);
+}
+window.addLine = function(who, text){ return recordTurn(activeTab(), who, text); };
+
+// setSpeaking(bool): liga/desliga o pulsar do grafo + indicador TTS.
+window.setSpeaking = function(b){
+  graph.setSpeaking(b);
+  els.io.classList.toggle('speaking', !!b);
+  els.tts.textContent = b ? 'TTS · SPEAKING' : 'TTS · STANDBY';
+};
+
+/* =====================================================================
+   5. SESSÕES PARALELAS (abas) + CICLO listen → think → speak → idle
+   Cada aba é uma conversa isolada: sid próprio (== processo `claude` no
+   backend), estado de UI próprio (idle|listen|think|speak) e transcript
+   próprio. Só a aba ATIVA controla os widgets singulares (grafo, medidor,
+   rótulo de estado) — abas em segundo plano seguem processando e só
+   marcam "não lida" quando terminam. A gravação de voz (mic) é exclusiva
+   de UM fluxo por vez (o botão INICIAR só existe uma vez na tela), mas
+   think/speak podem rodar em paralelo em várias abas — a fala é
+   serializada no servidor (árbitro de áudio, Fase 2), nunca no front.
+   ===================================================================== */
+
+// COMMAND DECK — rótulos das skills. Por enquanto cada botão envia o rótulo
+// como comando real ao Claude (think → speak). Mapear p/ skills dedicadas depois.
+const SKILLS = ['RESUMO INBOX','CRIAR MISSÃO','ANOTAR IDEIA','REVISAR DIA',
+                'PLANEJAR SEMANA','STATUS FORESTOS','BUSCAR NOTA','LIMPAR VAULT'];
+
+// Fase 0: paleta de earcon (bip por sessão, escala G4→G5) + teto de abas vivas.
+const EARCON_HZ = [392,440,494,523,587,659,698,784];
+const MAX_TABS = 6;
+
+// --- Abas vivas (sessões paralelas) ---
+let tabs=[];              // { sid, titulo, ui, turns:[], unread, earconHz, askCtrl, askTimer, speakMeterTimer }
+let activeIdx=0;
+let tabSeq=0;             // contador p/ nomear "Sessão N" e indexar o earcon
+let history=[];           // conversas ARQUIVADAS (após "nova conversa" resetar uma aba)
+
+// --- Estado do fluxo de gravação (exclusivo de 1 aba por vez — o mic é único) ---
+let rec=null, chunks=[], stream=null, recCapTimer=null;
+// Teto da GRAVAÇÃO e teto da fase de TRANSCRIÇÃO. O STT roda local na CPU a
+// ~0,7x o tempo real: sem teto, uma fala longa deixava o HUD em PROCESSANDO
+// por dezenas de minutos, sem transcript e sem resposta.
+const REC_MAX_S = 180;        // gravação: avisa e envia o que já foi falado
+const STT_MAX_MS = 420000;    // transcrição: aborta e devolve a aba ao repouso
+let audioCtx=null, analyser=null, meterRAF=null;
+let pendingSend=false;
+let activityLines=[];                // timeline de etapas da aba ativa (F1) — linhas empilhadas
+let activityCurStart=0;              // instante (ms) em que a etapa atual começou (p/ duração)
+let minimal=false;                   // modo minimalista (item 1 desta rodada)
+let textMode=false;                  // chat por texto em vez de voz (item 4 desta rodada)
+
+function activeTab(){ return tabs[activeIdx]; }
+
+function makeSid(){
+  const u = (typeof crypto!=='undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()).slice(2);
+  return 's-' + u.slice(0,8);
+}
+function newTab(){
+  tabSeq++;
+  return { sid:makeSid(), provider:window.hubProviders?.current() || 'claude', titulo:'Sessão '+tabSeq, ui:'idle', turns:[], unread:false,
+           earconHz: EARCON_HZ[(tabs.length) % EARCON_HZ.length],
+           askCtrl:null, askTimer:null, speakMeterTimer:null,
+           // progresso ao vivo (F2/F3/F4/F5): estado por aba, só a ativa pinta os widgets
+           idleS:0, idleLimit:90, idleTool:'', partial:'', thinking:0, plan:null, nextAnnounce:45,
+           // F6: alterações da CONVERSA atual desta aba (arquivos + comandos)
+           changes:[] };
+}
+function tickClockStamp(){ const d=new Date(); return p2(d.getHours())+':'+p2(d.getMinutes()); }
+
+// sincroniza os widgets singulares (grafo/medidor/rótulo/botões) com o
+// estado da aba, MAS só se essa aba for a que está em foco agora.
+function applyUiIfActive(tab){
+  if (tab !== activeTab()) return;
+  setState(tab.ui);
+  const busy = tab.ui !== 'idle';
+  setMainLabel(tab.ui==='listen' ? 'ENVIAR' : (busy ? '…' : 'INICIAR'));
+  setPauseLabel('PAUSAR');
+  els.main.disabled = (tab.ui==='think' || tab.ui==='speak');
+  els.textInput.disabled = busy; els.textSend.disabled = busy;
+  window.hubProviders?.syncControls(tab);
+}
+
+/* --- barra de abas (sessões paralelas) --- */
+function renderTabBar(){
+  els.tabbar.innerHTML = '';
+  tabs.forEach((t, i) => {
+    if (window.hubProviders && !window.hubProviders.accepts(t)) return;
+    const b = document.createElement('button');
+    b.className = 'stab' + (i===activeIdx ? ' on' : '') + (t.unread ? ' unread' : '') + (t.mirror ? ' mirror' : '');
+    b.type = 'button';
+    b.innerHTML = `<i class="sdot ${t.ui}"></i><span class="stitulo"></span><i class="sclose" title="fechar aba">×</i>`;
+    b.querySelector('.stitulo').textContent = t.titulo;
+    b.title = t.titulo + ' · ' + t.ui;
+    b.addEventListener('click', () => activateTab(i));
+    b.querySelector('.sclose').addEventListener('click', (e) => { e.stopPropagation(); closeTab(i); });
+    els.tabbar.appendChild(b);
+  });
+  const plus = document.createElement('button');
+  plus.className = 'stab splus'; plus.type = 'button'; plus.textContent = '+';
+  plus.disabled = tabs.length >= MAX_TABS;
+  plus.title = tabs.length >= MAX_TABS ? ('limite de '+MAX_TABS+' abas') : 'nova aba';
+  plus.addEventListener('click', addTab);
+  els.tabbar.appendChild(plus);
+}
+
+function renderActiveTranscript(){
+  els.log.innerHTML = '';
+  activityLines = []; activityCurStart = 0;   // timeline é transitória: não sobrevive à troca de aba
+  activeTab().turns.forEach(t => appendLine(t.who, t.text));
+  // repinta os overlays de progresso conforme a aba que assumiu o foco
+  renderPlan(activeTab());
+  renderLiveResp(activeTab());
+  renderChanges();            // F6: alterações também são por aba
+  chgUnread = 0; renderChgBadge();
+}
+
+function activateTab(i){
+  if (i===activeIdx || i<0 || i>=tabs.length) return;
+  if (window.hubProviders && !window.hubProviders.accepts(tabs[i])) return;
+  // a gravação de voz é exclusiva da aba ativa (1 mic só) — trocar de aba no
+  // meio de uma escuta órfã o fluxo (ninguém mais controla aquele MediaRecorder).
+  if (activeTab().ui === 'listen'){ dbg('WARN','termine ou envie a gravação antes de trocar de aba'); return; }
+  activeIdx = i;
+  const tab = activeTab();
+  tab.unread = false;
+  renderActiveTranscript();
+  applyUiIfActive(tab);
+  graph.setAudioLevel(0);
+  renderTabBar();
+  dbg('INFO','aba ativa » '+tab.titulo);
+}
+
+async function addTab(){
+  if (tabs.length >= MAX_TABS){ dbg('WARN','limite de '+MAX_TABS+' abas atingido'); return; }
+  const tab = newTab();
+  tabs.push(tab);
+  activeIdx = tabs.length - 1;
+  renderActiveTranscript();
+  applyUiIfActive(tab);
+  renderTabBar();
+  dbg('INFO','nova aba » '+tab.titulo+' · sid='+tab.sid);
+  if (tab.provider === 'codex') return;
+  try{
+    const r = await fetch('/session_start',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({modelo:currentModel(), esforco:currentEffort(), sid:tab.sid})});
+    const j = await r.json().catch(()=>({}));
+    if (j.ok===false) dbg('ERR','/session_start ('+tab.titulo+'): '+j.err);
+    else dbg('OK','claude headless pronto · '+tab.titulo+' · vivo='+j.alive+' · novo='+j.spawned);
+  }catch(e){ dbg('WARN','/session_start ('+tab.titulo+'): '+e.message); }
+}
+
+// fecha UMA aba (mata só o processo daquele sid) — bloqueado se for a última
+// aba viva, ou se aquela aba estiver ocupada (evita matar um /ask em curso).
+async function closeTab(i){
+  const visibleTabs = window.hubProviders ? tabs.filter(t => window.hubProviders.accepts(t)) : tabs;
+  if (visibleTabs.length <= 1){ dbg('WARN','não dá pra fechar a última aba'); return; }
+  const tab = tabs[i];
+  if (tab.ui !== 'idle'){ dbg('WARN','fechar aba ignorado (estado='+tab.ui+')'); return; }
+  tabs.splice(i, 1);
+  if (i < activeIdx) activeIdx--;
+  else activeIdx = Math.min(activeIdx, tabs.length - 1);
+  if (window.hubProviders && !window.hubProviders.accepts(activeTab()))
+    activeIdx = tabs.findIndex(t => window.hubProviders.accepts(t));
+  renderActiveTranscript();
+  applyUiIfActive(activeTab());
+  renderTabBar();
+  dbg('INFO','aba fechada · '+tab.titulo+' · sid='+tab.sid);
+  // espelho do celular: fechar a aba só a tira da tela — o processo é do
+  // celular, não desta janela (a aba renasce sozinha na próxima atividade).
+  if (tab.mirror){ mobileTab = null; return; }
+  if (tab.provider === 'codex') return;
+  try{
+    await fetch('/session_end',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sid:tab.sid})});
+  }catch(e){ dbg('WARN','/session_end ('+tab.titulo+'): '+e.message); }
+}
+
+/* --- indicador global de fila de fala (Fase 2/2.3) — atravessa todas as abas --- */
+let speaking=null, speakQueue=[];
+function renderSpeakStatus(){
+  if (!speaking && !speakQueue.length){ els.speakStatus.textContent=''; return; }
+  let s = speaking ? ('🔊 falando: '+speaking) : '';
+  if (speakQueue.length) s += (s?'  ·  ':'') + 'na fila: ' + speakQueue.join(', ');
+  els.speakStatus.textContent = s;
+}
+function noteSpeakQueued(tab){ speakQueue.push(tab.titulo); renderSpeakStatus(); }
+function noteSpeakStart(tab){ speakQueue = speakQueue.filter(t=>t!==tab.titulo); speaking = tab.titulo; renderSpeakStatus(); }
+function noteSpeakDone(tab){ if (speaking===tab.titulo) speaking=null; renderSpeakStatus(); }
+
+// F1 — timeline de atividade EMPILHADA (só da aba ativa). Cada etapa (`step`)
+// vira linha permanente: ao chegar a próxima, a anterior é fechada com marcador
+// de concluído e duração; a atual fica pulsando. Ao `done`/encerrar, clearActivity
+// remove tudo e resta só a resposta final (colapso obrigatório).
+function showActivity(text){
+  const now = performance.now();
+  // fecha a etapa anterior (marca concluída + duração desde que começou)
+  const prev = activityLines[activityLines.length-1];
+  if(prev){
+    const secs = Math.max(0, Math.round((now - activityCurStart)/1000));
+    prev.classList.remove('cur'); prev.classList.add('done');
+    prev.querySelector('.txt').textContent = '✓ ' + prev._label + ' · ' + secs + 's';
+  }
+  const div=document.createElement('div');
+  div.className='line claude activity cur';
+  div.innerHTML='<span class="who">CLAUDE</span><span class="txt"></span>';
+  div._label = String(text||'').toLowerCase();
+  div.querySelector('.txt').textContent='· '+div._label;
+  els.log.appendChild(div);
+  activityLines.push(div); activityCurStart = now;
+  while (els.log.children.length > 200) els.log.removeChild(els.log.firstChild);
+  els.log.scrollTop=els.log.scrollHeight;
+}
+function clearActivity(){
+  activityLines.forEach(el => { try{ el.remove(); }catch(e){} });
+  activityLines = []; activityCurStart = 0;
+}
+
+/* --- F2: banner de erro no HUD (não só na aba DEBUG) --- */
+function showErrBanner(msg){
+  els.errBanner.innerHTML = '';
+  els.errBanner.appendChild(document.createTextNode(String(msg||'').slice(0,200)));
+  const x = document.createElement('span'); x.className='x'; x.textContent='×';
+  x.addEventListener('click', hideErrBanner); els.errBanner.appendChild(x);
+  els.errBanner.hidden = false;
+}
+function hideErrBanner(){ els.errBanner.hidden = true; els.errBanner.textContent=''; }
+
+/* --- F2: watchdog visual. Pinta #step por faixa de ociosidade e mostra CANCELAR.
+   Chamada pelo cronômetro do turno (a cada 200ms) e ao chegar `hb`. --- */
+function applyWatchdog(tab){
+  if(tab!==activeTab()) return;
+  const idle = tab.idleS||0;
+  // o teto vem do servidor (`hb.limit_s`): 90s antes do primeiro evento, 300s ocioso,
+  // 1200s com ferramenta aberta. Pintar em fração do teto mantém o aviso honesto —
+  // com limiar fixo, um subagente de 10min ficaria vermelho o tempo todo à toa.
+  const limit = tab.idleLimit || 90;
+  els.step.classList.remove('warn','crit');
+  if(idle >= limit*0.75){
+    els.step.classList.add('crit');
+    els.cancelBtn.hidden = false;
+  } else if(idle >= limit*0.34){
+    els.step.classList.add('warn');
+    els.cancelBtn.hidden = (idle < 30);   // ocioso de verdade: oferece a saída manual cedo
+  } else {
+    els.cancelBtn.hidden = true;
+  }
+}
+function clearWatchdog(){
+  els.step.classList.remove('warn','crit');
+  els.cancelBtn.hidden = true;
+}
+
+/* --- F3: legenda "resposta ao vivo" (texto parcial + indicador de raciocínio) --- */
+function renderLiveResp(tab){
+  if(tab!==activeTab()) return;
+  const hasTxt = !!(tab.partial), hasThink = (tab.thinking||0) > 0 && !hasTxt;
+  if(!hasTxt && !hasThink){ els.liveResp.hidden = true; return; }
+  els.liveResp.hidden = false;
+  els.liveResp.querySelector('.lr-think').textContent = hasThink ? ('RACIOCINANDO · '+tab.thinking+' chars') : '';
+  els.liveResp.querySelector('.lr-txt').textContent = tab.partial ? tab.partial.slice(-600) : '';
+}
+function clearLiveResp(tab){
+  tab.partial=''; tab.thinking=0;
+  if(tab===activeTab()){ els.liveResp.hidden = true;
+    els.liveResp.querySelector('.lr-think').textContent='';
+    els.liveResp.querySelector('.lr-txt').textContent=''; }
+}
+
+/* --- F4: painel de plano vivo (checklist do TodoWrite) --- */
+const PLAN_MK = { completed:'✓', in_progress:'▶', pending:'☐' };
+function renderPlan(tab){
+  if(tab!==activeTab()) return;
+  const items = tab.plan;
+  if(!Array.isArray(items) || !items.length){ els.planPanel.hidden = true; els.planPanel.innerHTML=''; return; }
+  els.planPanel.hidden = false;
+  els.planPanel.innerHTML = '<h4>PLANO</h4>';
+  items.forEach(it => {
+    const st = (it.status||'pending');
+    const row = document.createElement('div');
+    row.className = 'pi ' + (st==='completed'?'done':st==='in_progress'?'doing':'');
+    row.innerHTML = '<span class="mk"></span><span class="pt"></span>';
+    row.querySelector('.mk').textContent = PLAN_MK[st] || '☐';
+    row.querySelector('.pt').textContent = String(it.txt||'');
+    els.planPanel.appendChild(row);
+  });
+}
+function clearPlan(tab){ tab.plan=null; if(tab===activeTab()){ els.planPanel.hidden=true; els.planPanel.innerHTML=''; } }
+
+/* --- F5: feedback sonoro. Toggle persistido (padrão LIGADO). Blip por etapa
+   (WebAudio) + announce falado após limiar de silêncio (via /speak / SPEAK_Q). --- */
+let soundOn = (localStorage.getItem('hub_sound_progress') ?? '1') === '1';
+let blipCtx = null;
+function renderSoundToggle(){
+  els.soundToggle.textContent = 'SOM PROGRESSO: ' + (soundOn?'LIGADO':'DESLIGADO');
+  els.soundToggle.classList.toggle('on', soundOn);
+}
+function toggleSound(){
+  soundOn = !soundOn;
+  localStorage.setItem('hub_sound_progress', soundOn?'1':'0');
+  renderSoundToggle();
+  if(soundOn) unlockBlip();   // gesto do usuário: destrava o AudioContext
+  dbg('INFO','som de progresso » '+(soundOn?'ligado':'desligado'));
+}
+function unlockBlip(){
+  try{
+    if(!blipCtx) blipCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(blipCtx.state==='suspended') blipCtx.resume();
+  }catch(e){}
+}
+function blip(hz){
+  if(!soundOn) return;
+  try{
+    unlockBlip();
+    if(!blipCtx || blipCtx.state!=='running') return;
+    const o=blipCtx.createOscillator(), g=blipCtx.createGain();
+    o.type='sine'; o.frequency.value=hz||440;
+    g.gain.setValueAtTime(0.0001, blipCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12, blipCtx.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, blipCtx.currentTime+0.09);
+    o.connect(g).connect(blipCtx.destination);
+    o.start(); o.stop(blipCtx.currentTime+0.1);
+  }catch(e){}
+}
+// announce falado de progresso: fila única do servidor (SPEAK_Q) — fire-and-forget.
+// Guard: só em `think` e só na aba ativa; nunca sobrepõe a resposta final (serializado).
+function announceProgress(tab, stepText){
+  if(!soundOn || tab.ui!=='think') return;
+  const reply = 'ainda trabalhando' + (stepText ? (': '+stepText) : '');
+  try{
+    fetch('/speak',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({reply, sid:tab.sid, titulo:tab.titulo, earcon_hz:tab.earconHz})})
+      .then(r=>{ try{ r.body && r.body.cancel(); }catch(e){} }).catch(()=>{});
+    dbg('SPEAK','announce de progresso enfileirado · '+tab.titulo);
+  }catch(e){}
+}
+els.soundToggle.addEventListener('click', toggleSound);
+els.cancelBtn.addEventListener('click', () => { dbg('WARN','CANCELAR clicado'); onStop(); });
+
+// modelo escolhido no seletor → alias do CLI (fable|opus|sonnet|haiku); vazio = padrão
+function currentModel(tab = activeTab()){
+  const provider = tab.provider || 'claude';
+  const value = window.hubProviders?.selection(provider).model ?? els.model.value;
+  if (provider === 'codex') return value;
+  const m=(value||'').trim().split(/\s+/)[0].toLowerCase();
+  return ['fable','opus','sonnet','haiku'].includes(m) ? m : '';
+}
+
+// esforço escolhido no seletor → --effort do CLI (low|medium|high|xhigh|max); vazio = padrão
+function currentEffort(tab = activeTab()){
+  const provider = tab.provider || 'claude';
+  const value = window.hubProviders?.selection(provider).effort ?? els.effort.value;
+  if (provider === 'codex') return value;
+  const e=(value||'').trim().toLowerCase();
+  return ['low','medium','high','xhigh','max'].includes(e) ? e : '';
+}
+
+// --- microfone: tenta o default; se falhar, percorre os dispositivos por id ---
+// `{audio:true}` deixa o Chrome ligar echoCancellation + noiseSuppression +
+// autoGainControl por padrão. O AEC3 come justamente a banda que o whisper usa:
+// medido no áudio de um turno real, sobrou 4,3% da energia entre 1–3,4 kHz (o
+// normal é 15–30%) contra 41% abaixo de 300 Hz — som abafado, e a transcrição
+// voltava repetida e incoerente. Aqui não há eco a cancelar (fala em turno,
+// mic próximo), então os três saem e o whisper recebe o sinal cru.
+const MIC_CONSTRAINTS = {echoCancellation:false, noiseSuppression:false, autoGainControl:false};
+
+// nome do DOMException → causa legível; o texto cru do Chrome é genérico
+const MIC_ERR_HINT = {
+  NotAllowedError:'permissão negada pelo Chrome ou pelo Windows',
+  NotReadableError:'o dispositivo não abriu (em uso, driver travado ou antivírus)',
+  NotFoundError:'nenhum microfone encontrado',
+  OverconstrainedError:'o mic recusou as constraints pedidas',
+  SecurityError:'contexto inseguro bloqueou o mic',
+};
+function micErrText(e){
+  const h=MIC_ERR_HINT[e.name];
+  return e.name+': '+(e.message||'?')+(h?' → '+h:'');
+}
+
+async function getMic(){
+  let first;
+  try{ return await navigator.mediaDevices.getUserMedia({audio:MIC_CONSTRAINTS}); }
+  catch(e){ first=e; dbg('WARN','mic default falhou ('+micErrText(e)+') · tentando dispositivos'); }
+  let devs=[], last=null;
+  try{ devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput'); }catch(e){}
+  for(const d of devs){
+    try{ return await navigator.mediaDevices.getUserMedia({audio:Object.assign({deviceId:{exact:d.deviceId}}, MIC_CONSTRAINTS)}); }catch(e){ last=e; }
+  }
+  // erro real do mic default + quantos dispositivos o fallback tentou
+  throw new Error(micErrText(first)+' · '+devs.length+' dispositivo(s) tentado(s)'
+                  +(last && last.name!==first.name ? ' · último: '+micErrText(last) : ''));
+}
+
+// mimeType suportado por ESTE Chrome (evita throw no MediaRecorder)
+function pickMime(){
+  const opts=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4',''];
+  for(const m of opts){ if(m==='') return ''; if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; }
+  return '';
+}
+
+// medidor real do nível do mic → alimenta setMeter() (e o grafo no estado listen)
+function startMeter(){
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=audioCtx.createMediaStreamSource(stream);
+    analyser=audioCtx.createAnalyser(); analyser.fftSize=512; src.connect(analyser);
+    const buf=new Uint8Array(analyser.frequencyBinCount);
+    const tick=()=>{
+      analyser.getByteTimeDomainData(buf);
+      let peak=0; for(let i=0;i<buf.length;i++){ const v=Math.abs(buf[i]-128); if(v>peak) peak=v; }
+      setMeter(Math.min(100, Math.round(peak/128*180)));
+      meterRAF=requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){}
+}
+function stopMeter(){
+  if(meterRAF) cancelAnimationFrame(meterRAF); meterRAF=null;
+  try{ if(audioCtx) audioCtx.close(); }catch(e){}
+  audioCtx=null; analyser=null; setMeter(0);
+}
+
+// medidor "sintético" do nível de fala do Kokoro (grafo no estado speak) —
+// caminha pelo envelope de amplitude real da resposta, enviado pelo /speak.
+// Só anima os widgets singulares se `tab` for a aba em foco no momento.
+// O áudio nasce em streaming: o envelope chega em pedaços (speak_env), então o
+// medidor espera os níveis seguintes em vez de encerrar no fim do array.
+function startSpeakMeter(tab, levels, stepMs){
+  stopSpeakMeter(tab);
+  tab.speakLevels = Array.isArray(levels) ? levels.slice() : [];
+  let i=0;
+  tab.speakMeterTimer=setInterval(()=>{
+    const lv=tab.speakLevels||[];
+    if(i>=lv.length) return;
+    if (tab===activeTab()) setMeter(Math.round(lv[i]*100));
+    i++;
+  }, stepMs||60);
+}
+
+// eventos de fala — vêm do /speak ou, quando a fala é em streaming, do /ask
+function handleSpeakEvent(tab, ev, t0){
+  if(ev.t==='speak_queued'){ noteSpeakQueued(tab); dbg('SPEAK','na fila · pos '+ev.pos); }
+  else if(ev.t==='speak_start'){
+    noteSpeakStart(tab);
+    tab.ui='speak'; renderTabBar();
+    if (tab===activeTab()){ setState('speak'); setSpeaking(true); startSpeakMeter(tab, ev.envelope, ev.step_ms); }
+    dbg('SPEAK','fala iniciou em '+(ev.start_ms||'?')+'ms · kokoro_pronto='+ev.ready);
+  }
+  else if(ev.t==='speak_env'){ if(tab.speakLevels && ev.levels) tab.speakLevels.push(...ev.levels); }
+  else if(ev.t==='speak_done'){
+    noteSpeakDone(tab);
+    stopSpeakMeter(tab);
+    if (tab===activeTab()) setMeter(0);
+    dbg('SPEAK','fala concluída · '+Math.round(performance.now()-(t0||0))+'ms (servidor '+(ev.spoke_ms||'?')+'ms) · iniciou='+ev.started+(ev.timeout?' · TIMEOUT!':''));
+  }
+  else return false;
+  return true;
+}
+
+// resposta pronta → colapsa timeline/legenda/plano/watchdog e registra no transcript.
+// Chamado no `done` quando a fala é em streaming (a voz continua depois dele).
+function finalizeResp(tab, reply){
+  if (tab===activeTab()){ setStep('',0); clearWatchdog(); }
+  clearActivity(); clearLiveResp(tab); clearPlan(tab);
+  if(tab.recorded) return;
+  tab.recorded = true;
+  recordTurn(tab, 'CLAUDE', reply);
+}
+function stopSpeakMeter(tab){
+  if(tab.speakMeterTimer){ clearInterval(tab.speakMeterTimer); tab.speakMeterTimer=null; }
+}
+
+// --- teto de gravação: avisa ao bater REC_MAX_S e envia o que já foi falado ---
+// Enviar (e não descartar) porque o áudio já gravado é o turno do usuário; jogar
+// fora custaria 3 minutos de fala. Quem dispara é o relógio de parede: uma pausa
+// no meio não estende o teto — o custo do STT é o mesmo.
+function armRecCap(){
+  clearRecCap();
+  recCapTimer=setTimeout(()=>{
+    if(!rec || (rec.state!=='recording' && rec.state!=='paused')) return;
+    dbg('WARN','limite de '+REC_MAX_S+'s de gravação atingido · enviando o que já foi falado');
+    showErrBanner('Limite de '+REC_MAX_S+'s de gravação atingido — enviando o que você já falou.');
+    sendTurn();
+  }, REC_MAX_S*1000);
+}
+function clearRecCap(){ if(recCapTimer){ clearTimeout(recCapTimer); recCapTimer=null; } }
+
+// --- INICIAR escuta: abre o mic e começa a gravar na aba ATIVA ---
+async function startListening(){
+  if (window.hubProviders?.canUseAssistantUI?.() === false) return;
+  if (window.hubProviders && !window.hubProviders.allowAction(activeTab())) return;
+  const tab = activeTab();
+  if(tab.ui!=='idle') return;
+  dbg('STT','iniciando captura de microfone…');
+  try{
+    const acquired=await getMic();
+    // A abertura pode terminar depois de uma troca de aba/provedor ou encerramento.
+    if (tab!==activeTab() || tab.ui!=='idle' || !tabs.includes(tab)
+        || window.hubProviders?.canUseAssistantUI?.() === false) {
+      acquired.getTracks().forEach(track=>track.stop());
+      return;
+    }
+    stream=acquired;
+  }
+  catch(e){ dbg('ERR','sem acesso ao microfone: '+e.message); finishIdle(tab); return; }
+  const tk=(stream.getAudioTracks()[0]||{}); dbg('STT','mic ok: '+(tk.label||'(sem rótulo)'));
+  // o navegador pode ignorar uma constraint: registra o que de fato valeu
+  try{ const st=tk.getSettings ? tk.getSettings() : {};
+       dbg('STT','mic dsp: aec='+st.echoCancellation+' ns='+st.noiseSuppression+' agc='+st.autoGainControl+' · '+(st.sampleRate||'?')+'Hz');
+  }catch(e){}
+  const mime=pickMime();
+  try{ rec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream); }
+  catch(e){ dbg('ERR','MediaRecorder falhou: '+e.message); finishIdle(tab); return; }
+  dbg('STT','gravando · mime='+(mime||'default'));
+  chunks=[]; pendingSend=false;
+  rec.ondataavailable=e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  rec.onstop=()=>onRecStop(tab);
+  rec.onerror=e=>dbg('ERR','rec.onerror: '+((e.error&&e.error.message)||e.type));
+  rec.start(250);
+  armRecCap();
+  tab.ui='listen'; applyUiIfActive(tab); els.main.disabled=false;
+  startMeter();
+  renderTabBar();
+  dbg('STT','capturando áudio · ENTER envia · ESPAÇO pausa');
+}
+
+// --- ENVIAR: encerra a gravação e processa o turno ---
+function sendTurn(){
+  if(!rec || (rec.state!=='recording' && rec.state!=='paused')) return;
+  dbg('STT','ENVIAR · encerrando gravação ('+rec.state+')');
+  clearRecCap();
+  pendingSend=true; els.main.disabled=true;
+  stopMeter();
+  try{ rec.requestData(); }catch(e){}
+  try{ rec.stop(); }catch(e){}
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+}
+
+// quando a gravação para: monta o blob e dispara STT → ask → speak (na aba que gravou)
+async function onRecStop(tab){
+  clearRecCap();
+  if(!pendingSend){ dbg('WARN','gravação parada sem envio (encerrada)'); return; }
+  pendingSend=false;
+  const type=(rec&&rec.mimeType)||'audio/webm';
+  const blob=new Blob(chunks,{type});
+  dbg('STT','áudio capturado: '+blob.size+' bytes · '+type+' · '+chunks.length+' chunks');
+  if(!blob.size){ dbg('ERR','blob vazio · nenhum áudio capturado'); finishIdle(tab); return; }
+  const turnSelection={model:currentModel(tab), effort:currentEffort(tab)};
+  tab.ui='think'; applyUiIfActive(tab); renderTabBar();
+  let texto='';
+  // A transcrição é local e pode levar minutos. Antes ela corria sem cronômetro,
+  // sem teto e fora do alcance do ENCERRAR (askCtrl só nasce no /ask): PROCESSANDO
+  // eterno, sem transcript e sem resposta. Aqui ela ganha os três.
+  const t0=performance.now();
+  let expirou=false;
+  tab.sttCtrl=new AbortController();
+  const cap=setTimeout(()=>{ expirou=true; try{ tab.sttCtrl.abort(); }catch(e){} }, STT_MAX_MS);
+  if(tab===activeTab()) setStep('TRANSCREVENDO', 0);
+  tab.sttTimer=setInterval(()=>{
+    if(tab===activeTab()) setStep('TRANSCREVENDO', (performance.now()-t0)/1000);
+  }, 200);
+  try{
+    const fd=new FormData(); fd.append('audio',blob,'a.webm'); fd.append('sid',tab.sid);
+    const r=await fetch('/stt',{method:'POST',body:fd,signal:tab.sttCtrl.signal});
+    dbg('NET','/stt status '+r.status+' · '+Math.round(performance.now()-t0)+'ms');
+    texto=((await r.json()).texto)||'';
+  }catch(e){
+    if(expirou){
+      dbg('ERR','/stt passou de '+Math.round(STT_MAX_MS/1000)+'s · transcrição abortada');
+      showErrBanner('A transcrição passou de '+Math.round(STT_MAX_MS/1000)+'s e foi abortada. Grave um trecho mais curto.');
+    }
+    else if(e.name==='AbortError') dbg('WARN','/stt abortado pelo ENCERRAR');
+    else dbg('ERR','/stt: '+e.message);
+    finishIdle(tab); return;
+  }finally{
+    clearTimeout(cap);
+    if(tab.sttTimer){ clearInterval(tab.sttTimer); tab.sttTimer=null; }
+    tab.sttCtrl=null;
+    if(tab===activeTab()) setStep('',0);
+  }
+  // ENCERRAR durante a transcrição: a aba já voltou ao repouso, não ressuscita o turno
+  if(tab.ui==='idle'){ dbg('WARN','transcrição descartada · turno encerrado durante o STT'); return; }
+  dbg('STT','transcrição: "'+texto.slice(0,120)+'"');
+  if(!texto.trim()){ dbg('WARN','transcrição vazia · não entendi o áudio'); finishIdle(tab); return; }
+  recordTurn(tab, 'EU', texto);
+  askAndSpeak(tab, texto, turnSelection);
+}
+
+// --- /ask em streaming: emite etapas (setStep) e devolve {reply, spoken} ---
+// `spoken` = a voz já correu dentro do próprio /ask (fala em streaming).
+async function streamAsk(tab, promptText, turnSelection){
+  const selection=turnSelection || {model:currentModel(tab), effort:currentEffort(tab)};
+  let reply='(sem resposta)', lastStep='INICIANDO', firstByte=false, spoken=false;
+  const t0=performance.now();
+  if (tab===activeTab()) setStep(lastStep, 0);
+  tab.askTimer=setInterval(()=>{
+    if (tab!==activeTab()) return;
+    let label = lastStep;
+    if ((tab.idleS||0) >= 30){                                                 // F2: nota de ociosidade
+      label += tab.idleTool ? (' · '+tab.idleTool.toUpperCase()+' há '+tab.idleS+'s')
+                            : (' · sem atividade há '+tab.idleS+'s');
+    }
+    setStep(label, (performance.now()-t0)/1000);
+    applyWatchdog(tab);
+  }, 200);
+  tab.askCtrl=new AbortController();
+  dbg('ASK','POST /ask · '+tab.titulo+' · modelo='+(selection.model||'(default)')+' · esforço='+(selection.effort||'(default)')+' · '+promptText.length+' chars');
+  try{
+    const resp=await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({texto:promptText, modelo:selection.model, esforco:selection.effort, sid:tab.sid, titulo:tab.titulo, earcon_hz:tab.earconHz}), signal:tab.askCtrl.signal});
+    dbg('NET','/ask status '+resp.status+' '+(resp.ok?'OK':'FALHA'));
+    const reader=resp.body.getReader(); const dec=new TextDecoder(); let buf='';
+    while(true){
+      const {value,done}=await reader.read();
+      if(value){
+        if(!firstByte){ firstByte=true; dbg('ASK','1º byte em '+Math.round(performance.now()-t0)+'ms'); }
+        buf+=dec.decode(value,{stream:true}); let nl;
+        while((nl=buf.indexOf('\n'))>=0){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
+          if(!line) continue; let ev; try{ ev=JSON.parse(line); }catch(e){ dbg('WARN','linha inválida: '+line.slice(0,80)); continue; }
+          if(ev.t==='step'){
+            lastStep=(ev.msg||'').toUpperCase();
+            tab.idleS=0; tab.nextAnnounce=45;                 // etapa real → zera ociosidade
+            if(tab===activeTab()){ showActivity(ev.msg); blip(tab.earconHz); }   // F1 timeline + F5 blip
+            dbg('STEP', '['+tab.titulo+'] '+lastStep);
+          }
+          else if(ev.t==='hb'){                                // F2 watchdog: expõe ociosidade
+            tab.idleS = ev.idle_s||0;
+            tab.idleLimit = ev.limit_s||90; tab.idleTool = ev.tool||'';
+            if(tab===activeTab()) applyWatchdog(tab);
+            if((tab.idleS) >= (tab.nextAnnounce||45)){ announceProgress(tab, lastStep); tab.nextAnnounce = tab.idleS + 45; }  // F5 announce
+          }
+          else if(ev.t==='partial'){                           // F3: texto nascendo ao vivo
+            tab.partial = (tab.partial||'') + (ev.txt||''); tab.idleS=0;
+            renderLiveResp(tab);
+          }
+          else if(ev.t==='thinking'){                          // F3: volume de raciocínio
+            tab.thinking = ev.chars||0; tab.idleS=0;
+            renderLiveResp(tab);
+          }
+          else if(ev.t==='change'){                            // F6: arquivo alterado / comando rodado
+            tab.idleS=0;
+            if(ev.ch) noteChange(tab, ev.ch);
+          }
+          else if(ev.t==='plan'){                              // F4: checklist do TodoWrite
+            tab.plan = ev.items||[]; tab.idleS=0;
+            renderPlan(tab);
+          }
+          else if(ev.t==='debug'){
+            dbg(ev.lv||'INFO','srv['+tab.titulo+']: '+ev.msg);
+            if((ev.lv||'')==='ERR' && tab===activeTab()) showErrBanner(ev.msg);   // F2: erro em banner
+          }
+          else if(ev.t==='done'){
+            reply=ev.reply||reply; spoken=!!ev.spoken;
+            dbg('ASK','done · reply '+(reply?reply.length:0)+' chars · '+Math.round(performance.now()-t0)+'ms'+(spoken?' · voz em streaming':''));
+            if(spoken) finalizeResp(tab, reply);      // a voz continua depois do done
+          }
+          else if(ev.t==='error'){ lastStep='ERRO: '+ev.msg; if(tab===activeTab()) showErrBanner(ev.msg); dbg('ERR','erro do /ask: '+ev.msg); }
+          else if(handleSpeakEvent(tab, ev, t0)){ /* fala em streaming */ }
+        }
+      }
+      if(done) break;
+    }
+  }catch(e){
+    if(e.name==='AbortError'){ reply=null; dbg('WARN','/ask abortado (ESC)'); }
+    else { reply='(erro de rede ao falar com o Claude)'; dbg('ERR','/ask rede: '+e.message); }
+  }
+  if(tab.askTimer){ clearInterval(tab.askTimer); tab.askTimer=null; }
+  tab.askCtrl=null;
+  return {reply, spoken};
+}
+
+// think → speak: pergunta ao Claude, mostra a resposta e fala via Kokoro (por aba)
+async function askAndSpeak(tab, promptText, turnSelection){
+  if (window.hubProviders && !window.hubProviders.allowAction(tab)) return;
+  tab.ui='think'; applyUiIfActive(tab); renderTabBar();
+  // zera o progresso do turno anterior nesta aba
+  tab.idleS=0; tab.idleLimit=90; tab.idleTool=''; tab.nextAnnounce=45; clearLiveResp(tab); clearPlan(tab); tab.recorded=false;
+  if (tab===activeTab()){ hideErrBanner(); clearWatchdog(); }
+  const {reply, spoken}=await streamAsk(tab, promptText, turnSelection);
+  // resposta pronta → colapsa timeline/legenda/plano/watchdog; resta só a resposta final
+  if (tab===activeTab()){ setStep('',0); clearWatchdog(); }
+  clearActivity(); clearLiveResp(tab); clearPlan(tab);
+  if(tab.ui==='idle' || reply===null) return;     // encerrado durante o /ask (ESC)
+  finalizeResp(tab, reply);
+  if(spoken){                                     // a voz já correu dentro do /ask
+    if (tab===activeTab()) setSpeaking(false);
+    finishIdle(tab);
+    return;
+  }
+  // segue em PROCESSANDO; só acende FALANDO quando a voz inicia de fato.
+  dbg('SPEAK','POST /speak · '+tab.titulo+' · '+reply.length+' chars');
+  const t0=performance.now();
+  try{
+    const r=await fetch('/speak',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({reply, sid:tab.sid, titulo:tab.titulo, earcon_hz:tab.earconHz})});
+    const rd=r.body.getReader(); const dec=new TextDecoder(); let buf='';
+    while(true){
+      const {value,done}=await rd.read();
+      if(value){
+        buf+=dec.decode(value,{stream:true}); let nl;
+        while((nl=buf.indexOf('\n'))>=0){ const line=buf.slice(0,nl).trim(); buf=buf.slice(nl+1);
+          if(!line) continue; let ev; try{ ev=JSON.parse(line); }catch(e){ continue; }
+          handleSpeakEvent(tab, ev, t0);
+        }
+      }
+      if(done) break;
+    }
+  }catch(e){ dbg('ERR','/speak: '+e.message); }
+  if(tab.ui==='idle') return;
+  if (tab===activeTab()) setSpeaking(false);
+  finishIdle(tab);
+}
+
+// volta ao repouso e zera a UI daquela aba (só mexe nos widgets se for a ativa)
+function finishIdle(tab){
+  tab.ui='idle';
+  stopSpeakMeter(tab);
+  if(tab.sttTimer){ clearInterval(tab.sttTimer); tab.sttTimer=null; }   // cronômetro do STT
+  clearLiveResp(tab); clearPlan(tab);
+  if (tab===activeTab()){ setSpeaking(false); setMeter(0); setStep('',0); clearWatchdog(); clearActivity(); }
+  applyUiIfActive(tab);
+  if (tab!==activeTab()) tab.unread = true;
+  renderTabBar();
+}
+
+// skill do COMMAND DECK → envia o rótulo como comando real (think → speak) na aba ativa
+function runSkill(tab, label){
+  if (window.hubProviders?.canUseAssistantUI?.() === false) return;
+  if (window.hubProviders && !window.hubProviders.allowAction(tab)) return;
+  if(tab.mirror){ dbg('INFO','a aba CELULAR é um espelho — skills rodam nas abas normais'); return; }
+  if(tab.ui!=='idle') return;
+  dbg('INFO','skill » '+label+' › executando');
+  recordTurn(tab, 'EU', label);   // o comando da skill é a fala do usuário
+  askAndSpeak(tab, label);
+}
+
+/* =====================================================================
+   6. SKILLS / COMMAND DECK (render + interação)
+   ===================================================================== */
+SKILLS.forEach((label, i) => {
+  const b = document.createElement('button');
+  b.className = 'skill';
+  b.innerHTML = `<span class="idx">S${p2(i+1)}</span>${label}`;
+  b.addEventListener('click', () => {
+    const tab = activeTab();
+    if (tab.ui!=='idle'){ // se ocupado, apenas enfileira (feedback visual)
+      dbg('INFO','skill » '+label+' › ocupado, ignorado');
+      b.classList.add('queued'); setTimeout(()=>b.classList.remove('queued'), 1400);
+    } else {
+      runSkill(tab, label);
+    }
+  });
+  els.skills.appendChild(b);
+});
+
+/* =====================================================================
+   7. CONTROLES + TECLADO
+   ESPAÇO = pausar/retomar · ENTER = enviar/iniciar · ESC = encerrar
+   Todos agem sobre a aba ATIVA — é a mesma que o mic captura.
+   ===================================================================== */
+const setMainLabel  = t => els.main.textContent  = t;
+const setPauseLabel = t => els.pause.textContent = t;
+
+function onMain(){                  // INICIAR (idle) → ENVIAR (durante a escuta)
+  if (textMode) return;             // no modo texto o mic fica desligado
+  const tab = activeTab();
+  if (tab.mirror){ dbg('INFO','a aba CELULAR é um espelho — fale pelo celular ou troque de aba'); return; }
+  if (tab.ui==='idle') startListening();
+  else if (tab.ui==='listen') sendTurn();
+}
+function onPause(){                 // pausa/retoma a GRAVAÇÃO antes de enviar
+  if (textMode) return;
+  const tab = activeTab();
+  if (tab.ui!=='listen' || !rec){ dbg('INFO','pausar ignorado (estado='+tab.ui+')'); return; }
+  if (rec.state==='recording'){ rec.pause(); stopMeter(); setPauseLabel('RETOMAR'); dbg('INFO','gravação pausada'); }
+  else if (rec.state==='paused'){ rec.resume(); startMeter(); setPauseLabel('PAUSAR'); dbg('INFO','gravação retomada'); }
+}
+function onStop(){                  // encerra o fluxo da aba ativa e volta ao idle
+  const tab = activeTab();
+  if (tab.provider === 'codex'){ finishIdle(tab); return; }
+  if (tab.mirror){ dbg('INFO','a aba CELULAR é um espelho — pare o turno pelo próprio celular'); return; }
+  if (tab.ui==='idle') return;
+  dbg('WARN','ENCERRAR pelo usuário (estado='+tab.ui+')');
+  const askEmCurso = !!tab.askCtrl;
+  try{ if (tab.askCtrl) tab.askCtrl.abort(); }catch(e){}
+  // o /stt é o outro fetch longo do turno; sem isto o ENCERRAR não o alcançava
+  // e a transcrição, ao voltar, ainda disparava o /ask numa aba já em repouso.
+  clearRecCap();
+  try{ if (tab.sttCtrl) tab.sttCtrl.abort(); }catch(e){}
+  // abortar o fetch só corta a escuta: o processo seguiria produzindo e a sobra
+  // apareceria no turno seguinte. /abort mata o processo daquele sid.
+  if (askEmCurso){
+    fetch('/abort',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sid:tab.sid})}).catch(e=>dbg('WARN','/abort: '+e.message));
+    dbg('WARN','/abort enviado · '+tab.titulo);
+  }
+  pendingSend=false;
+  try{ if (rec && (rec.state==='recording'||rec.state==='paused')) rec.stop(); }catch(e){}
+  if (stream) stream.getTracks().forEach(t=>t.stop());
+  stopMeter(); if (tab===activeTab()) clearActivity();
+  dbg('WARN','sessão encerrada pelo usuário');
+  finishIdle(tab);
+}
+
+els.main.addEventListener('click', onMain);
+els.pause.addEventListener('click', onPause);
+els.stop.addEventListener('click', onStop);
+els.model.addEventListener('change', () => { mirrorDockSelects(); dbg('INFO','modelo » '+els.model.value+' selecionado'); });
+els.effort.addEventListener('change', () => { mirrorDockSelects(); dbg('INFO','esforço » '+(els.effort.value||'padrão')+' selecionado'); });
+
+// gaveta CONVERSA (minimalista): mesmos seletores, espelhados nos originais —
+// currentModel()/currentEffort() continuam lendo só els.model/els.effort
+function mirrorDockSelects(){
+  els.dockModel.value  = els.model.value;
+  els.dockEffort.value = els.effort.value;
+}
+els.dockModel.addEventListener('change', () => { els.model.value = els.dockModel.value; dbg('INFO','modelo » '+els.model.value+' selecionado'); });
+els.dockEffort.addEventListener('change', () => { els.effort.value = els.dockEffort.value; dbg('INFO','esforço » '+(els.effort.value||'padrão')+' selecionado'); });
+
+document.addEventListener('keydown', (e) => {
+  if (window.hubProviders?.canUseAssistantUI?.() === false) return;
+  if (e.target === els.model) return;       // deixa o teclado operar o dropdown
+  if (e.target === els.effort) return;      // idem p/ o dropdown de esforço
+  if (e.target === els.dockModel) return;   // idem p/ os seletores da gaveta CONVERSA
+  if (e.target === els.dockEffort) return;
+  if (e.target === els.textInput) return;   // deixa o input de texto digitar/ENTER normalmente
+  if (!els.modalOverlay.hidden) return;     // modal aberto: não intercepta teclado global
+  if (!els.repOverlay.hidden){              // visor de relatório: ESC fecha ELE, nunca a sessão
+    if (e.code === 'Escape'){ e.preventDefault(); closeReport(); }
+    return;
+  }
+  if (e.code === 'Space'){ e.preventDefault(); onPause(); }
+  else if (e.code === 'Enter'){ e.preventDefault(); onMain(); }
+  else if (e.code === 'Escape'){ e.preventDefault(); onStop(); }
+});
+
+/* =====================================================================
+   7b. MODO MINIMALISTA — o núcleo no centro, o resto em duas gavetas.
+   As gavetas NÃO são markup novo: são o painel de TRANSCRIPT (esquerda,
+   com as abas e as sessões) e a coluna de SKILLS (direita), só
+   reposicionados por CSS (seção 9b) via .dock-l / .dock-r no <body>.
+   Modo + gavetas abertas persistem em localStorage; gaveta aberta se
+   recolhe sozinha depois de DOCK_HIDE_MS parada; recolhida, acende um
+   ponto discreto na alça quando chega novidade.
+   ===================================================================== */
+const MIN_KEY = 'core.minimal';
+// Etapa 5: 12s fazia sentido quando a gaveta era um espião do log; agora ela é
+// o painel de trabalho (diff, busca, relatórios) e sumir no meio da leitura
+// atrapalhava mais do que limpava a tela.
+const DOCK_HIDE_MS = 45000;
+const DOCKS = {
+  l: { el:els.txPanel,   btn:els.dockL, cls:'dock-l', timer:0 },
+  r: { el:els.colRight,  btn:els.dockR, cls:'dock-r', timer:0 },
+};
+const isDockOpen = (side) => document.body.classList.contains(DOCKS[side].cls);
+
+function saveMinimalState(){
+  try{ localStorage.setItem(MIN_KEY, JSON.stringify(
+    { on:minimal, l:isDockOpen('l'), r:isDockOpen('r') })); }catch(e){}
+}
+
+function setMinimal(on, silent){
+  window.hubProviders?.beforeModeChange(on);
+  minimal = on;
+  document.body.classList.toggle('minimal', on);
+  els.minimalToggle.textContent = on ? 'PAINEL COMPLETO' : 'MINIMALISTA';
+  // Etapa 2: no rail vertical não sobra espaço horizontal pro tag no meio
+  // das abas — ele migra (mesmo elemento, mesmo id) pro cabeçalho da visão;
+  // no painel completo volta pra dentro de h3.tabs, de onde nunca saiu.
+  if (els.dockHead && elTabTag){
+    if (on) els.dockHead.appendChild(elTabTag);
+    else els.txPanel.querySelector('h3.tabs').appendChild(elTabTag);
+  }
+  // as classes dock-* só têm efeito sob body.minimal, então o estado das
+  // gavetas sobrevive intacto à ida e volta do painel completo.
+  ['l','r'].forEach(s => on && isDockOpen(s) ? armDockHide(s) : clearTimeout(DOCKS[s].timer));
+  if (!silent){ saveMinimalState(); dbg('INFO','modo minimalista » ' + (on ? 'ativado' : 'desativado')); }
+  graph.resize();
+  window.hubProviders?.afterModeChange(on);
+}
+
+function setDock(side, on, silent){
+  const d = DOCKS[side];
+  document.body.classList.toggle(d.cls, on);
+  d.btn.classList.toggle('on', on);
+  if (on){ d.btn.classList.remove('nu'); armDockHide(side); }
+  else clearTimeout(d.timer);
+  if (!silent) saveMinimalState();
+}
+
+// Etapa 5: além de mouse e foco, duas situações em que recolher seria roubo de
+// contexto — texto selecionado dentro da gaveta (alguém está lendo ou copiando)
+// e busca escrita (o filtro sumiria de vista junto com o resultado dele).
+function dockBusy(el){
+  if (el === els.txPanel && els.dockFind && els.dockFind.value.trim()) return true;
+  const sel = window.getSelection && window.getSelection();
+  if (sel && sel.rangeCount && !sel.isCollapsed){
+    const n = sel.getRangeAt(0).commonAncestorContainer;
+    if (el.contains(n.nodeType === 1 ? n : n.parentNode)) return true;
+  }
+  return false;
+}
+
+// recolhe sozinha depois do tempo parada — mas nunca com o mouse/foco dentro
+function armDockHide(side){
+  const d = DOCKS[side];
+  clearTimeout(d.timer);
+  if (!minimal) return;
+  d.timer = setTimeout(() => {
+    if (d.el.matches(':hover') || d.el.contains(document.activeElement) || dockBusy(d.el)){ armDockHide(side); return; }
+    setDock(side, false);
+  }, DOCK_HIDE_MS);
+}
+
+// ponto na alça quando chega novidade e a gaveta está recolhida
+function dockNotify(side){
+  if (!minimal || !DOCKS[side] || isDockOpen(side)) return;
+  DOCKS[side].btn.classList.add('nu');
+}
+
+els.minimalToggle.addEventListener('click', () => setMinimal(!minimal));
+['l','r'].forEach(side => {
+  const d = DOCKS[side];
+  d.btn.addEventListener('click', () => setDock(side, !isDockOpen(side)));
+  ['pointerdown','pointermove','wheel','focusin','keydown'].forEach(ev =>
+    d.el.addEventListener(ev, () => { if (isDockOpen(side)) armDockHide(side); }, {passive:true}));
+});
+
+/* ---------- Etapa 1: largura ajustável e persistente da gaveta esquerda ----------
+   A gaveta segue position:fixed flutuando por cima do núcleo — arrastar só
+   muda --dock-w (não ancora, não empurra nada, não chama graph.resize()).
+   Guarda em localStorage à parte do resto do estado minimalista (MIN_KEY),
+   porque a largura faz sentido independente de a gaveta estar aberta. */
+const DOCKW_KEY = 'core.dockw';
+const DOCKW_MIN = 340;                                    // legibilidade mínima da coluna
+const dockwMax  = () => Math.min(1100, window.innerWidth * 0.92);
+const dockwWide = () => Math.min(1100, window.innerWidth * 0.80);
+let dockWSaved = 480;   // largura "normal" a que o duplo-clique volta (ver abaixo)
+
+function setDockW(px, persist){
+  const w = clamp(px, DOCKW_MIN, dockwMax());
+  document.documentElement.style.setProperty('--dock-w', w + 'px');
+  if (persist){ dockWSaved = w; try{ localStorage.setItem(DOCKW_KEY, String(w)); }catch(e){} }
+  return w;
+}
+
+if (els.dockGrip){
+  let dragging = false, startX = 0, startW = 0;
+  els.dockGrip.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    startX = e.clientX;
+    startW = els.txPanel.getBoundingClientRect().width;
+    els.dockGrip.classList.add('dragging');
+    document.body.style.userSelect = 'none';   // não selecionar texto da gaveta enquanto arrasta
+    els.dockGrip.setPointerCapture(e.pointerId);
+  });
+  els.dockGrip.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    setDockW(startW + (e.clientX - startX), false);   // só persiste ao soltar (ver endDrag)
+    armDockHide('l');            // arrastar é atividade — a gaveta não pode sumir no meio do ajuste
+  });
+  function endDrag(){
+    if (!dragging) return;
+    dragging = false;
+    els.dockGrip.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    setDockW(els.txPanel.getBoundingClientRect().width, true);   // grava o valor final
+    armDockHide('l');
+  }
+  els.dockGrip.addEventListener('pointerup', endDrag);
+  els.dockGrip.addEventListener('pointercancel', endDrag);
+  // duplo clique: alterna entre a largura salva e uma largura ampla (leitura
+  // confortável de diff longo), sem virar outra tela nem sobrescrever o que
+  // tava salvo — a largura ampla é só um estado passageiro.
+  els.dockGrip.addEventListener('dblclick', () => {
+    const atual = els.txPanel.getBoundingClientRect().width;
+    if (Math.round(atual) >= Math.round(dockwWide()) - 2) setDockW(dockWSaved, false);
+    else setDockW(dockwWide(), false);
+    armDockHide('l');
+  });
+}
+
+/* ---------- Etapa 3: densidade (confortável/compacta) ----------
+   Botão fica no cabeçalho da visão (#dockHead, Etapa 2). Persiste à parte
+   do resto do estado minimalista (MIN_KEY) porque é preferência de
+   leitura, não estado de qual gaveta tá aberta — igual à largura (Etapa 1). */
+const DENSE_KEY = 'core.dense';
+function setDense(on, silent){
+  document.body.classList.toggle('dense', on);
+  if (els.densToggle){
+    els.densToggle.textContent = 'DENSIDADE: ' + (on ? 'COMPACTA' : 'CONFORTO');
+    els.densToggle.classList.toggle('on', on);
+  }
+  if (!silent){ try{ localStorage.setItem(DENSE_KEY, on ? '1' : '0'); }catch(e){} }
+}
+if (els.densToggle){
+  els.densToggle.addEventListener('click', () => setDense(!document.body.classList.contains('dense')));
+}
+
+// legenda passageira: a última frase (minha ou dele) perto do núcleo, para
+// não precisar abrir a gaveta só porque não deu pra ouvir direito.
+const CAPTION_MS = 7000, CAPTION_MAX = 220;
+let captionTimer = 0;
+function showCaption(who, text){
+  if (!els.caption) return;
+  const t = (text || '').trim();
+  if (!t) return;
+  els.caption.className = 'caption on ' + (CLS[who] || 'sys');
+  els.caption.textContent = t.length > CAPTION_MAX ? t.slice(0, CAPTION_MAX) + '…' : t;
+  clearTimeout(captionTimer);
+  captionTimer = setTimeout(() => els.caption.classList.remove('on'), CAPTION_MS);
+}
+
+// no minimalista o palco inteiro é o botão de falar (o #main fica só como
+// alvo visível) — clique em botão de verdade, como CANCELAR, segue o dele.
+els.canvasWrap.addEventListener('click', (e) => {
+  if (!minimal || textMode) return;
+  if (e.target.closest('button')) return;
+  onMain();
+});
+
+/* =====================================================================
+   7c. CHAT POR TEXTO (item 4) — alterna com voz. Reusa askAndSpeak() tal
+   qual o fluxo de voz, só pula STT: digitar substitui a captura de áudio.
+   Permite testar TUDO (transcript, memória, /speak, grafo) via navegador.
+   ===================================================================== */
+function setTextMode(on){
+  const tab = activeTab();
+  if (tab.ui !== 'idle'){ dbg('INFO','troca de modo ignorada (estado='+tab.ui+')'); return; }
+  textMode = on;
+  els.main.hidden = on; els.pause.hidden = on; els.textForm.hidden = !on;
+  els.modeToggle.textContent = on ? 'MODO VOZ' : 'MODO TEXTO';
+  dbg('INFO','modo » ' + (on ? 'TEXTO' : 'VOZ') + ' ativado');
+  if (on) els.textInput.focus();
+}
+els.modeToggle.addEventListener('click', () => setTextMode(!textMode));
+function resizeTextInput(){
+  els.textInput.style.height = 'auto';
+  els.textInput.style.height = els.textInput.scrollHeight + 'px';
+}
+els.textInput.addEventListener('input', resizeTextInput);
+els.textInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); els.textForm.requestSubmit(); }
+});
+function sendTextPrompt(v){
+  if (window.hubProviders?.canUseAssistantUI?.() === false) return;
+  if (window.hubProviders && !window.hubProviders.allowAction(activeTab())) return;
+  const tab = activeTab();
+  if (tab.mirror){ dbg('INFO','a aba CELULAR é um espelho — envie pelo celular ou troque de aba'); return; }
+  if (tab.ui !== 'idle') return;
+  v = (v || '').trim();
+  if (!v) return;
+  els.textInput.value = '';
+  resizeTextInput();
+  recordTurn(tab, 'EU', v);
+  askAndSpeak(tab, v);
+}
+els.textForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  sendTextPrompt(els.textInput.value);
+});
+
+/* modal — clicar na caixa pequena abre uma grande, centralizada, com os
+   mesmos seletores de modelo/esforço, p/ compor o prompt com mais espaço. */
+function openTextModal(){
+  els.modalModel.value = els.model.value;
+  els.modalEffort.value = els.effort.value;
+  els.modalTextInput.value = els.textInput.value;
+  els.modalOverlay.hidden = false;
+  els.textInput.blur();
+  els.modalTextInput.focus();
+}
+function closeTextModal(sync){
+  if (sync){
+    els.model.value = els.modalModel.value;
+    els.effort.value = els.modalEffort.value;
+    mirrorDockSelects();
+    els.textInput.value = els.modalTextInput.value;
+    resizeTextInput();
+  }
+  els.modalOverlay.hidden = true;
+}
+els.textInput.addEventListener('focus', openTextModal);
+els.modalClose.addEventListener('click', () => closeTextModal(true));
+els.modalOverlay.addEventListener('click', (e) => { if (e.target === els.modalOverlay) closeTextModal(true); });
+els.modalSend.addEventListener('click', () => {
+  els.model.value = els.modalModel.value;
+  els.effort.value = els.modalEffort.value;
+  mirrorDockSelects();
+  const v = els.modalTextInput.value;
+  els.modalTextInput.value = '';
+  closeTextModal(false);
+  sendTextPrompt(v);
+});
+els.modalTextInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); els.modalSend.click(); }
+  else if (e.key === 'Escape'){ e.preventDefault(); closeTextModal(true); }
+});
+
+/* =====================================================================
+   8. PAINÉIS PLACEHOLDER — sparklines (SVG geradas) + métrica viva
+   ===================================================================== */
+function spark(n){
+  let v = 45 + Math.random()*15, pts = [];
+  for (let i=0;i<n;i++){ v = clamp(v + (Math.random()-0.5)*24, 10, 92); pts.push(v); }
+  const W=120, H=30, step=W/(n-1);
+  const line = pts.map((p,i)=>`${(i*step).toFixed(1)},${(H-p/100*H).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <polyline points="0,${H} ${line} ${W},${H}" style="fill:rgba(var(--accent-rgb),.1)"></polyline>
+    <polyline points="${line}" fill="none" vector-effect="non-scaling-stroke" style="stroke:var(--accent);stroke-width:1.4;filter:drop-shadow(0 0 3px rgba(var(--accent-rgb),.6))"></polyline>
+  </svg>`;
+}
+document.querySelectorAll('[data-spark]').forEach(el => el.innerHTML = spark(22));
+// uma métrica "viva": janela de contexto deriva levemente
+setInterval(() => {
+  const v = 14 + Math.round(Math.random()*16);
+  els.ctx.textContent = v + '%';
+  document.querySelector('[data-spark="d"]').innerHTML = spark(22);
+}, 3500);
+
+/* =====================================================================
+   8b. PAINÉIS EXPANSÍVEIS — clicar no cabeçalho recolhe/expande.
+   Esquerda, direita e o TRANSCRIPT. Estado guardado em localStorage.
+   ===================================================================== */
+const PANEL_KEY = 'core.collapsed';
+let collapsedSet = new Set();
+try { collapsedSet = new Set(JSON.parse(localStorage.getItem(PANEL_KEY) || '[]')); } catch(e){}
+
+document.querySelectorAll('.panel > h3').forEach(h => {
+  const panel = h.parentElement;
+  if (panel.id === 'txPanel') return;   // painel de abas: não recolhe (tabs cuidam do clique)
+  // injeta a seta de recolher (vai p/ a direita via CSS)
+  h.insertAdjacentHTML('beforeend', '<span class="chev" aria-hidden="true">▾</span>');
+  // chave estável p/ persistir (título do painel)
+  const key = (h.textContent || '').trim().split(/\s+/).slice(0,2).join('-').toUpperCase();
+  panel.dataset.pkey = key;
+  if (collapsedSet.has(key)) applyCollapse(panel, true);
+  h.setAttribute('role','button'); h.setAttribute('tabindex','0');
+  h.addEventListener('click', () => toggleCollapse(panel));
+  h.addEventListener('keydown', e => { if (e.code==='Enter' || e.code==='Space'){ e.preventDefault(); e.stopPropagation(); toggleCollapse(panel); } });
+});
+
+function applyCollapse(panel, on){
+  panel.classList.toggle('collapsed', on);
+  if (panel.classList.contains('transcript'))
+    document.body.classList.toggle('tx-collapsed', on);
+}
+function toggleCollapse(panel){
+  const on = !panel.classList.contains('collapsed');
+  applyCollapse(panel, on);
+  if (on) collapsedSet.add(panel.dataset.pkey); else collapsedSet.delete(panel.dataset.pkey);
+  try { localStorage.setItem(PANEL_KEY, JSON.stringify([...collapsedSet])); } catch(e){}
+  graph.resize();  // o núcleo se ajusta ao novo espaço
+}
+
+/* =====================================================================
+   8c. DEBUG — console estruturado + abas TRANSCRIPT / DEBUG
+   dbg(level, msg) registra com timestamp ms; níveis colorem a linha.
+   ===================================================================== */
+const elDebug = $('debug'), elTabTag = $('tabTag');
+const tabBtns = [...document.querySelectorAll('#txPanel .tab')];
+const debugTabBtn = tabBtns.find(b => b.dataset.tab === 'debug');
+let dbgTabActive = false, dbgUnread = 0;
+const DEBUG_MAX = 600;
+const pad3 = n => String(n).padStart(3,'0');
+
+window.dbg = function(level, msg){
+  const d = new Date();
+  const ts = `${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}.${pad3(d.getMilliseconds())}`;
+  const lv = (level || 'INFO').toUpperCase();
+  const cls = {INFO:'info',OK:'ok',WARN:'warn',ERR:'err',NET:'net',STEP:'step',
+               STT:'info',ASK:'info',SPEAK:'info'}[lv] || 'info';
+  const row = document.createElement('div');
+  row.className = 'dl ' + cls;
+  row.innerHTML = '<span class="dt"></span><span class="dlv"></span><span class="dm"></span>';
+  row.children[0].textContent = ts;
+  row.children[1].textContent = lv;
+  row.children[2].textContent = msg;
+  elDebug.appendChild(row);
+  while (elDebug.children.length > DEBUG_MAX) elDebug.removeChild(elDebug.firstChild);
+  elDebug.scrollTop = elDebug.scrollHeight;
+  if (!dbgTabActive){ dbgUnread++; debugTabBtn.textContent = 'DEBUG (' + dbgUnread + ')'; }
+  if (lv === 'ERR' || lv === 'WARN') dockNotify('l');   // só o que importa acende a alça
+  try{ console.log('[core]', ts, lv, msg); }catch(e){}
+};
+
+tabBtns.forEach(b => b.addEventListener('click', () => {
+  tabBtns.forEach(x => x.classList.toggle('on', x === b));
+  const t = b.dataset.tab;
+  els.log.hidden   = (t !== 'log');
+  elDebug.hidden   = (t !== 'debug');
+  els.convs.hidden = (t !== 'convs');
+  els.chg.hidden   = (t !== 'chg');
+  els.reps.hidden  = (t !== 'reps');
+  elTabTag.textContent = (t === 'debug') ? 'DEBUG' : (t === 'convs') ? 'HISTÓRICO'
+                       : (t === 'chg') ? 'DIFF' : (t === 'reps') ? 'VISUAIS' : 'LIVE';
+  dbgTabActive = (t === 'debug');
+  if (dbgTabActive){ dbgUnread = 0; debugTabBtn.textContent = 'DEBUG'; elDebug.scrollTop = elDebug.scrollHeight; }
+  if (t === 'convs') renderConvList();
+  if (t === 'chg'){ chgUnread = 0; renderChgBadge(); renderChanges(); }
+  if (t === 'reps'){ repsUnread = 0; renderRepsBadge(); renderReports(); }
+}));
+
+// Etapa 2: cabeçalho da visão ativa no rail vertical — listener novo e
+// separado do handler acima (aquele os testes casam por regex, não mexe).
+// Só troca o rótulo grande do #dockHead; o #tabTag continua com o seu.
+const DOCK_VIEW_LABELS = { log:'TRANSCRIPT', chg:'ALTERAÇÕES', debug:'DEBUG', convs:'CONVERSAS', reps:'RELATÓRIOS' };
+if (els.dockTitle){
+  tabBtns.forEach(b => b.addEventListener('click', () => {
+    els.dockTitle.textContent = DOCK_VIEW_LABELS[b.dataset.tab] || 'TRANSCRIPT';
+  }));
+}
+
+/* ---------- Etapa 4: busca na visão ativa + chips de nível do DEBUG ----------
+   Log de conversa longa em coluna estreita só se navegava rolando. O campo do
+   #dockHead filtra a visão ATIVA (case-insensitive, sem regex) escondendo o
+   que não casa. Nenhuma função de render existente foi tocada: um
+   MutationObserver reaplica o filtro quando qualquer visão ganha linha nova.
+   Ele observa só `childList` — applyFind mexe em classe, que é `attributes`,
+   então o observer não se retroalimenta. */
+let dockView = 'log';
+const FIND_SPEC = {
+  log:   { box: () => els.log,   sel: '.line' },
+  debug: { box: () => elDebug,   sel: '.dl' },
+  chg:   { box: () => els.chg,   sel: '.chg-row' },
+  convs: { box: () => els.convs, sel: '.conv-item' },
+  reps:  { box: () => els.reps,  sel: '.rep-item' },
+};
+function applyFind(){
+  const spec = FIND_SPEC[dockView];
+  const box = spec && spec.box();
+  if (!box) return;
+  const q = ((els.dockFind && els.dockFind.value) || '').trim().toLowerCase();
+  const rows = box.querySelectorAll(spec.sel);
+  let hits = 0;
+  rows.forEach(r => {
+    const hit = !q || r.textContent.toLowerCase().indexOf(q) >= 0;
+    r.classList.toggle('nomatch', !hit);
+    // o diff de uma alteração é IRMÃO da linha, não filho: some junto com ela
+    if (dockView === 'chg'){
+      const dif = r.nextElementSibling;
+      if (dif && dif.classList.contains('chg-diff')) dif.classList.toggle('nomatch', !hit);
+    }
+    if (hit) hits++;
+  });
+  if (els.dockCount){
+    els.dockCount.hidden = !q;
+    els.dockCount.textContent = hits + ' de ' + rows.length;
+  }
+}
+if (els.dockFind){
+  els.dockFind.addEventListener('input', applyFind);
+  els.dockFind.addEventListener('keydown', e => {
+    // Esc aqui limpa o filtro e PARA no campo: o handler global de keydown
+    // encerra a sessão, o que seria uma surpresa e tanto ao cancelar uma busca.
+    if (e.key === 'Escape'){
+      e.stopPropagation();
+      if (els.dockFind.value){ els.dockFind.value = ''; applyFind(); }
+      else els.dockFind.blur();
+    }
+  });
+  let pend = false;
+  const obs = new MutationObserver(() => {
+    if (pend) return;
+    pend = true;
+    requestAnimationFrame(() => { pend = false; applyFind(); });
+  });
+  [els.log, elDebug, els.chg, els.convs, els.reps].forEach(b => {
+    if (b) obs.observe(b, { childList: true });
+  });
+}
+
+/* chips de nível do DEBUG: escondem classes inteiras de linha (as classes
+   .dl.info/.ok/... que window.dbg já põe). Estado invertido — guardo os
+   DESLIGADOS — pra que um nível novo no futuro apareça ligado por padrão. */
+const DBG_KEY = 'core.dbgLevels';
+const DBG_LVS = ['info','ok','warn','err','net','step'];
+let dbgOff = [];
+function applyDbgLevels(silent){
+  DBG_LVS.forEach(lv => elDebug.classList.toggle('hide-' + lv, dbgOff.indexOf(lv) >= 0));
+  if (els.dbgLevels){
+    els.dbgLevels.querySelectorAll('.dbg-chip').forEach(c => {
+      c.classList.toggle('off', dbgOff.indexOf(c.dataset.lv) >= 0);
+    });
+  }
+  if (!silent){ try{ localStorage.setItem(DBG_KEY, dbgOff.join(',')); }catch(e){} }
+}
+if (els.dbgLevels){
+  els.dbgLevels.addEventListener('click', e => {
+    const chip = e.target.closest('.dbg-chip');
+    if (!chip) return;
+    const lv = chip.dataset.lv, i = dbgOff.indexOf(lv);
+    if (i >= 0) dbgOff.splice(i, 1); else dbgOff.push(lv);
+    applyDbgLevels();
+  });
+  try{
+    const raw = localStorage.getItem(DBG_KEY);
+    if (raw) dbgOff = raw.split(',').filter(x => DBG_LVS.indexOf(x) >= 0);
+  }catch(e){}
+  applyDbgLevels(true);
+}
+
+// troca de visão: listener novo (o handler de cima é casado por regex nos
+// testes) — atualiza a visão corrente, mostra os chips só no DEBUG e reaplica
+// o filtro, que vale por visão e não some ao trocar de aba.
+tabBtns.forEach(b => b.addEventListener('click', () => {
+  dockView = b.dataset.tab || 'log';
+  if (els.dbgLevels) els.dbgLevels.hidden = (dockView !== 'debug');
+  applyFind();
+}));
+
+/* =====================================================================
+   8c-bis. ALTERAÇÕES (F6) — o que o Claude MUDOU de fato: cada Edit/Write
+   vira uma linha com arquivo, linhas +/− e o diff expansível; cada Bash
+   vira a linha do comando. Estado por aba (tab.changes) e por CONVERSA:
+   "NOVA CONVERSA" arquiva junto com o transcript. O servidor emite isso a
+   partir do structuredPatch que vem no tool_result do stream-json.
+   ===================================================================== */
+const chgTabBtn = tabBtns.find(b => b.dataset.tab === 'chg');
+const CHG_MAX = 400;          // teto de itens guardados por conversa
+let chgUnread = 0;
+
+function renderChgBadge(){
+  chgTabBtn.textContent = chgUnread ? ('ALTERAÇÕES (' + chgUnread + ')') : 'ALTERAÇÕES';
+}
+function chgSummary(list){
+  const files = new Set(); let add = 0, del = 0, cmds = 0;
+  (list || []).forEach(c => {
+    if (c.kind === 'cmd'){ cmds++; return; }
+    files.add(c.path || c.file); add += (c.add || 0); del += (c.del || 0);
+  });
+  return { files: files.size, add, del, cmds };
+}
+function noteChange(tab, ch){
+  tab.changes.push(ch);
+  while (tab.changes.length > CHG_MAX) tab.changes.shift();
+  if (tab !== activeTab()) return;
+  dockNotify('l');
+  if (els.chg.hidden){ chgUnread++; renderChgBadge(); }
+  else renderChanges();
+}
+function chgDiffBox(c){
+  const box = document.createElement('div');
+  box.className = 'chg-diff';
+  (c.diff || []).forEach(ln => {
+    const d = document.createElement('div');
+    const p = ln.charAt(0);
+    d.className = ln.startsWith('@@') ? 'df-hunk' : p === '+' ? 'df-add' : p === '-' ? 'df-del' : 'df-ctx';
+    d.textContent = ln;
+    box.appendChild(d);
+  });
+  if (c.truncated){
+    const m = document.createElement('div');
+    m.className = 'df-more'; m.textContent = '… DIFF TRUNCADO (arquivo grande)';
+    box.appendChild(m);
+  }
+  if (!(c.diff || []).length){
+    const m = document.createElement('div');
+    m.className = 'df-more'; m.textContent = c.ok ? '(sem diff reportado)' : '(a ferramenta falhou)';
+    box.appendChild(m);
+  }
+  return box;
+}
+function chgAppendRow(c){
+  const row = document.createElement('div');
+  row.className = 'chg-row ' + (c.kind === 'cmd' ? 'cmd' : '') + (c.ok === false ? ' fail' : '');
+  row.innerHTML = '<span class="ck"></span><span class="cf"></span><span class="cn"></span>';
+  if (c.kind === 'cmd'){
+    row.children[0].textContent = c.ok === false ? 'FALHOU' : 'CMD';
+    row.children[1].textContent = '$ ' + (c.cmd || '');
+    row.children[1].title = (c.desc || '') + '\n' + (c.cmd || '');
+    els.chg.appendChild(row);
+    return;
+  }
+  row.children[0].textContent = c.kind === 'create' ? 'NOVO' : 'EDIT';
+  row.children[1].textContent = c.file || 'arquivo';
+  row.children[1].title = c.path || '';
+  row.children[2].innerHTML = '<span class="plus"></span><span class="minus"></span>';
+  row.children[2].children[0].textContent = '+' + (c.add || 0);
+  row.children[2].children[1].textContent = '−' + (c.del || 0);
+  const box = chgDiffBox(c);
+  box.hidden = true;
+  row.addEventListener('click', () => { box.hidden = !box.hidden; });
+  els.chg.appendChild(row);
+  els.chg.appendChild(box);
+}
+function renderChanges(){
+  const list = (activeTab() && activeTab().changes) || [];
+  els.chg.innerHTML = '';
+  if (!list.length){
+    const e = document.createElement('div'); e.className = 'chg-empty';
+    e.textContent = 'NENHUMA ALTERAÇÃO NESTA CONVERSA AINDA.'; els.chg.appendChild(e); return;
+  }
+  const s = chgSummary(list);
+  const head = document.createElement('div'); head.className = 'chg-sum';
+  head.innerHTML = '<span></span><span class="plus"></span><span class="minus"></span><span></span>';
+  head.children[0].innerHTML = '<b>' + s.files + '</b> arquivo' + (s.files === 1 ? '' : 's');
+  head.children[1].innerHTML = '<b>+' + s.add + '</b> linhas';
+  head.children[2].innerHTML = '<b>−' + s.del + '</b> linhas';
+  head.children[3].innerHTML = '<b>' + s.cmds + '</b> comando' + (s.cmds === 1 ? '' : 's');
+  els.chg.appendChild(head);
+  list.forEach(chgAppendRow);
+  els.chg.scrollTop = els.chg.scrollHeight;
+}
+function chgSummaryText(list){
+  const s = chgSummary(list);
+  return s.files + ' arq · +' + s.add + ' −' + s.del + ' · ' + s.cmds + ' cmd';
+}
+
+/* =====================================================================
+   8d. CONVERSAS (item 4) — histórico ARQUIVADO (conversas resetadas via
+   "NOVA CONVERSA"). Sessões AO VIVO ficam na barra de abas (seção 5), não aqui.
+   Sessão do navegador = vida da página; zera ao fechar o HUB.
+   ===================================================================== */
+function renderConvList(){
+  els.convs.innerHTML = '';
+  const visibleHistory = window.hubProviders ? history.filter(c => window.hubProviders.accepts(c)) : history;
+  if (!visibleHistory.length){
+    const e = document.createElement('div'); e.className = 'conv-empty';
+    e.textContent = 'NENHUMA CONVERSA ARQUIVADA NESTA SESSÃO AINDA.'; els.convs.appendChild(e); return;
+  }
+  // mais recente primeiro
+  [...visibleHistory].reverse().forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'conv-item';
+    row.innerHTML = '<span class="ct"></span><span class="cmeta"></span>';
+    const first = c.turns.find(t => t.who === 'EU');
+    row.children[0].textContent = c.titulo + (first ? ' · ' + first.text.slice(0,40) : '');
+    row.children[1].textContent = c.endedAt + ' · ' + c.turns.length + ' msgs'
+      + ((c.changes && c.changes.length) ? ' · ' + chgSummaryText(c.changes) : '');
+    row.addEventListener('click', () => renderConvDetail(c));
+    els.convs.appendChild(row);
+  });
+}
+function renderConvDetail(c){
+  els.convs.innerHTML = '';
+  const back = document.createElement('button');
+  back.className = 'conv-back'; back.textContent = '‹ VOLTAR ÀS CONVERSAS';
+  back.addEventListener('click', renderConvList); els.convs.appendChild(back);
+  if (c.changes && c.changes.length){          // F6: o que essa conversa mudou
+    const s = document.createElement('div'); s.className = 'chg-sum';
+    s.textContent = 'ALTERAÇÕES · ' + chgSummaryText(c.changes);
+    els.convs.appendChild(s);
+  }
+  if (!c.turns.length){
+    const e = document.createElement('div'); e.className = 'conv-empty';
+    e.textContent = 'CONVERSA SEM MENSAGENS.'; els.convs.appendChild(e); return;
+  }
+  c.turns.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'line ' + (CLS[t.who] || 'sys');
+    div.innerHTML = `<span class="who">${t.who}</span><span class="txt"></span>`;
+    div.querySelector('.txt').textContent = t.text;
+    els.convs.appendChild(div);
+  });
+}
+
+// NOVA CONVERSA: arquiva o transcript da aba ativa em `history`, zera o
+// contexto do Claude daquele sid no backend e começa uma conversa limpa NA
+// MESMA aba (o sid não muda). Bloqueado durante think/speak.
+async function onNewConv(){
+  const tab = activeTab();
+  if (tab.mirror){ dbg('INFO','a aba CELULAR é um espelho — comece a conversa nova pelo celular'); return; }
+  if (tab.ui !== 'idle'){ dbg('INFO','nova conversa ignorada (estado='+tab.ui+')'); return; }
+  dbg('INFO','nova conversa · resetando contexto de '+tab.titulo);
+  if (tab.turns.length) history.push({ provider:tab.provider || 'claude', titulo: tab.titulo, turns: tab.turns.slice(),
+                                       changes: tab.changes.slice(), endedAt: tickClockStamp() });
+  tab.turns = [];
+  tab.changes = [];              // F6: alterações são por conversa, não por aba
+  renderActiveTranscript();
+  if (tab.provider === 'codex'){
+    if (!els.convs.hidden) renderConvList();
+    dbg('INFO','nova conversa local Codex · backend pendente'); return;
+  }
+  try{
+    const r = await fetch('/session_reset',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({modelo:currentModel(), esforco:currentEffort(), sid:tab.sid})});
+    const j = await r.json().catch(()=>({}));
+    dbg('OK','contexto zerado · '+tab.titulo+' · claude vivo='+j.alive);
+  }catch(e){ dbg('ERR','/session_reset: '+e.message); }
+  if (!els.convs.hidden) renderConvList();
+}
+els.newconv.addEventListener('click', onNewConv);
+
+/* =====================================================================
+   8e. RELATÓRIOS VISUAIS — o Claude da sessão salva um HTML auto-contido em
+   _agentes/relatorios/ do vault; o front sonda GET /reports e, quando surge
+   um arquivo novo, ABRE o visor sozinho (o usuário ouve o comentário por voz
+   enquanto olha o gráfico). A aba RELATÓRIOS lista o histórico; badge +
+   ponto na alça seguem o mesmo contrato das outras abas.
+   ===================================================================== */
+const REPS_POLL_MS = 4000;
+const repsTabBtn = tabBtns.find(b => b.dataset.tab === 'reps');
+let repsList = [];      // último GET /reports (mais recente primeiro)
+let repsSeen = 0;       // maior mtime já visto (0 = 1ª carga ainda não veio)
+let repsUnread = 0;
+
+function renderRepsBadge(){
+  repsTabBtn.textContent = repsUnread ? ('RELATÓRIOS (' + repsUnread + ')') : 'RELATÓRIOS';
+}
+function fmtRepTime(mtime){
+  const d = new Date(mtime * 1000);
+  return `${p2(d.getDate())}/${p2(d.getMonth()+1)} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+}
+function renderReports(){
+  els.reps.innerHTML = '';
+  if (!repsList.length){
+    const e = document.createElement('div'); e.className = 'rep-empty';
+    e.textContent = 'NENHUM RELATÓRIO AINDA. PEÇA UM GRÁFICO OU RELATÓRIO POR VOZ.';
+    els.reps.appendChild(e); return;
+  }
+  repsList.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'rep-item';
+    row.innerHTML = '<span class="rt"></span><span class="rmeta"></span>';
+    row.children[0].textContent = r.title;
+    row.children[0].title = r.file;
+    row.children[1].textContent = fmtRepTime(r.mtime);
+    row.addEventListener('click', () => openReport(r));
+    els.reps.appendChild(row);
+  });
+}
+let repOpenFile = null;   // arquivo do relatório atualmente aberto no visor (p/ EXCLUIR)
+function openReport(r){
+  const url = '/reports/' + encodeURIComponent(r.file);
+  repOpenFile = r.file;
+  els.repTitle.textContent = r.title;
+  els.repTitle.title = r.file;
+  els.repOpen.href = url;
+  els.repFrame.src = url;
+  els.repOverlay.hidden = false;
+}
+function closeReport(){
+  els.repOverlay.hidden = true;
+  els.repFrame.src = 'about:blank';   // libera o documento (áudio/timers do relatório param)
+}
+els.repClose.addEventListener('click', closeReport);
+els.repOverlay.addEventListener('click', (e) => { if (e.target === els.repOverlay) closeReport(); });
+els.repDelete.addEventListener('click', async () => {
+  if (!repOpenFile) return;
+  if (!confirm('Excluir este relatório? Não tem como desfazer.')) return;
+  try{
+    const r = await fetch('/reports/' + encodeURIComponent(repOpenFile), {method:'DELETE'});
+    if (!r.ok){ dbg('ERR','excluir relatório: '+(await r.text())); return; }
+    repsList = repsList.filter(x => x.file !== repOpenFile);
+    renderReports();
+    closeReport();
+  }catch(e){ dbg('ERR','excluir relatório: '+e.message); }
+});
+
+async function pollReports(){
+  try{
+    const r = await fetch('/reports');
+    const j = await r.json();
+    const list = j.reports || [];
+    const first = (repsSeen === 0);
+    const fresh = first ? [] : list.filter(x => x.mtime > repsSeen);
+    repsList = list;
+    if (list.length && list[0].mtime > repsSeen) repsSeen = list[0].mtime;
+    if (first && list.length) dbg('INFO', 'relatórios no acervo: ' + list.length);
+    if (fresh.length){
+      dbg('OK', 'relatório novo: ' + fresh[0].title);
+      dockNotify('l');
+      if (els.reps.hidden){ repsUnread += fresh.length; renderRepsBadge(); }
+      else renderReports();
+      openReport(fresh[0]);   // promessa da feature: o visual aparece sozinho
+    }
+  }catch(e){ /* silencioso: a ponte pode estar reiniciando; a próxima sonda resolve */ }
+  setTimeout(pollReports, REPS_POLL_MS);
+}
+pollReports();
+
+/* =====================================================================
+   9. BOOT — sequência de inicialização (deixa o HUD "vivo" no load)
+   ===================================================================== */
+setState('idle');
+tabs.push(newTab()); activeIdx = 0;         // 1ª aba da janela
+renderActiveTranscript();
+renderTabBar();
+renderSoundToggle();                        // F5: rótulo do toggle conforme localStorage (padrão LIGADO)
+// 7b: retoma o modo minimalista e as gavetas como ficaram na última sessão
+(() => {
+  let s = {};
+  try{ s = JSON.parse(localStorage.getItem(MIN_KEY) || '{}') || {}; }catch(e){}
+  setDock('l', !!s.l, true); setDock('r', !!s.r, true);
+  setMinimal(!!s.on, true);
+  if (s.on){
+    const abertas = [s.l && 'conversa', s.r && 'skills'].filter(Boolean).join(' + ') || 'nenhuma';
+    dbg('INFO','modo minimalista restaurado · gavetas abertas: ' + abertas);
+  }
+  // Etapa 1: a largura da gaveta esquerda persiste à parte (core.dockw),
+  // pois faz sentido independente de a gaveta estar aberta agora ou não.
+  let w = null;
+  try{ w = Number(localStorage.getItem(DOCKW_KEY)); }catch(e){}
+  if (w && isFinite(w)) setDockW(w, true);
+  // Etapa 3: densidade também é preferência à parte (core.dense)
+  let dense = false;
+  try{ dense = localStorage.getItem(DENSE_KEY) === '1'; }catch(e){}
+  setDense(dense, true);
+})();
+// destrava o AudioContext dos blips no 1º gesto do usuário (política de autoplay do Chrome)
+['pointerdown','keydown'].forEach(evt => window.addEventListener(evt, unlockBlip, {once:true}));
+dbg('OK','C.O.R.E. frontend carregado · contratos prontos');
+
+// aquece o Claude persistente (headless) da 1ª aba assim que o HUB abre.
+(async () => {
+  const tab = activeTab();
+  try{
+    const r = await fetch('/session_start',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({modelo:currentModel(), esforco:currentEffort(), sid:tab.sid})});
+    const j = await r.json().catch(()=>({}));
+    dbg('OK','claude headless pronto · vivo='+j.alive+' · novo='+j.spawned+' · modelo='+(j.model||'default'));
+  }catch(e){ dbg('WARN','/session_start: '+e.message+' (será iniciado sob demanda)'); }
+})();
+
+// --- pulso do HUD: a ponte morre junto com esta janela ----------------------
+// Fechar o Chrome não derrubava o servidor: um pythonw ficou 18h no ar segurando
+// a porta 8765 com código velho em memória. Agora esta janela pulsa com um id
+// próprio; quando nenhum HUD pulsa mais, a ponte se encerra sozinha. O id torna
+// seguro ter duas janelas abertas — fechar uma não derruba a ponte da outra.
+const HUD_ID = 'hud-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
+const HUD_PING_MS = 15000;   // o servidor só desiste após HUB_HUD_TTL (90 s)
+function hudPing(){
+  fetch('/hud_ping',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({hud:HUD_ID})}).catch(()=>{});
+}
+hudPing();
+setInterval(hudPing, HUD_PING_MS);
+
+// encerra o Claude persistente de TODAS as abas vivas ao FECHAR o HUB.
+// A aba CELULAR (espelho) fica de fora: o processo dela pertence ao celular,
+// não a esta janela — encerrá-lo aqui mataria a conversa do outro aparelho.
+window.addEventListener('beforeunload', () => {
+  tabs.forEach(t => {
+    if (t.mirror) return;
+    if (t.provider === 'codex') return;
+    try{ navigator.sendBeacon('/session_end', new Blob([JSON.stringify({sid:t.sid})], {type:'application/json'})); }catch(e){}
+  });
+  // baixa imediata do HUD: sem isto a ponte só cairia quando o TTL vencesse
+  try{ navigator.sendBeacon('/hud_bye', new Blob([JSON.stringify({hud:HUD_ID})], {type:'application/json'})); }catch(e){}
+});
+
+/* =====================================================================
+   10. ESPELHO DA SESSAO DO CELULAR — a sessao "mobile" (sid fixo, cliente
+   separado em mobile/) roda os turnos dela por fora desta janela, então
+   nada passaria pelo /ask daqui. Este loop OBSERVA o stream espelhado
+   pelo servidor (GET /session_watch/mobile, long-poll com fila de linhas
+   desde `rev`) e REPRODUZ o turno numa aba especial "CELULAR", somente
+   leitura: a pergunta enviada do celular, as etapas, a resposta nascendo,
+   plano e alterações — os mesmos widgets das abas normais. A aba nasce
+   sozinha na primeira atividade, não tem processo próprio (nunca chama
+   /session_start, /session_end nem /ask) e ganha o foco só se a aba ativa
+   estiver ociosa — nunca atropela um turno real em curso aqui.
+   ===================================================================== */
+let mobileTab = null;        // a aba-espelho (null = ainda não criada/fechada)
+let mobileT0 = 0;            // início do turno espelhado (cronômetro do #step)
+let mobileLastStep = 'PROCESSANDO';
+
+function ensureMobileTab(){
+  if (mobileTab && tabs.includes(mobileTab)) return mobileTab;
+  mobileTab = { sid:'mobile', titulo:'CELULAR', mirror:true, ui:'idle', turns:[], unread:false,
+                earconHz:330, askCtrl:null, askTimer:null, speakMeterTimer:null,
+                idleS:0, idleLimit:90, idleTool:'', partial:'', thinking:0, plan:null, nextAnnounce:45,
+                changes:[] };
+  tabs.push(mobileTab);
+  renderTabBar();
+  dbg('INFO','celular ativo » aba CELULAR criada (espelho, somente leitura)');
+  return mobileTab;
+}
+
+// começo de turno vindo do celular (evento `ask`; q=null quando o HUD abriu
+// no meio de um turno já em curso e só viu as etapas seguintes).
+function mobileTurnStart(q){
+  const tab = ensureMobileTab();
+  if (tab.ui !== 'idle') mobileTurnEnd(tab, tab.partial);   // turno anterior ficou sem `done`
+  tab.ui = 'think';
+  tab.idleS = 0; tab.idleLimit = 90; tab.idleTool = ''; tab.recorded = false;
+  clearLiveResp(tab); clearPlan(tab);
+  // o espelho existe pra ser visto: assume o foco, mas só se nada roda aqui
+  const at = activeTab();
+  if (at && at !== tab && at.ui === 'idle'
+      && window.hubProviders?.current() !== 'codex'
+      && window.hubProviders?.canUseAssistantUI?.() !== false) activateTab(tabs.indexOf(tab));
+  if (q != null) recordTurn(tab, 'EU', q);
+  renderTabBar(); applyUiIfActive(tab);
+  mobileT0 = performance.now(); mobileLastStep = 'PROCESSANDO';
+  if (tab.askTimer) clearInterval(tab.askTimer);
+  tab.askTimer = setInterval(() => {
+    if (tab !== activeTab()) return;
+    let label = mobileLastStep;
+    if ((tab.idleS||0) >= 30){
+      label += tab.idleTool ? (' · '+tab.idleTool.toUpperCase()+' há '+tab.idleS+'s')
+                            : (' · sem atividade há '+tab.idleS+'s');
+    }
+    setStep(label, (performance.now()-mobileT0)/1000);
+    applyWatchdog(tab);
+  }, 200);
+}
+
+function mobileTurnEnd(tab, reply){
+  if (tab.askTimer){ clearInterval(tab.askTimer); tab.askTimer = null; }
+  if (reply != null && String(reply).trim()) finalizeResp(tab, reply);
+  else {
+    if (tab === activeTab()){ setStep('',0); clearWatchdog(); clearActivity(); }
+    clearLiveResp(tab); clearPlan(tab);
+  }
+  finishIdle(tab);
+}
+
+function mobileWatchLine(ev){
+  if (!ev || !ev.t) return;
+  if (ev.t === 'ask'){ mobileTurnStart(ev.q || null); return; }
+  const tab = ensureMobileTab();
+  if (ev.t === 'debug'){
+    dbg(ev.lv || 'INFO', 'srv[CELULAR]: ' + ev.msg);
+    if ((ev.lv||'') === 'ERR' && tab === activeTab()) showErrBanner(ev.msg);
+    return;
+  }
+  // HUD aberto no meio de um turno do celular: entra em PROCESSANDO mesmo sem
+  // ter visto o `ask` (a pergunta ficou para trás; o resto aparece normal).
+  if (tab.ui === 'idle' && ['step','partial','thinking','plan','change','hb'].includes(ev.t)){
+    mobileTurnStart(null);
+  }
+  if (ev.t === 'step'){
+    mobileLastStep = (ev.msg||'').toUpperCase();
+    tab.idleS = 0;
+    if (tab === activeTab()){ showActivity(ev.msg); blip(tab.earconHz); }
+    dbg('STEP','[CELULAR] ' + mobileLastStep);
+  }
+  else if (ev.t === 'hb'){
+    tab.idleS = ev.idle_s||0; tab.idleLimit = ev.limit_s||90; tab.idleTool = ev.tool||'';
+    if (tab === activeTab()) applyWatchdog(tab);
+  }
+  else if (ev.t === 'partial'){ tab.partial = (tab.partial||'') + (ev.txt||''); tab.idleS = 0; renderLiveResp(tab); }
+  else if (ev.t === 'thinking'){ tab.thinking = ev.chars||0; tab.idleS = 0; renderLiveResp(tab); }
+  else if (ev.t === 'change'){ tab.idleS = 0; if (ev.ch) noteChange(tab, ev.ch); }
+  else if (ev.t === 'plan'){ tab.plan = ev.items||[]; tab.idleS = 0; renderPlan(tab); }
+  else if (ev.t === 'done'){
+    const reply = ev.reply || tab.partial || '';
+    if (ev.spoken){
+      // a voz ainda corre no stream: registra a resposta e espera o speak_done
+      if (tab.askTimer){ clearInterval(tab.askTimer); tab.askTimer = null; }
+      if (tab === activeTab()){ setStep('',0); clearWatchdog(); }
+      finalizeResp(tab, reply);
+    } else {
+      mobileTurnEnd(tab, reply);
+    }
+  }
+  else if (handleSpeakEvent(tab, ev, mobileT0)){
+    if (ev.t === 'speak_done') finishIdle(tab);
+  }
+}
+
+async function mobileWatchLoop(){
+  let rev = -1;      // -1 = só sincroniza o rev atual (sem replay de turnos velhos)
+  while (true){
+    try{
+      const r = await fetch('/session_watch/mobile?rev=' + rev, {cache:'no-store'});
+      if (!r.ok){ await new Promise(res => setTimeout(res, 3000)); continue; }
+      const j = await r.json();
+      const lines = (rev >= 0 && Array.isArray(j.lines)) ? j.lines : [];
+      if (typeof j.rev === 'number') rev = j.rev;
+      for (const ln of lines){ try{ mobileWatchLine(JSON.parse(ln)); }catch(e){} }
+    }catch(e){ await new Promise(res => setTimeout(res, 3000)); }
+  }
+}
+mobileWatchLoop();
+</script>
+<script>
+// Contrato pequeno para módulos de frontend; os painéis continuam no Hub.
+window.hubFrontend = {
+  get tabs(){ return tabs; }, get active(){ return activeTab(); },
+  get isMinimal(){ return minimal; },
+  selectSession:activateTab, createSession:addTab,
+  refresh(){ renderActiveTranscript(); applyUiIfActive(activeTab()); renderTabBar();
+    if (!els.convs.hidden) renderConvList(); },
+  closeComposer(){ if (!els.modalOverlay.hidden) closeTextModal(true); },
+  get textMode(){ return textMode; },
+  restoreInput({mode, text}){
+    textMode = mode;
+    els.main.hidden = mode; els.pause.hidden = mode; els.textForm.hidden = !mode;
+    els.modeToggle.textContent = mode ? 'MODO VOZ' : 'MODO TEXTO';
+    els.textInput.value = text; resizeTextInput();
+  },
+  log:dbg,
+};
+</script>
+<script type="module" src="/codex-ui/static/providers.js"></script>
+<script type="module" src="/hive-ui/static/app.js"></script>
+</body>
+</html>

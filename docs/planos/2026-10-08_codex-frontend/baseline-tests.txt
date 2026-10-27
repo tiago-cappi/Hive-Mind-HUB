@@ -1,0 +1,13 @@
+........................................................................ [ 32%]
+........................................................................ [ 65%]
+........................................F............................... [ 98%]
+....                                                                     [100%]
+================================== FAILURES ===================================
+E   AssertionError: descendente continuou escrevendo depois do timeout
+    assert not True
+     +  where True = exists()
+     +    where exists = WindowsPath('C:/Users/m.rafael/Desktop/Projetos Pessoais/core-voice-hub-v2-main/core-voice-hub-v2-main/.test-tmp/baseline-codex/test_timeout_fallback_mata_des0/orphan.txt').exists
+C:\Users\m.rafael\Desktop\Projetos Pessoais\core-voice-hub-v2-main\core-voice-hub-v2-main\tests\test_runtime_lifecycle.py:96: AssertionError: descendente continuou escrevendo depois do timeout
+=========================== short test summary info ===========================
+FAILED tests/test_runtime_lifecycle.py::test_timeout_fallback_mata_descendente_que_tentaria_escrever
+1 failed, 219 passed in 24.97s

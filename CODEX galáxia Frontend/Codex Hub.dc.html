@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;height:100%;background:#030304;overflow:hidden}
+*{box-sizing:border-box}
+a{color:#cfd2d8;text-decoration:none}a:hover{color:#ffffff}
+input::placeholder{color:#5c6068}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1)}::-webkit-scrollbar-track{background:transparent}
+@keyframes corePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
+@keyframes coreBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+</style>
+</helmet>
+<div data-screen-label="Codex · modo minimalista" style="position:relative;width:100%;height:100vh;min-height:660px;overflow:hidden;background:#030304;font-family:'JetBrains Mono',ui-monospace,monospace;color:#ECEDEF;user-select:none;">
+<div style="{{ rootVars }}">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 62% 58% at 50% 42%, rgba(34,40,58,.20), rgba(3,3,4,0) 72%);pointer-events:none;"></div>
+  <canvas ref="{{ canvasRef }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+
+  <div style="position:absolute;top:30px;left:24px;width:36px;height:36px;border-top:1px solid rgba(255,255,255,.16);border-left:1px solid rgba(255,255,255,.16);pointer-events:none;"></div>
+  <div style="position:absolute;top:44px;left:68px;font-size:11px;letter-spacing:.42em;color:#6B6F77;">NÚCLEO · CODEX</div>
+  <div style="position:absolute;bottom:184px;left:24px;width:36px;height:36px;border-bottom:1px solid rgba(255,255,255,.16);border-left:1px solid rgba(255,255,255,.16);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:184px;right:20px;width:36px;height:36px;border-bottom:1px solid rgba(255,255,255,.16);border-right:1px solid rgba(255,255,255,.16);pointer-events:none;"></div>
+
+  <div onClick="{{ onFullPanel }}" style="position:absolute;top:18px;right:20px;padding:10px 16px 9px;border:1px solid rgba(255,255,255,.07);cursor:pointer;text-align:center;line-height:1.3;z-index:5;" style-hover="border-color:rgba(255,255,255,.16)">
+    <div style="font-size:11px;letter-spacing:.32em;color:#6B6F77;">PAINEL COMPLETO</div>
+    <div style="font-size:10px;letter-spacing:.32em;color:#4f535a;">SYNC 0xA3</div>
+    <div style="position:absolute;top:-1px;right:-1px;width:34px;height:54px;border-top:1px solid rgba(255,255,255,.16);border-right:1px solid rgba(255,255,255,.16);pointer-events:none;"></div>
+  </div>
+
+  <div style="position:absolute;top:24px;left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div style="display:flex;gap:2px;padding:3px;border:1px solid rgba(255,255,255,.12);background:rgba(8,9,11,.7);">
+      <div onClick="{{ pickClaude }}" title="Tela atual do Hub" style="display:flex;align-items:center;gap:9px;padding:7px 14px;cursor:pointer;font-size:10.5px;letter-spacing:.26em;color:#6B6F77;transition:color .2s;" style-hover="color:#A0A3AA">
+        <span style="width:6px;height:6px;background:#C9963F;opacity:.55;transform:rotate(45deg);"></span>CLAUDE CODE
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:10.5px;letter-spacing:.26em;color:#F4F5F7;background:rgba(255,255,255,.07);">
+        <span style="width:6px;height:6px;border-radius:50%;background:#EEF1F6;box-shadow:0 0 8px rgba(150,185,255,.9);"></span>CODEX
+      </div>
+    </div>
+    <div style="font-size:9.5px;letter-spacing:.3em;color:#5c6068;white-space:nowrap;">{{ modelReadout }}</div>
+  </div>
+
+  <div style="position:absolute;left:50%;bottom:206px;transform:translateX(-50%);width:min(760px,78vw);text-align:center;pointer-events:none;opacity:{{ capOpacity }};transition:opacity .6s ease;z-index:4;">
+    <div style="font-size:10px;letter-spacing:.4em;color:#6B6F77;margin-bottom:9px;">{{ capWho }}</div>
+    <div style="font-size:16px;line-height:1.6;color:#E6E8EC;text-wrap:balance;">{{ capText }}</div>
+  </div>
+
+  <div style="position:absolute;left:50%;bottom:142px;transform:translateX(-50%);font-size:18px;font-weight:500;letter-spacing:.5em;padding-left:.5em;color:#E4E6EA;white-space:nowrap;z-index:4;">{{ statusLabel }}</div>
+  <canvas ref="{{ meterRef }}" style="position:absolute;left:50%;bottom:122px;transform:translateX(-50%);width:440px;max-width:70vw;height:5px;display:block;z-index:4;"></canvas>
+  <div style="position:absolute;left:50%;bottom:98px;transform:translateX(-50%);font-size:10px;letter-spacing:.22em;color:#6B6F77;white-space:nowrap;z-index:4;">{{ planLine }}</div>
+  <div onClick="{{ primary }}" style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:176px;height:58px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);font-size:13px;font-weight:600;letter-spacing:.36em;padding-left:.36em;color:#DADDE2;cursor:{{ btnCursor }};opacity:{{ btnOpacity }};transition:opacity .3s, border-color .2s, background-color .2s;z-index:4;" style-hover="border-color:rgba(255,255,255,.28);background-color:rgba(255,255,255,.04)">{{ btnLabel }}</div>
+
+  <div data-menu="1" style="position:absolute;right:24px;bottom:26px;display:flex;align-items:center;gap:10px;font-size:9.5px;letter-spacing:.26em;color:#4f535a;z-index:4;">
+    <span>PROTÓTIPO · GALÁXIA</span>
+    <div style="display:flex;border:1px solid rgba(255,255,255,.08);">
+      <div onClick="{{ galA }}" style="padding:5px 9px;cursor:pointer;color:{{ galAColor }};background:{{ galABg }};">A</div>
+      <div onClick="{{ galB }}" style="padding:5px 9px;cursor:pointer;color:{{ galBColor }};background:{{ galBBg }};">B</div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:96px;left:50%;transform:translateX(-50%);padding:9px 16px;border:1px solid rgba(255,255,255,.12);background:#0b0c0f;font-size:11px;letter-spacing:.12em;color:#C9CCD2;opacity:{{ toastOpacity }};transition:opacity .35s;pointer-events:none;z-index:40;white-space:nowrap;">{{ toastText }}</div>
+
+  <div onClick="{{ toggleLeft }}" style="position:absolute;top:50%;left:var(--lhx,0px);transform:translateY(-50%);z-index:22;width:40px;height:118px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--lhb,rgba(255,255,255,.08));background:rgba(10,11,13,.6);transition:left var(--dtr,.5s) cubic-bezier(.2,.7,.2,1), border-color .4s;" style-hover="border-color:rgba(255,255,255,.22)">
+    <div style="writing-mode:vertical-rl;font-size:10px;letter-spacing:.42em;color:var(--lhc,#6B6F77);transition:color .4s;">CONVERSA</div>
+  </div>
+  <div onClick="{{ toggleRight }}" style="position:absolute;top:50%;right:var(--rhx,0px);transform:translateY(-50%);z-index:22;width:40px;height:100px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--rhb,rgba(255,255,255,.08));background:rgba(10,11,13,.6);transition:right .5s cubic-bezier(.2,.7,.2,1), border-color .4s;" style-hover="border-color:rgba(255,255,255,.22)">
+    <div style="writing-mode:vertical-rl;font-size:10px;letter-spacing:.42em;color:var(--rhc,#6B6F77);transition:color .4s;">SKILLS</div>
+  </div>
+
+  <div data-screen-label="Gaveta CONVERSA" style="position:absolute;top:70px;bottom:12px;left:18px;z-index:20;width:var(--ldw,650px);max-width:calc(100vw - 110px);transform:var(--ldx,translateX(-720px));opacity:var(--ldo,0);pointer-events:var(--ldpe,none);transition:transform var(--dtr,.5s) cubic-bezier(.2,.7,.2,1), opacity .35s ease;">
+    <div style="position:relative;height:100%;display:flex;background:rgba(9,10,12,.94);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);">
+
+      <div style="width:148px;flex:none;border-right:1px solid rgba(255,255,255,.07);padding:16px 14px;display:flex;flex-direction:column;gap:6px;">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+          <div onClick="{{ t.select }}" style="position:relative;cursor:pointer;padding:13px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;background:{{ t.bg }};transition:background-color .25s;" style-hover="background:rgba(255,255,255,.035)">
+            <sc-if value="{{ t.active }}"><div style="position:absolute;left:0;top:0;bottom:0;width:2px;background:#F4F5F7;"></div></sc-if>
+            <div style="font-size:16px;line-height:1;color:{{ t.color }};">{{ t.icon }}</div>
+            <div style="font-size:10.5px;letter-spacing:.12em;color:{{ t.color }};white-space:nowrap;">{{ t.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;padding:16px 16px 14px;">
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="font-size:14px;font-weight:600;letter-spacing:.32em;color:#ECEDEF;white-space:nowrap;">{{ tabTitle }}</div>
+          <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="buscar…" style="flex:1;min-width:0;height:30px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);color:#ECEDEF;font-family:inherit;font-size:12px;padding:0 10px;outline:none;user-select:text;" style-focus="border-color:rgba(255,255,255,.2)">
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07);">
+          <div onClick="{{ toggleDensity }}" style="cursor:pointer;font-size:10.5px;letter-spacing:.24em;color:#A0A3AA;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);padding:7px 12px;" style-hover="border-color:rgba(255,255,255,.18)">DENSIDADE: {{ densityLabel }}</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.3em;color:#ECEDEF;">
+            <sc-if value="{{ isBusy }}"><span style="width:5px;height:5px;border-radius:50%;background:#9DBBFF;animation:corePulse 1.1s ease-in-out infinite;"></span></sc-if>
+            <span>LIVE</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;font-size:10.5px;letter-spacing:.3em;color:#6B6F77;">SESSÕES</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;">
+          <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="2">
+            <div onClick="{{ s.select }}" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 10px 0 12px;border:1px solid {{ s.border }};background:rgba(255,255,255,.025);cursor:pointer;">
+              <sc-if value="{{ s.busy }}"><span style="width:6px;height:6px;border-radius:50%;background:#9DBBFF;animation:corePulse 1.1s ease-in-out infinite;"></span></sc-if>
+              <sc-if value="{{ s.idle }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ s.dot }};"></span></sc-if>
+              <span style="font-size:12.5px;font-weight:700;letter-spacing:.06em;color:{{ s.text }};">{{ s.name }}</span>
+              <span onClick="{{ s.close }}" title="Fechar sessão" style="font-size:12px;color:#5c6068;padding:0 2px;" style-hover="color:#ECEDEF">×</span>
+            </div>
+          </sc-for>
+          <div onClick="{{ addSession }}" title="Nova sessão" style="width:44px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);color:#ECEDEF;cursor:pointer;font-size:15px;" style-hover="border-color:rgba(255,255,255,.2)">+</div>
+        </div>
+
+        <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;margin-top:18px;padding-right:6px;">
+
+          <sc-if value="{{ isTranscript }}">
+            <sc-if value="{{ noMsgs }}"><div style="padding:24px 0;font-size:12px;line-height:1.7;color:#6B6F77;">{{ emptyText }}</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:var(--mgap,16px);padding-bottom:8px;">
+              <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="3">
+                <sc-if value="{{ m.isUser }}">
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                    <div style="font-size:9.5px;letter-spacing:.32em;color:#6B6F77;">VOCÊ</div>
+                    <div style="max-width:86%;font-size:var(--mfs,13px);line-height:1.6;color:#ECEDEF;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);padding:var(--mpad,10px) 14px;text-wrap:pretty;user-select:text;">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isSteps }}">
+                  <div style="display:flex;flex-direction:column;gap:var(--sgap,7px);">
+                    <div style="display:flex;gap:10px;font-size:9.5px;letter-spacing:.32em;color:#6B6F77;"><span>ATIVIDADE</span><span>{{ m.count }}</span></div>
+                    <sc-for list="{{ m.steps }}" as="st">
+                      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;line-height:1.45;">
+                        <span style="font-size:9px;color:{{ st.mc }};">{{ st.mark }}</span>
+                        <span style="color:{{ st.tc }};">{{ st.label }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isWarn }}">
+                  <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;line-height:1.5;border:1px solid rgba(221,191,126,.22);background:rgba(221,191,126,.04);padding:8px 12px;">
+                    <span style="font-size:9.5px;letter-spacing:.3em;color:#DDBF7E;flex:none;">AVISO</span>
+                    <span style="color:#C9CCD2;">{{ m.text }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isAi }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="font-size:9.5px;letter-spacing:.32em;color:#F4F5F7;">CODEX</div>
+                    <div style="font-size:var(--mfs,13px);line-height:1.65;color:#DADDE2;text-wrap:pretty;user-select:text;">{{ m.text }}<sc-if value="{{ m.streaming }}"><span style="display:inline-block;width:7px;height:13px;margin-left:4px;vertical-align:-2px;background:#9DBBFF;animation:coreBlink 1s steps(1) infinite;"></span></sc-if></div>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isChanges }}">
+            <div style="display:flex;align-items:baseline;gap:14px;font-size:11px;letter-spacing:.2em;color:#A0A3AA;padding-bottom:12px;">
+              <span>{{ changesCount }}</span><span style="color:#86C9A3;">{{ addTotal }}</span><span style="color:#E48D8D;">{{ delTotal }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ changes }}" as="f" hint-placeholder-count="3">
+                <div style="border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);">
+                  <div onClick="{{ f.toggle }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;cursor:pointer;" style-hover="background:rgba(255,255,255,.03)">
+                    <span style="font-size:9px;color:#6B6F77;width:10px;">{{ f.caret }}</span>
+                    <span style="flex:1;min-width:0;font-size:12px;color:#ECEDEF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.path }}</span>
+                    <span style="font-size:9px;letter-spacing:.2em;color:#6B6F77;border:1px solid rgba(255,255,255,.08);padding:2px 6px;">{{ f.tag }}</span>
+                    <span style="font-size:11.5px;color:#86C9A3;">+{{ f.add }}</span>
+                    <span style="font-size:11.5px;color:#E48D8D;">−{{ f.del }}</span>
+                  </div>
+                  <sc-if value="{{ f.open }}">
+                    <div style="border-top:1px solid rgba(255,255,255,.07);padding:8px 0;font-size:11.5px;line-height:1.75;user-select:text;">
+                      <sc-for list="{{ f.lines }}" as="l">
+                        <div style="display:flex;gap:12px;padding:0 12px;background:{{ l.bg }};color:{{ l.color }};white-space:pre-wrap;"><span style="width:10px;flex:none;">{{ l.sign }}</span><span>{{ l.text }}</span></div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDebug }}">
+            <sc-for list="{{ logs }}" as="l" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:66px 44px minmax(0,1fr);gap:10px;font-size:11.5px;line-height:1.5;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+                <span style="color:#5c6068;">{{ l.t }}</span>
+                <span style="color:{{ l.c }};letter-spacing:.12em;">{{ l.lvl }}</span>
+                <span style="color:#A0A3AA;user-select:text;word-break:break-word;">{{ l.msg }}</span>
+              </div>
+            </sc-for>
+          </sc-if>
+
+          <sc-if value="{{ isConvs }}">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ convs }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                    <span style="font-size:12.5px;color:#ECEDEF;">{{ c.title }}</span>
+                    <span style="font-size:10.5px;letter-spacing:.08em;color:#6B6F77;">{{ c.meta }}</span>
+                  </div>
+                  <span onClick="{{ c.restore }}" style="font-size:9.5px;letter-spacing:.26em;color:#A0A3AA;cursor:pointer;padding:6px 8px;border:1px solid rgba(255,255,255,.08);" style-hover="color:#ECEDEF;border-color:rgba(255,255,255,.2)">RESTAURAR</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isReports }}">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ reports }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:14px;padding:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);">
+                  <div style="width:88px;height:56px;flex:none;border:1px solid rgba(255,255,255,.08);background:repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0px, rgba(255,255,255,.035) 1px, transparent 1px, transparent 7px);display:flex;align-items:center;justify-content:center;font-size:8.5px;letter-spacing:.14em;color:#5c6068;">{{ r.kind }}</div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                    <span style="font-size:12.5px;color:#ECEDEF;">{{ r.title }}</span>
+                    <span style="font-size:10.5px;letter-spacing:.08em;color:#6B6F77;">{{ r.meta }}</span>
+                  </div>
+                  <span onClick="{{ r.open }}" style="font-size:9.5px;letter-spacing:.26em;color:#A0A3AA;cursor:pointer;padding:6px 8px;border:1px solid rgba(255,255,255,.08);" style-hover="color:#ECEDEF;border-color:rgba(255,255,255,.2)">ABRIR</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div data-menu="1" style="position:relative;display:flex;gap:12px;margin-top:14px;">
+          <div onClick="{{ toggleModelMenu }}" style="flex:1.15;min-width:0;height:42px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px 0 14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.025);cursor:pointer;" style-hover="border-color:rgba(255,255,255,.2)">
+            <span style="font-size:12.5px;font-weight:700;letter-spacing:.2em;color:#F4F5F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ modelLabel }}</span><span style="font-size:8px;color:#A0A3AA;">▾</span>
+          </div>
+          <div onClick="{{ toggleEffortMenu }}" style="flex:1;min-width:0;height:42px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px 0 14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.025);cursor:pointer;" style-hover="border-color:rgba(255,255,255,.2)">
+            <span style="font-size:12.5px;font-weight:700;letter-spacing:.2em;color:#F4F5F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ effortLabel }}</span><span style="font-size:8px;color:#A0A3AA;">▾</span>
+          </div>
+
+          <sc-if value="{{ modelMenuOpen }}">
+            <div style="position:absolute;left:0;right:0;bottom:calc(100% + 8px);max-height:440px;overflow-y:auto;background:#0b0c0f;border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 40px rgba(0,0,0,.7);z-index:6;">
+              <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,.07);font-size:9.5px;letter-spacing:.3em;color:#6B6F77;"><span>MODELOS · CODEX</span><span>DADOS ILUSTRATIVOS</span></div>
+              <sc-for list="{{ models }}" as="o">
+                <sc-if value="{{ o.head }}"><div style="padding:12px 14px 6px;font-size:9px;letter-spacing:.32em;color:#5c6068;">{{ o.headLabel }}</div></sc-if>
+                <div onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:12px;padding:9px 14px 9px 12px;cursor:pointer;background:{{ o.bg }};" style-hover="background:rgba(255,255,255,.045)">
+                  <span style="width:2px;height:30px;flex:none;background:{{ o.bar }};"></span>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+                    <span style="font-size:12.5px;font-weight:600;letter-spacing:.08em;color:#ECEDEF;">{{ o.name }}</span>
+                    <span style="font-size:10.5px;color:#6B6F77;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ o.sub }}</span>
+                  </div>
+                  <span style="font-size:8.5px;letter-spacing:.2em;color:#8C9098;border:1px solid rgba(255,255,255,.12);padding:3px 6px;flex:none;">EXEMPLO</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ effortMenuOpen }}">
+            <div style="position:absolute;right:0;width:min(270px,100%);bottom:calc(100% + 8px);background:#0b0c0f;border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 40px rgba(0,0,0,.7);z-index:6;">
+              <div style="padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,.07);font-size:9.5px;letter-spacing:.3em;color:#6B6F77;">ESFORÇO · {{ effortMenuModel }}</div>
+              <sc-for list="{{ efforts }}" as="e">
+                <div onClick="{{ e.pick }}" style="display:flex;align-items:center;gap:12px;padding:9px 14px 9px 12px;cursor:pointer;background:{{ e.bg }};" style-hover="background:rgba(255,255,255,.045)">
+                  <span style="width:2px;height:18px;flex:none;background:{{ e.bar }};"></span>
+                  <span style="flex:1;font-size:12.5px;color:#ECEDEF;letter-spacing:.06em;">{{ e.label }}</span>
+                  <span style="font-size:10.5px;color:#6B6F77;">{{ e.sub }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div onMouseDown="{{ startResize }}" title="Arraste para ajustar a largura" style="position:absolute;top:0;right:0;width:8px;height:100%;cursor:col-resize;z-index:3;display:flex;align-items:center;justify-content:center;" style-hover="background:rgba(255,255,255,.03)">
+        <div style="width:2px;height:32px;background:rgba(255,255,255,.12);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-screen-label="Gaveta SKILLS" style="position:absolute;top:70px;right:18px;z-index:20;width:min(650px,42vw);transform:var(--rdx,translateX(calc(100% + 60px)));opacity:var(--rdo,0);pointer-events:var(--rdpe,none);transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .35s ease;">
+    <div style="background:rgba(9,10,12,.94);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:18px 16px 18px;clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%);">
+      <div style="display:flex;align-items:center;gap:12px;padding:0 2px 16px;">
+        <span style="width:3px;height:16px;background:#F4F5F7;"></span>
+        <span style="font-size:14px;font-weight:600;letter-spacing:.36em;color:#ECEDEF;white-space:nowrap;">COMMAND DECK</span>
+        <span style="flex:1;"></span>
+        <div data-menu="1" onClick="{{ toggleDeckMenu }}" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:10.5px;letter-spacing:.28em;color:#ECEDEF;padding:4px 2px;">{{ deckLabel }}<span style="font-size:8px;color:#A0A3AA;">▾</span></div>
+      </div>
+      <sc-if value="{{ deckSkills }}">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
+          <sc-for list="{{ skills }}" as="s" hint-placeholder-count="8">
+            <div onClick="{{ s.run }}" style="display:flex;flex-direction:column;gap:12px;padding:14px 14px 16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);cursor:pointer;clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%);transition:border-color .2s, background-color .2s;" style-hover="border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05)">
+              <span style="font-size:9.5px;letter-spacing:.14em;color:#6B6F77;">{{ s.code }}</span>
+              <span style="font-size:13px;font-weight:600;letter-spacing:.16em;color:#ECEDEF;">{{ s.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ deckCmds }}">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ cmds }}" as="c" hint-placeholder-count="5">
+            <div onClick="{{ c.run }}" style="display:flex;align-items:baseline;gap:16px;padding:12px 14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);cursor:pointer;" style-hover="border-color:rgba(255,255,255,.2)">
+              <span style="font-size:12.5px;font-weight:600;color:#ECEDEF;min-width:130px;">{{ c.cmd }}</span>
+              <span style="font-size:11.5px;color:#8C9098;">{{ c.desc }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ deckMenuOpen }}">
+      <div data-menu="1" style="position:absolute;top:46px;right:16px;width:190px;background:#0b0c0f;border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 40px rgba(0,0,0,.7);z-index:6;">
+        <div onClick="{{ pickDeckSkills }}" style="display:flex;justify-content:space-between;padding:10px 14px;cursor:pointer;font-size:10.5px;letter-spacing:.26em;color:#ECEDEF;" style-hover="background:rgba(255,255,255,.045)"><span>SKILLS</span><span style="color:#6B6F77;">8</span></div>
+        <div onClick="{{ pickDeckCmds }}" style="display:flex;justify-content:space-between;padding:10px 14px;cursor:pointer;font-size:10.5px;letter-spacing:.26em;color:#ECEDEF;border-top:1px solid rgba(255,255,255,.06);" style-hover="background:rgba(255,255,255,.045)"><span>COMANDOS</span><span style="color:#6B6F77;">5</span></div>
+      </div>
+    </sc-if>
+  </div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;galaxia&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;A · Via Láctea&quot;,&quot;B · Grande desenho&quot;],&quot;default&quot;:&quot;A · Via Láctea&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Galáxia&quot;},&quot;densidadeEstrelas&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.5,&quot;max&quot;:1.6,&quot;step&quot;:0.1,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Galáxia&quot;},&quot;estado&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Fluxo simulado&quot;,&quot;Em espera&quot;,&quot;Ouvindo&quot;,&quot;Processando&quot;,&quot;Falando&quot;],&quot;default&quot;:&quot;Fluxo simulado&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Revisão de estados&quot;}}">
+class Component extends DCLogic {
+  static EFF = { none: 'Nenhum', low: 'Baixo', medium: 'Médio', high: 'Alto', xhigh: 'Extra alto', max: 'Máximo', ultra: 'Ultra' };
+  static MODELS = [
+    { id: 'gpt-6.1-sol', name: 'GPT-6.1 Sol', note: 'código e fluxos agênticos', eff: ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'], def: 'medium' },
+    { id: 'gpt-6-astra', name: 'GPT-6 Astra', note: 'o mais capaz, tarefas de ponta a ponta', eff: ['low', 'medium', 'high', 'xhigh', 'max'], def: 'low' },
+    { id: 'gpt-6-sol', name: 'GPT-6 Sol', note: 'versão anterior do Sol', eff: ['none', 'low', 'medium', 'high', 'xhigh', 'max'], def: 'medium' },
+    { id: 'gpt-6-luna', name: 'GPT-6 Luna', note: 'eficiente, tarefas focadas', eff: ['none', 'low', 'medium', 'high', 'xhigh', 'max'], def: 'high' },
+    { id: 'gpt-5.6-sol', name: 'GPT-5.6 Sol', note: 'disponível durante a transição', eff: ['low', 'medium', 'high', 'xhigh'], def: 'medium', prev: true },
+    { id: 'gpt-5.6-terra', name: 'GPT-5.6 Terra', note: 'disponível durante a transição', eff: ['low', 'medium', 'high', 'xhigh'], def: 'medium', prev: true },
+    { id: 'gpt-5.6-luna', name: 'GPT-5.6 Luna', note: 'disponível durante a transição', eff: ['none', 'low', 'medium', 'high'], def: 'medium', prev: true }
+  ];
+  static REVIEW = { steps: ['Lendo Diário/2026-10-08.md', 'Consultando tarefas abertas', 'Cruzando com missões ativas'], warn: '1 nota sem data foi ignorada na revisão.', reply: 'Hoje você concluiu 5 de 8 tarefas. Ficaram pendentes a revisão do contrato da Forestos, a resposta ao fornecedor e o rascunho do relatório semanal. Sugiro começar amanhã pelo contrato, que vence na sexta.' };
+  static VOICE = [
+    { user: 'Revisa o meu dia e me diz o que ficou pendente.', ...Component.REVIEW },
+    { user: 'Anota uma ideia: painel de custos por missão.', steps: ['Criando nota em Ideias/', 'Vinculando à tag custos'], reply: 'Anotei em Ideias/Painel de custos por missão.md e vinculei à tag custos. Posso transformar em missão quando você quiser.' }
+  ];
+  static SKILLS = [
+    { code: 'S01', label: 'RESUMO INBOX', sc: { steps: ['Lendo 12 notas em Inbox/', 'Agrupando por tipo'], reply: 'A inbox tem 12 notas: 4 pendências da Forestos, 3 ideias e 5 referências. Nenhuma está atrasada.' } },
+    { code: 'S02', label: 'CRIAR MISSÃO', sc: { steps: ['Lendo modelo de missão', 'Criando Missões/Nova missão.md'], reply: 'Criei a missão em rascunho. Me diga o objetivo e o prazo para completar.' } },
+    { code: 'S03', label: 'ANOTAR IDEIA', sc: { steps: ['Abrindo Ideias/'], reply: 'Pronto para anotar. Pode falar a ideia.' } },
+    { code: 'S04', label: 'REVISAR DIA', sc: Component.REVIEW },
+    { code: 'S05', label: 'PLANEJAR SEMANA', sc: { steps: ['Lendo agenda da semana', 'Consultando missões ativas', 'Distribuindo tarefas'], reply: 'Montei o plano da semana com 14 tarefas em cinco dias. Quinta ficou mais leve para o fechamento do relatório.' } },
+    { code: 'S06', label: 'STATUS FORESTOS', sc: { steps: ['Lendo Projetos/Forestos/', 'Consultando alterações recentes'], reply: 'A Forestos está em 68%. Três entregas foram concluídas esta semana e uma está bloqueada aguardando a aprovação do contrato.' } },
+    { code: 'S07', label: 'BUSCAR NOTA', sc: { steps: ['Buscando no vault'], reply: 'Encontrei 3 notas com esse termo. A mais recente é Reunião Forestos, de terça.' } },
+    { code: 'S08', label: 'LIMPAR VAULT', sc: { steps: ['Verificando notas vazias', 'Verificando links quebrados'], warn: '2 links quebrados precisam de revisão manual.', reply: 'Encontrei 6 notas vazias e 2 links quebrados. Movi as notas vazias para Arquivo/ e deixei os links para você revisar.' } }
+  ];
+  static CMDS = [
+    ['/nova-sessao', 'Abre uma sessão limpa'], ['/compactar', 'Resume o contexto da sessão atual'], ['/modelo', 'Troca modelo e esforço'], ['/revisar', 'Revisa as alterações pendentes'], ['/arquivar', 'Move a sessão para CONVERSAS']
+  ];
+  static CHANGES = [
+    { path: 'Missões/Relatório Forestos.md', tag: 'NOVO', add: 24, del: 0, lines: [['@@', '@@ -0,0 +1,24 @@'], ['+', '# Relatório Forestos'], ['+', 'prazo: 2026-10-10'], ['+', 'status: em andamento'], ['+', ''], ['+', '## Pendências vinculadas'], ['+', '- [ ] Revisar contrato'], ['+', '- [ ] Responder fornecedor']] },
+    { path: 'Diário/2026-10-08.md', tag: 'MOD', add: 12, del: 5, lines: [['@@', '@@ -14,7 +14,14 @@'], [' ', '## Tarefas'], ['-', '- [ ] Revisar inbox'], ['+', '- [x] Revisar inbox'], ['+', '- [x] Criar missão do relatório'], [' ', '- [ ] Revisar contrato Forestos'], ['-', '## Notas'], ['+', '## Notas do dia']] },
+    { path: 'Ideias/Painel de custos.md', tag: 'MOD', add: 12, del: 7, lines: [['@@', '@@ -1,9 +1,14 @@'], ['-', 'tags: ideia'], ['+', 'tags: ideia, custos'], [' ', ''], ['-', 'Ver custo por projeto.'], ['+', 'Ver custo por missão, com total semanal.'], ['+', 'Origem: sessão de voz de 08/10.']] }
+  ];
+  static LOGS = [
+    ['14:02:11', 'INFO', 'sessão iniciada · codex · {model}'], ['14:02:12', 'INFO', 'vault montado · 1.284 notas'], ['14:02:15', 'WARN', 'nota sem data ignorada: Inbox/rascunho.md'],
+    ['14:02:16', 'INFO', 'ferramenta: leitura · Inbox/ (12 arquivos)'], ['14:02:18', 'INFO', 'ferramenta: escrita · Missões/Relatório Forestos.md'], ['14:02:18', 'WARN', 'latência de áudio acima do normal · 420 ms'],
+    ['14:02:19', 'INFO', 'resposta concluída · 3,1 s'], ['14:02:20', 'ERRO', 'sync parcial · 0xA3 · nova tentativa em 30 s']
+  ];
+  static CONVS = [['Planejamento de outubro', '02/10 · 24 mensagens'], ['Revisão do contrato Forestos', '29/09 · 11 mensagens'], ['Limpeza do vault', '21/09 · 8 mensagens'], ['Ideias para o Hub', '14/09 · 31 mensagens']];
+  static REPORTS = [['Semana 40 · resumo visual', '06/10 · painel', 'PAINEL'], ['Forestos · progresso', '03/10 · gráfico', 'GRÁFICO'], ['Hábitos de setembro', '30/09 · mapa de calor', 'MAPA']];
+  static TABS = [['transcript', '▤', 'TRANSCRIPT', 'TRANSCRIPT'], ['changes', '±', 'ALTERAÇÕES', 'ALTERAÇÕES'], ['debug', '⌗', 'DEBUG (3)', 'DEBUG'], ['convs', '↺', 'CONVERSAS', 'CONVERSAS'], ['reports', '◫', 'RELATÓRIOS', 'RELATÓRIOS']];
+  static PH = {
+    idle: { spd: 1, bri: 1, blue: 0, amp: .016, react: 0, shim: 1, pulse: 0 },
+    listening: { spd: 1.12, bri: 1.06, blue: 0, amp: .006, react: 1, shim: 1.15, pulse: 0 },
+    processing: { spd: 2.6, bri: 1.28, blue: 0, amp: .006, react: 0, shim: 2.4, pulse: .06 },
+    speaking: { spd: 1.3, bri: 1.14, blue: 1, amp: .006, react: 1.25, shim: 1.3, pulse: 0 }
+  };
+  static FORCE = { 'Em espera': 'idle', 'Ouvindo': 'listening', 'Processando': 'processing', 'Falando': 'speaking' };
+  static LABEL = { idle: 'ONLINE', listening: 'OUVINDO', processing: 'PROCESSANDO', speaking: 'FALANDO' };
+
+  static initSessions() {
+    return [
+      { id: 's1', name: 'Sessão 1', busy: false, unread: false, msgs: [
+        { id: 1, kind: 'user', text: 'Resume a inbox de hoje.' },
+        { id: 2, kind: 'steps', steps: [{ label: 'Lendo 12 notas em Inbox/', st: 'done' }, { label: 'Agrupando por tipo', st: 'done' }] },
+        { id: 3, kind: 'ai', text: 'A inbox tem 12 notas: 4 pendências da Forestos, 3 ideias e 5 referências. Nenhuma está atrasada.' },
+        { id: 4, kind: 'user', text: 'Cria uma missão para o relatório da Forestos com prazo na sexta.' },
+        { id: 5, kind: 'steps', steps: [{ label: 'Lendo modelo de missão', st: 'done' }, { label: 'Criando Missões/Relatório Forestos.md', st: 'done' }, { label: 'Vinculando 4 pendências', st: 'done' }] },
+        { id: 6, kind: 'ai', text: 'Criei a missão Relatório Forestos com prazo para sexta, 10/10, e vinculei a ela as 4 pendências da inbox.' }
+      ] },
+      { id: 's2', name: 'Sessão 2', busy: false, unread: true, msgs: [
+        { id: 7, kind: 'user', text: 'Como está a semana?' },
+        { id: 8, kind: 'ai', text: 'A semana tem 14 tarefas e 9 já foram concluídas. Quinta está livre à tarde.' }
+      ] }
+    ];
+  }
+
+  state = {
+    phase: 'idle', leftOpen: false, rightOpen: false, leftW: 650, dragging: false, tab: 'transcript', query: '', dense: false,
+    model: 'gpt-6.1-sol', effort: 'medium', menu: null, deck: 'skills', sessions: Component.initSessions(), active: 's1',
+    cap: { who: '', text: '', on: false }, plan: '', openDiff: 0, toast: { text: '', on: false }, gal: null
+  };
+  canvasRef = React.createRef(); meterRef = React.createRef(); scrollRef = React.createRef();
+  timers = []; idc = 100; vi = 0; imp = 0; lvl = 0; prog = 0; progT = 0; rot = 0; m = 0;
+  p = { ...Component.PH.idle };
+
+  componentDidMount() {
+    this.t0 = this.last = performance.now();
+    this.buildBg();
+    this.ro = new ResizeObserver(() => this.resize());
+    this.onDoc = e => { if (this.state.menu && !(e.target.closest && e.target.closest('[data-menu]'))) this.setState({ menu: null }); };
+    this.onKey = e => { if (e.key === 'Escape') this.setState({ menu: null }); };
+    document.addEventListener('mousedown', this.onDoc);
+    window.addEventListener('keydown', this.onKey);
+    this.raf = requestAnimationFrame(this.frame);
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf); this.clearFlow(); this.ro && this.ro.disconnect();
+    document.removeEventListener('mousedown', this.onDoc); window.removeEventListener('keydown', this.onKey); this.endResize();
+  }
+  componentDidUpdate(pp, ps) {
+    if (pp.galaxia !== this.props.galaxia && this.state.gal !== null) this.setState({ gal: null });
+    const se = this.sess(); const last = se && se.msgs[se.msgs.length - 1];
+    const key = this.state.active + ':' + (se ? se.msgs.length : 0) + ':' + (last && last.text ? last.text.length : 0) + ':' + this.state.tab + ':' + this.state.leftOpen;
+    if (key !== this.scrollKey) { this.scrollKey = key; const el = this.scrollRef.current; if (el && this.state.tab === 'transcript') el.scrollTop = el.scrollHeight; }
+  }
+
+  rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  mix(a, b, k) { return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]; }
+  css(c, a) { return a === undefined ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a < 0 ? 0 : a})`; }
+  variant() { const g = this.state.gal || ((this.props.galaxia || 'A').startsWith('B') ? 'B' : 'A'); return g; }
+  forced() { return Component.FORCE[this.props.estado] || null; }
+  vphase() { return this.forced() || this.state.phase; }
+
+  buildBg() {
+    const R = this.rng(77); this.bgS = [];
+    for (let i = 0; i < 320; i++) this.bgS.push({ x: R(), y: R(), b: .05 + R() * R() * .4, s: R() < .08 ? 1.6 : 1, f: .3 + R() * 1.2, p: R() * 6.28 });
+  }
+  buildGalaxy(variant, dens) {
+    const B = variant === 'B', R = this.rng(B ? 11 : 5);
+    const g = () => { let u = 0; while (!u) u = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185 * R()); };
+    const N = Math.round((B ? 7800 : 10500) * dens), out = [];
+    const arms = B ? [[0, .5], [Math.PI, .5]] : [[0, .33], [Math.PI, .33], [Math.PI * .5, .17], [Math.PI * 1.5, .17]];
+    const pitch = B ? .42 : .30, r0 = B ? .12 : .2;
+    const knots = [];
+    if (B) for (let k = 0; k < 40; k++) { const a = k % 2 ? Math.PI : 0, r = .22 + R() * .75; knots.push([r, a + Math.log(r / r0) / pitch + g() * .05]); }
+    for (let i = 0; i < N; i++) {
+      const u = R(); let r, th, y, b, gi, sz = 1;
+      if (u < (B ? .10 : .15)) { r = Math.abs(g()) * (B ? .07 : .10); th = R() * 6.2832; y = g() * r * .6; b = .26 + R() * .3; gi = 0; }
+      else if (!B && u < .22) { const x = (R() * 2 - 1) * .24, z = g() * .03; r = Math.hypot(x, z); th = Math.atan2(z, x); y = g() * .02; b = .3 + R() * .3; gi = 0; }
+      else if (u < (B ? .86 : .80)) {
+        if (B && R() < .14) { const kn = knots[(R() * knots.length) | 0]; r = kn[0] + g() * .012; th = kn[1] + g() * .014 / kn[0]; gi = R() < .3 ? 3 : 2; b = .55 + R() * .4; }
+        else {
+          let k = R(), ai = 0; for (; ai < arms.length - 1; ai++) { if (k < arms[ai][1]) break; k -= arms[ai][1]; }
+          r = r0 + Math.pow(R(), B ? 1.1 : 1.35) * (1.02 - r0);
+          const base = arms[ai][0] + Math.log(r / r0) / pitch;
+          const spread = ((B ? .03 : .028) + (B ? .07 : .055) * r) * (ai > 1 ? 1.3 : 1);
+          th = base + g() * spread / r; r += g() * .012;
+          const q = R(); gi = q < .06 ? 3 : (q < .55 ? 2 : 1); b = .3 + R() * .5 + (gi === 3 ? .2 : 0);
+        }
+        y = g() * .016;
+        if (R() < .035) { sz = 1.9; b = Math.min(1, b + .3); }
+      } else { r = .1 - Math.log(1 - R() * .97) * .3; if (r > 1.25) r = .1 + R() * 1.1; th = R() * 6.2832; y = g() * .035; gi = R() < .5 ? 1 : 2; b = .1 + R() * .24; }
+      out.push([r, th, y, Math.min(1, b), sz, gi, .4 + R() * 1.4, R() * 6.28, R(), g(), g()]);
+    }
+    out.sort((a, c) => a[5] - c[5]);
+    const n = out.length, A = () => new Float32Array(n);
+    const G = { n, R: A(), TH: A(), Y: A(), B: A(), SZ: A(), G: new Uint8Array(n), F: A(), PHS: A(), DL: A() };
+    out.forEach((s, i) => { G.R[i] = s[0]; G.TH[i] = s[1]; G.Y[i] = s[2]; G.B[i] = s[3]; G.SZ[i] = s[4]; G.G[i] = s[5]; G.F[i] = s[6]; G.PHS[i] = s[7]; G.DL[i] = s[8]; });
+    this.gal = G;
+    this.V = B
+      ? { tilt: 1.0, pa: .28, core: .055, rw: .23, rh: .42, trail: .05, cols: [[255, 236, 212], [220, 228, 255], [150, 182, 255], [255, 196, 172]] }
+      : { tilt: .66, pa: -.35, core: .075, rw: .21, rh: .36, trail: 0, cols: [[255, 226, 186], [236, 238, 246], [178, 198, 255], [255, 172, 200]] };
+    this.m = 0;
+  }
+
+  resize() {
+    const c = this.canvasRef.current; if (!c) return;
+    if (this.cv !== c) { this.cv = c; this.ctx = c.getContext('2d'); this.ro && this.ro.observe(c); }
+    const r = c.getBoundingClientRect(); this.dpr = Math.min(2, window.devicePixelRatio || 1);
+    this.W = Math.max(1, r.width); this.H = Math.max(1, r.height);
+    c.width = Math.round(this.W * this.dpr); c.height = Math.round(this.H * this.dpr);
+  }
+
+  frame = (now) => {
+    this.raf = requestAnimationFrame(this.frame);
+    const dt = Math.min(.05, (now - this.last) / 1000); this.last = now; const t = (now - this.t0) / 1000;
+    if (!this.ctx || this.cv !== this.canvasRef.current) this.resize();
+    if (!this.ctx) return;
+    const v = this.variant(), dens = this.props.densidadeEstrelas ?? 1, key = v + dens;
+    if (key !== this.gKey) { this.gKey = key; this.buildGalaxy(v, dens); }
+    if (this.m < 1) this.m = Math.min(1, this.m + dt / 2.8);
+    const ph = this.vphase(), T = Component.PH[ph], k = 1 - Math.exp(-dt * 2.2);
+    for (const q in T) this.p[q] += (T[q] - this.p[q]) * k;
+    if (this.forced() && (ph === 'listening' || ph === 'speaking') && Math.random() < dt * (ph === 'speaking' ? 6 : 4)) this.imp = Math.max(this.imp, .35 + Math.random() * .65);
+    this.imp *= Math.exp(-dt * 6);
+    const raw = (ph === 'listening' || ph === 'speaking') ? Math.min(1, this.imp + Math.random() * .05) : 0;
+    this.lvl += (raw - this.lvl) * (1 - Math.exp(-dt * 14));
+    const pt = this.forced() === 'processing' ? (t * .25) % 1 : this.progT;
+    this.prog += (pt - this.prog) * (1 - Math.exp(-dt * 4));
+    this.rot -= this.p.spd * .045 * dt;
+    this.draw(t); this.drawMeter(t, ph);
+  };
+
+  draw(t) {
+    const ctx = this.ctx, W = this.W, H = this.H, P = this.p, V = this.V, m = this.m, G = this.gal;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    const cx = W / 2, cy = H * .42, bri = P.bri * (1 + P.pulse * Math.sin(t * 6.5));
+    ctx.fillStyle = '#dfe4ee';
+    for (const s of this.bgS) { ctx.globalAlpha = s.b * (.55 + .45 * Math.sin(t * s.f + s.p)) * Math.min(1, m * 2); ctx.fillRect(s.x * W, s.y * H, s.s, s.s); }
+    const pulse = 1 + P.amp * Math.sin(t * 1.26) + P.react * this.lvl * .075;
+    const Rg = Math.min(W * V.rw, H * V.rh) * pulse;
+    const ct = Math.cos(V.tilt), st = Math.sin(V.tilt), cp = Math.cos(V.pa), sp = Math.sin(V.pa);
+    const BL = [125, 172, 255], cols = V.cols.map((c, i) => this.mix(c, BL, P.blue * (i === 0 ? .62 : .5)));
+    const L = 6, paths = []; for (let i = 0; i < 4 * L; i++) paths.push(new Path2D());
+    const rot = this.rot, sh = .012 * P.shim, trail = V.trail * (.7 + .3 * P.spd), intro = m < 1;
+    for (let i = 0; i < G.n; i++) {
+      let th = G.TH[i] + rot + sh * Math.sin(t * G.F[i] + G.PHS[i]), ap = 1, ee = 1;
+      if (intro) { let e = (m - G.DL[i] * .45) / .55; e = e < 0 ? 0 : e > 1 ? 1 : e; ee = e * e * (3 - 2 * e); th += (1 - ee) * 1.6; ap = Math.min(1, e * 2); }
+      const r = G.R[i] * (intro ? .05 + .95 * ee : 1);
+      const x = r * Math.cos(th), z = r * Math.sin(th), y = G.Y[i];
+      const yv = z * ct - y * st, d = z * st + y * ct, ps = 4 / (4 + d);
+      const gx = cx + (x * cp - yv * sp) * Rg * ps, gy = cy + (x * sp + yv * cp) * Rg * ps;
+      const a = G.B[i] * bri * ap * ps * ps * (.72 + .28 * Math.sin(t * G.F[i] * 2.3 + G.PHS[i]));
+      if (a < .02) continue;
+      let li = (a * L) | 0; if (li >= L) li = L - 1;
+      const p = paths[G.G[i] * L + li];
+      if (trail) {
+        const t2 = th + trail, x2 = r * Math.cos(t2), z2 = r * Math.sin(t2), yv2 = z2 * ct - y * st, ps2 = 4 / (4 + z2 * st + y * ct);
+        p.moveTo(gx, gy); p.lineTo(cx + (x2 * cp - yv2 * sp) * Rg * ps2, cy + (x2 * sp + yv2 * cp) * Rg * ps2);
+      } else { const s = G.SZ[i]; p.rect(gx - s * .5, gy - s * .5, s, s); }
+    }
+    if (trail) { ctx.lineWidth = 1.05; ctx.lineCap = 'round'; }
+    for (let g = 0; g < 4; g++) { const c = this.css(cols[g]); for (let l = 0; l < L; l++) { ctx.globalAlpha = (l + .5) / L; if (trail) { ctx.strokeStyle = c; ctx.stroke(paths[g * L + l]); } else { ctx.fillStyle = c; ctx.fill(paths[g * L + l]); } } }
+    const I = Math.min(1, m * 1.3) * bri;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(V.pa); ctx.scale(1, ct);
+    const hot = this.mix([255, 250, 242], BL, P.blue * .4), cc = cols[0], rc = Rg * V.core * (.3 + .7 * Math.min(1, m * 1.2));
+    let gr = ctx.createRadialGradient(0, 0, 0, 0, 0, rc * 5);
+    gr.addColorStop(0, this.css(hot, .9 * I)); gr.addColorStop(.1, this.css(cc, .5 * I)); gr.addColorStop(.38, this.css(cc, .12 * I)); gr.addColorStop(1, this.css(cc, 0));
+    ctx.globalAlpha = 1; ctx.fillStyle = gr; ctx.fillRect(-rc * 5, -rc * 5, rc * 10, rc * 10);
+    const hz = cols[2]; gr = ctx.createRadialGradient(0, 0, 0, 0, 0, Rg);
+    gr.addColorStop(0, this.css(hz, .075 * I)); gr.addColorStop(.5, this.css(hz, .025 * I)); gr.addColorStop(1, this.css(hz, 0));
+    ctx.fillStyle = gr; ctx.fillRect(-Rg, -Rg, 2 * Rg, 2 * Rg);
+    ctx.restore();
+    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  }
+
+  drawMeter(t, ph) {
+    const c = this.meterRef.current; if (!c) return;
+    if (this.mcv !== c) { this.mcv = c; this.mctx = c.getContext('2d'); this.md = Math.min(2, window.devicePixelRatio || 1); c.width = 440 * this.md; c.height = 5 * this.md; }
+    const ctx = this.mctx; ctx.setTransform(this.md, 0, 0, this.md, 0, 0); ctx.clearRect(0, 0, 440, 5);
+    const n = 56, gap = 2, w = (440 - gap * (n - 1)) / n, on = this.mix([236, 238, 242], [150, 186, 255], this.p.blue * .8);
+    for (let i = 0; i < n; i++) {
+      const x = i / (n - 1), pos = Math.abs(x - .5) * 2; let a = .09;
+      if (ph === 'listening' || ph === 'speaking') { const lv = this.lvl * 1.05 + .03 * Math.sin(t * 11 + i * 1.7); if (pos < lv) a = .25 + .65 * (1 - pos / Math.max(lv, .01)); }
+      else if (ph === 'processing') { if (x <= this.prog) a = .45; const sw = ((t * .7) % 1.4) - .2, dd = Math.abs(x - sw); if (dd < .07) a = Math.max(a, .85 - dd * 6); }
+      ctx.fillStyle = this.css(on, Math.min(1, a)); ctx.fillRect(i * (w + gap), 0, w, 5);
+    }
+  }
+
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+  clearFlow() { this.timers.forEach(clearTimeout); this.timers = []; }
+  nid() { return ++this.idc; }
+  sess() { return this.state.sessions.find(s => s.id === this.state.active) || this.state.sessions[0]; }
+  updSess(fn) { const sid = this.flow.sid; this.setState(s => ({ sessions: s.sessions.map(se => se.id === sid ? fn(se) : se) })); }
+  updMsgs(fn) { this.updSess(se => ({ ...se, msgs: fn(se.msgs) })); }
+  toast(text) { clearTimeout(this.toastT); this.setState({ toast: { text, on: true } }); this.toastT = setTimeout(() => this.setState(s => ({ toast: { ...s.toast, on: false } })), 2400); }
+
+  listen() {
+    const sc = Component.VOICE[this.vi++ % Component.VOICE.length];
+    this.flow = { sid: this.sess().id, sc };
+    const words = sc.user.split(' ');
+    this.setState({ phase: 'listening', cap: { who: 'VOCÊ', text: '', on: true }, plan: 'MICROFONE ABERTO' });
+    let at = 700;
+    words.forEach((w, i) => { at += 230 + Math.random() * 120; this.later(() => { this.imp = .5 + Math.random() * .5; this.setState(s => ({ cap: { ...s.cap, text: words.slice(0, i + 1).join(' ') } })); }, at); });
+    this.later(() => this.send(), at + 1300);
+  }
+  send() { if (this.state.phase !== 'listening') return; this.clearFlow(); this.process(this.flow.sc.user); }
+  runSkill(sk) {
+    if (this.state.phase !== 'idle') { this.toast('Aguarde a resposta atual'); return; }
+    this.flow = { sid: this.sess().id, sc: sk.sc };
+    this.process('Skill ' + sk.code + ' · ' + sk.label);
+  }
+  process(userText) {
+    const sc = this.flow.sc, n = sc.steps.length, sid = this.nid(), D = 1150;
+    this.updSess(se => ({ ...se, busy: true, msgs: [...se.msgs, { id: this.nid(), kind: 'user', text: userText }, { id: sid, kind: 'steps', steps: sc.steps.map(l => ({ label: l, st: 'pending' })) }] }));
+    this.progT = 0; this.prog = 0;
+    this.setState(s => ({ phase: 'processing', cap: { who: 'VOCÊ', text: userText, on: true }, plan: 'PLANO 0/' + n }));
+    this.later(() => this.setState(s => ({ cap: { ...s.cap, on: false } })), 1700);
+    const setSt = (i, st) => this.updMsgs(ms => ms.map(m => m.id === sid ? { ...m, steps: m.steps.map((x, j) => j === i ? { ...x, st } : x) } : m));
+    sc.steps.forEach((l, i) => {
+      this.later(() => { setSt(i, 'run'); this.setState({ plan: 'PLANO ' + (i + 1) + '/' + n + ' · ' + l }); }, 300 + i * D);
+      this.later(() => { setSt(i, 'done'); this.progT = (i + 1) / n; if (sc.warn && i === Math.min(1, n - 1)) this.updMsgs(ms => [...ms, { id: this.nid(), kind: 'warn', text: sc.warn }]); }, 300 + (i + 1) * D - 120);
+    });
+    this.later(() => this.speak(), 300 + n * D + 350);
+  }
+  speak() {
+    const sc = this.flow.sc, aid = this.nid(), words = sc.reply.split(' ');
+    this.updMsgs(ms => [...ms, { id: aid, kind: 'ai', text: '', streaming: true }]);
+    this.setState({ phase: 'speaking', cap: { who: 'CODEX', text: '', on: true }, plan: 'RESPOSTA EM ANDAMENTO' });
+    let at = 250;
+    words.forEach((w, i) => {
+      at += 140 + w.length * 18 + (/[.,:]$/.test(w) ? 240 : 0);
+      this.later(() => {
+        this.imp = .55 + Math.random() * .45;
+        const txt = words.slice(0, i + 1).join(' ');
+        let s0 = 0; for (let j = i - 1; j >= 0; j--) if (/[.!?]$/.test(words[j])) { s0 = j + 1; break; }
+        this.updMsgs(ms => ms.map(m => m.id === aid ? { ...m, text: txt } : m));
+        this.setState(s => ({ cap: { ...s.cap, text: words.slice(s0, i + 1).join(' ') } }));
+      }, at);
+    });
+    this.later(() => { this.updSess(se => ({ ...se, busy: false, msgs: se.msgs.map(m => m.id === aid ? { ...m, streaming: false } : m) })); this.setState({ phase: 'idle', plan: '' }); this.progT = 0; }, at + 700);
+    this.later(() => this.setState(s => ({ cap: { ...s.cap, on: false } })), at + 3200);
+  }
+
+  startResize = (e) => {
+    e.preventDefault(); this.rx = e.clientX; this.rw = this.state.leftW; this.setState({ dragging: true });
+    this.onMove = ev => { const max = Math.min(980, window.innerWidth * .62); this.setState({ leftW: Math.round(Math.max(480, Math.min(max, this.rw + ev.clientX - this.rx))) }); };
+    this.onUp = () => this.endResize();
+    window.addEventListener('mousemove', this.onMove); window.addEventListener('mouseup', this.onUp);
+  };
+  endResize() { if (this.onMove) { window.removeEventListener('mousemove', this.onMove); window.removeEventListener('mouseup', this.onUp); this.onMove = null; this.setState({ dragging: false }); } }
+
+  renderVals() {
+    const S = this.state, C = Component, ph = this.vphase(), busy = S.phase !== 'idle';
+    const W = S.leftW, q = S.query.trim().toLowerCase(), has = s => !q || s.toLowerCase().includes(q);
+    const model = C.MODELS.find(x => x.id === S.model) || C.MODELS[0];
+    const se = this.sess();
+    const rootVars = {
+      position: 'absolute', inset: 0,
+      '--ldw': W + 'px', '--ldx': S.leftOpen ? 'translateX(0px)' : `translateX(-${W + 60}px)`, '--ldo': S.leftOpen ? 1 : 0, '--ldpe': S.leftOpen ? 'auto' : 'none',
+      '--lhx': S.leftOpen ? `min(${18 + W + 10}px, calc(100vw - 92px))` : '0px', '--lhc': S.leftOpen ? '#F4F5F7' : '#6B6F77', '--lhb': S.leftOpen ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.08)',
+      '--rdx': S.rightOpen ? 'translateX(0px)' : 'translateX(calc(100% + 60px))', '--rdo': S.rightOpen ? 1 : 0, '--rdpe': S.rightOpen ? 'auto' : 'none',
+      '--rhx': S.rightOpen ? 'calc(min(650px, 42vw) + 28px)' : '0px', '--rhc': S.rightOpen ? '#F4F5F7' : '#6B6F77', '--rhb': S.rightOpen ? 'rgba(255,255,255,.22)' : 'rgba(255,255,255,.08)',
+      '--dtr': S.dragging ? '0s' : '.5s',
+      '--mpad': S.dense ? '6px' : '10px', '--mfs': S.dense ? '12px' : '13px', '--mgap': S.dense ? '9px' : '16px', '--sgap': S.dense ? '4px' : '7px'
+    };
+    let msgs = se ? se.msgs : [];
+    if (q) msgs = msgs.filter(m => has(m.text || '') || (m.steps || []).some(s => has(s.label)));
+    msgs = msgs.map(m => {
+      const steps = (m.steps || []).map(s => ({ label: s.label, mark: s.st === 'done' ? '■' : s.st === 'run' ? '▸' : '□', mc: s.st === 'done' ? '#8C9098' : s.st === 'run' ? '#9DBBFF' : '#4f535a', tc: s.st === 'done' ? '#A0A3AA' : s.st === 'run' ? '#ECEDEF' : '#5c6068' }));
+      return { ...m, isUser: m.kind === 'user', isAi: m.kind === 'ai', isSteps: m.kind === 'steps', isWarn: m.kind === 'warn', streaming: !!m.streaming, steps, count: steps.filter((s, i) => m.steps[i].st === 'done').length + '/' + steps.length };
+    });
+    const tot = C.CHANGES.reduce((a, f) => [a[0] + f.add, a[1] + f.del], [0, 0]);
+    const lc = { '+': ['#86C9A3', 'rgba(134,201,163,.07)'], '-': ['#E48D8D', 'rgba(228,141,141,.07)'], '@@': ['#5c6068', 'transparent'], ' ': ['#A0A3AA', 'transparent'] };
+    return {
+      rootVars, canvasRef: this.canvasRef, meterRef: this.meterRef, scrollRef: this.scrollRef,
+      modelReadout: (model.name + ' · ' + C.EFF[S.effort]).toUpperCase(),
+      pickClaude: () => this.toast('Claude Code mantém a tela atual do Hub'),
+      onFullPanel: () => this.toast('O Painel completo permanece inalterado'),
+      capOpacity: S.cap.on ? 1 : 0, capWho: S.cap.who, capText: S.cap.text,
+      statusLabel: C.LABEL[ph], planLine: S.plan,
+      btnLabel: S.phase === 'listening' ? 'ENVIAR' : (busy ? 'ENVIAR' : 'INICIAR'),
+      btnOpacity: S.phase === 'processing' || S.phase === 'speaking' ? .35 : 1, btnCursor: S.phase === 'processing' || S.phase === 'speaking' ? 'default' : 'pointer',
+      primary: () => { if (S.phase === 'idle') this.listen(); else if (S.phase === 'listening') this.send(); },
+      galA: () => this.setState({ gal: 'A' }), galB: () => this.setState({ gal: 'B' }),
+      galAColor: this.variant() === 'A' ? '#ECEDEF' : '#4f535a', galABg: this.variant() === 'A' ? 'rgba(255,255,255,.07)' : 'transparent',
+      galBColor: this.variant() === 'B' ? '#ECEDEF' : '#4f535a', galBBg: this.variant() === 'B' ? 'rgba(255,255,255,.07)' : 'transparent',
+      toastOpacity: S.toast.on ? 1 : 0, toastText: S.toast.text,
+      toggleLeft: () => this.setState(s => ({ leftOpen: !s.leftOpen, menu: null })),
+      toggleRight: () => this.setState(s => ({ rightOpen: !s.rightOpen, menu: null })),
+      tabs: C.TABS.map(([k, icon, label]) => ({ icon, label, active: S.tab === k, color: S.tab === k ? '#F4F5F7' : '#7A7E86', bg: S.tab === k ? 'rgba(255,255,255,.055)' : 'transparent', select: () => this.setState({ tab: k, query: '' }) })),
+      tabTitle: C.TABS.find(x => x[0] === S.tab)[3],
+      query: S.query, onQuery: e => this.setState({ query: e.target.value }),
+      densityLabel: S.dense ? 'COMPACTO' : 'CONFORTO', toggleDensity: () => this.setState(s => ({ dense: !s.dense })),
+      isBusy: busy,
+      sessions: S.sessions.map(s => {
+        const act = s.id === S.active;
+        return { name: s.name, busy: s.busy, idle: !s.busy, dot: s.unread ? '#ECEDEF' : '#4f535a', border: act ? 'rgba(255,255,255,.5)' : 'rgba(255,255,255,.08)', text: act ? '#ECEDEF' : '#8C9098',
+          select: () => this.setState(st => ({ active: s.id, sessions: st.sessions.map(x => x.id === s.id ? { ...x, unread: false } : x) })),
+          close: e => { e.stopPropagation(); if (S.sessions.length < 2 || s.busy) return; const rest = S.sessions.filter(x => x.id !== s.id); this.setState({ sessions: rest, active: act ? rest[0].id : S.active }); } };
+      }),
+      addSession: () => { const id = 's' + this.nid(); this.setState(s => ({ sessions: [...s.sessions, { id, name: 'Sessão ' + (s.sessions.length + 1), busy: false, unread: false, msgs: [] }], active: id, tab: 'transcript' })); },
+      isTranscript: S.tab === 'transcript', isChanges: S.tab === 'changes', isDebug: S.tab === 'debug', isConvs: S.tab === 'convs', isReports: S.tab === 'reports',
+      msgs, noMsgs: msgs.length === 0, emptyText: q ? 'Nada encontrado nesta sessão.' : 'Sessão vazia. Toque em INICIAR ou escolha uma skill no painel SKILLS.',
+      changesCount: C.CHANGES.length + ' ARQUIVOS', addTotal: '+' + tot[0], delTotal: '−' + tot[1],
+      changes: C.CHANGES.map((f, i) => ({ ...f, i })).filter(f => has(f.path)).map(f => ({ ...f, open: S.openDiff === f.i, caret: S.openDiff === f.i ? '▾' : '▸', toggle: () => this.setState(s => ({ openDiff: s.openDiff === f.i ? null : f.i })), lines: f.lines.map(([sg, text]) => ({ sign: sg === '@@' ? '' : sg, text, color: lc[sg][0], bg: lc[sg][1] })) })),
+      logs: C.LOGS.map(([t, lvl, msg]) => ({ t, lvl, msg: msg.replace('{model}', model.id), c: lvl === 'WARN' ? '#DDBF7E' : lvl === 'ERRO' ? '#E48D8D' : '#6B6F77' })).filter(l => has(l.msg)),
+      convs: C.CONVS.filter(c => has(c[0])).map(([title, meta]) => ({ title, meta, restore: () => this.toast('Restaurar: ' + title) })),
+      reports: C.REPORTS.filter(r => has(r[0])).map(([title, meta, kind]) => ({ title, meta, kind, open: () => this.toast('Abrir relatório: ' + title) })),
+      modelLabel: model.name.toUpperCase(), effortLabel: C.EFF[S.effort].toUpperCase(),
+      modelMenuOpen: S.menu === 'model', effortMenuOpen: S.menu === 'effort', deckMenuOpen: S.menu === 'deck',
+      toggleModelMenu: () => this.setState(s => ({ menu: s.menu === 'model' ? null : 'model' })),
+      toggleEffortMenu: () => this.setState(s => ({ menu: s.menu === 'effort' ? null : 'effort' })),
+      toggleDeckMenu: () => this.setState(s => ({ menu: s.menu === 'deck' ? null : 'deck' })),
+      models: C.MODELS.map((o, i) => ({ name: o.name, sub: o.id + ' · ' + o.note, head: i === 0 || (o.prev && !C.MODELS[i - 1].prev), headLabel: o.prev ? 'GERAÇÃO ANTERIOR' : 'ATUAIS', bg: o.id === S.model ? 'rgba(255,255,255,.05)' : 'transparent', bar: o.id === S.model ? '#F4F5F7' : 'transparent', pick: () => this.setState({ model: o.id, effort: o.eff.includes(S.effort) ? S.effort : o.def, menu: null }) })),
+      effortMenuModel: model.name.toUpperCase(),
+      efforts: model.eff.map(e => ({ label: C.EFF[e] + (e === model.def ? ' · padrão' : ''), sub: e, bg: e === S.effort ? 'rgba(255,255,255,.05)' : 'transparent', bar: e === S.effort ? '#F4F5F7' : 'transparent', pick: () => this.setState({ effort: e, menu: null }) })),
+      startResize: this.startResize,
+      deckLabel: S.deck === 'skills' ? 'SKILLS' : 'COMANDOS', deckSkills: S.deck === 'skills', deckCmds: S.deck === 'cmds',
+      pickDeckSkills: () => this.setState({ deck: 'skills', menu: null }), pickDeckCmds: () => this.setState({ deck: 'cmds', menu: null }),
+      skills: C.SKILLS.map(s => ({ code: s.code, label: s.label, run: () => this.runSkill(s) })),
+      cmds: C.CMDS.map(([cmd, desc]) => ({ cmd, desc, run: () => this.toast(cmd + ' · comando ilustrativo') }))
+    };
+  }
+}
+</script>
+</body>
+</html>

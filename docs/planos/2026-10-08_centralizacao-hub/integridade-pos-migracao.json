@@ -1,0 +1,50 @@
+{
+  "personal": {
+    "unchanged": 118,
+    "expectedLinkEdits": 2,
+    "unexpected": 0
+  },
+  "external": [
+    {
+      "type": "mixed",
+      "exists": false,
+      "backupValid": true,
+      "sourceUnchanged": null
+    },
+    {
+      "type": "classify-settings",
+      "exists": true,
+      "backupValid": true,
+      "sourceUnchanged": true
+    },
+    {
+      "type": "technical-history",
+      "exists": false,
+      "backupValid": true,
+      "sourceUnchanged": null
+    },
+    {
+      "type": "technical-history",
+      "exists": false,
+      "backupValid": true,
+      "sourceUnchanged": null
+    },
+    {
+      "type": "technical-history",
+      "exists": false,
+      "backupValid": true,
+      "sourceUnchanged": null
+    },
+    {
+      "type": "voice-source",
+      "exists": true,
+      "backupValid": true,
+      "sourceUnchanged": true
+    }
+  ],
+  "oldSourceAbsent": true,
+  "archivedGit": true,
+  "archivedIndexValid": true,
+  "mobileSourceAbsent": true,
+  "mobileDestinationValid": true
+}

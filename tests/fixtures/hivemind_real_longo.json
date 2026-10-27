@@ -1,0 +1,5523 @@
+{
+ "about": "Textos longos sem espaço (descrição, tarefas, caminho, evidência) para o teste de estouro (V08).",
+ "status": {
+  "settings": {
+   "worker_limit": 2,
+   "revision": 1
+  },
+  "roster": {
+   "bees": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "revision": 1,
+   "incomplete": []
+  },
+  "providers": [
+   "claude",
+   "codex"
+  ]
+ },
+ "catalog": {
+  "codex": {
+   "authenticated": true,
+   "compatible": true,
+   "errors": [],
+   "models": [
+    {
+     "name": "gpt-x",
+     "efforts": [
+      "low",
+      "high"
+     ]
+    },
+    {
+     "name": "gpt-y",
+     "efforts": [
+      "high"
+     ]
+    }
+   ]
+  },
+  "claude": {
+   "authenticated": true,
+   "compatible": true,
+   "errors": [],
+   "models": [
+    {
+     "name": "opus-x",
+     "efforts": [
+      "max"
+     ]
+    }
+   ]
+  }
+ },
+ "scenarios": {
+  "running": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "running",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     },
+     "workspace": {
+      "id": "w1"
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [
+    {
+     "id": "documentos-t1-running",
+     "bee_id": "documentos",
+     "role": "worker",
+     "state": "running",
+     "data": {
+      "task_id": "t1",
+      "cycle": 1,
+      "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "plan_attempt": 1,
+      "process": {
+       "pid": 1
+      }
+     }
+    },
+    {
+     "id": "cadastros-t2-succeeded",
+     "bee_id": "cadastros",
+     "role": "worker",
+     "state": "succeeded",
+     "data": {
+      "task_id": "t2",
+      "cycle": 1,
+      "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "plan_attempt": 1,
+      "process": {
+       "pid": 1
+      }
+     }
+    },
+    {
+     "id": "extra-t5-succeeded",
+     "bee_id": "extra",
+     "role": "worker",
+     "state": "succeeded",
+     "data": {
+      "task_id": "t5",
+      "cycle": 1,
+      "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "plan_attempt": 1,
+      "process": {
+       "pid": 1
+      }
+     }
+    }
+   ],
+   "events": [],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t1",
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "running",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": {
+      "done": 7,
+      "total": 23,
+      "note": "lendo anexos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "seq": 812
+     },
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": "running",
+      "cycle": 1,
+      "started": true
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t3",
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "waiting",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": "completed",
+      "cycle": 1,
+      "started": true
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t4",
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "waiting",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  },
+  "awaiting_plan_approval": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "awaiting_plan_approval",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [],
+   "events": [],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t1",
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "pending",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t3",
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "pending",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t2",
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "pending",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t4",
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "pending",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 0,
+      "current": "t5",
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "pending",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  },
+  "awaiting_delivery_approval": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "awaiting_delivery_approval",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     },
+     "delivery": {
+      "source": "x",
+      "changes": [
+       "pedidos/a.py",
+       "analise/c.py",
+       "nao/previsto/Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py"
+      ]
+     },
+     "delivery_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "candidate_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "verdict": {
+      "passed": true,
+      "cycle": 1,
+      "criteria": {
+       "ac-1": "passed",
+       "ac-2": "unverifiable"
+      },
+      "evidence": "Todos os critérios foram conferidos. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [],
+   "events": [],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  },
+  "recovery_required": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "recovery_required",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     },
+     "delivery": {
+      "source": "x",
+      "changes": [
+       "pedidos/a.py",
+       "analise/c.py",
+       "nao/previsto/Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py"
+      ]
+     },
+     "delivery_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "candidate_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "reconciliation_required": {
+      "conflicts": [
+       "pedidos/a.py"
+      ]
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [],
+   "events": [],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  },
+  "awaiting_user": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "awaiting_user",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     },
+     "attempt_outcome": {
+      "status": "cycle_limit",
+      "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cycle": 3
+     },
+     "verdict": {
+      "passed": false,
+      "cycle": 1,
+      "criteria": {
+       "ac-1": "failed",
+       "ac-2": "passed"
+      },
+      "evidence": "Todos os critérios foram conferidos. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [],
+   "events": [
+    {
+     "seq": 1,
+     "kind": "job_error",
+     "created_at": 1,
+     "data": {
+      "reason": "security_config_invalid"
+     }
+    }
+   ],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  },
+  "completed": {
+   "mission": {
+    "id": "m1",
+    "revision": 3,
+    "state": "completed",
+    "cycle": 1,
+    "cycle_limit": 3,
+    "data": {
+     "title": "Operação de pedidos Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "plan": {
+      "objective": "Conferir pedidos recebidos por e-mail e preparar um relatório de divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "project": {
+       "path": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/"
+      },
+      "bees": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "extra",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": true,
+        "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "temporária"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "tasks": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "documentos",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       },
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "cadastros",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       },
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "analise",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       },
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "relatorios",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       },
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "bee_id": "extra",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ],
+      "acceptance": [
+       {
+        "id": "ac-1",
+        "description": "Só os arquivos das tarefas mudam."
+       },
+       {
+        "id": "ac-2",
+        "description": "Os testes passam. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "plan_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "plan_attempt": 1,
+     "planning": {
+      "source": "C:/Users/m.rafael/Desktop/Projetos Pessoais/um-projeto-com-caminho-muito-longo/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/pasta/",
+      "queen": {
+       "id": "queen",
+       "role": "queen",
+       "provider": "codex",
+       "model": "gpt-x",
+       "effort": "high",
+       "temporary": false,
+       "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+       "skills": {
+        "tags": [
+         "planejamento",
+         "coordenação"
+        ],
+        "instructions": ""
+       },
+       "tools": [
+        "read"
+       ]
+      },
+      "team": [
+       {
+        "id": "queen",
+        "role": "queen",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "planejamento",
+          "coordenação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read"
+        ]
+       },
+       {
+        "id": "documentos",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "python",
+          "leitura de PDF",
+          "revisão de código"
+         ],
+         "instructions": "Siga o guia de estilo da empresa."
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "analise",
+        "role": "worker",
+        "provider": "claude",
+        "model": "opus-x",
+        "effort": "max",
+        "temporary": false,
+        "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "comparação",
+          "análise"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "cadastros",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "consulta",
+          "cadastros"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       },
+       {
+        "id": "verifier",
+        "role": "verifier",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "verificação"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "checks"
+        ]
+       },
+       {
+        "id": "relatorios",
+        "role": "worker",
+        "provider": "codex",
+        "model": "gpt-x",
+        "effort": "high",
+        "temporary": false,
+        "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "skills": {
+         "tags": [
+          "relatórios",
+          "resumo"
+         ],
+         "instructions": ""
+        },
+        "tools": [
+         "read",
+         "patch",
+         "checks"
+        ]
+       }
+      ],
+      "messages": [
+       {
+        "role": "user",
+        "text": "Quero conferir os pedidos recebidos esta semana. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       },
+       {
+        "role": "assistant",
+        "text": "Entendi. Aqui está o plano proposto para a sua aprovação. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+       }
+      ]
+     },
+     "pause": {
+      "from": "running"
+     },
+     "delivery": {
+      "source": "x",
+      "changes": [
+       "pedidos/a.py",
+       "analise/c.py",
+       "nao/previsto/Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py"
+      ]
+     },
+     "delivery_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "candidate_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "verdict": {
+      "passed": true,
+      "cycle": 1,
+      "criteria": {
+       "ac-1": "passed",
+       "ac-2": "unverifiable"
+      },
+      "evidence": "Todos os critérios foram conferidos. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     }
+    },
+    "created_at": 1,
+    "updated_at": 2
+   },
+   "jobs": [],
+   "events": [],
+   "roster": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ]
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "temporary": false,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ]
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": false,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "temporary": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ]
+    }
+   ],
+   "bees_summary": [
+    {
+     "id": "queen",
+     "role": "queen",
+     "temporary": false,
+     "active": true,
+     "description": "Coordena o trabalho da colmeia. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "planejamento",
+       "coordenação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "documentos",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Lê os documentos que chegam à empresa e organiza as informações. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "python",
+       "leitura de PDF",
+       "revisão de código"
+      ],
+      "instructions": "Siga o guia de estilo da empresa."
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t1",
+        "description": "Extrair os pedidos recebidos por e-mail Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "pedidos/a.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "analise",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Compara as entregas e lista as divergências. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "comparação",
+       "análise"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "claude",
+     "model": "opus-x",
+     "effort": "max",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t3",
+        "description": "Comparar as duas entregas Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t1",
+         "t2"
+        ],
+        "files": [
+         "analise/c.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "cadastros",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Consulta o cadastro de clientes e a tabela de preços. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "consulta",
+       "cadastros"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t2",
+        "description": "Consultar clientes e preços Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "cadastros/b.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "verifier",
+     "role": "verifier",
+     "temporary": false,
+     "active": true,
+     "description": "Verificador independente: confere cada critério de aceite. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "verificação"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 0,
+      "done": 0,
+      "current": null,
+      "items": []
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "relatorios",
+     "role": "worker",
+     "temporary": false,
+     "active": true,
+     "description": "Prepara o relatório de divergências no modelo da empresa. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "relatórios",
+       "resumo"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t4",
+        "description": "Preparar o relatório de divergências Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [
+         "t3"
+        ],
+        "files": [
+         "relatorios/d.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    },
+    {
+     "id": "extra",
+     "role": "worker",
+     "temporary": true,
+     "active": true,
+     "description": "Operária temporária criada pela Rainha para uma tarefa específica. Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "skills": {
+      "tags": [
+       "temporária"
+      ],
+      "instructions": ""
+     },
+     "tools": [
+      "read",
+      "patch",
+      "checks"
+     ],
+     "provider": "codex",
+     "model": "gpt-x",
+     "effort": "high",
+     "tasks": {
+      "total": 1,
+      "done": 1,
+      "current": null,
+      "items": [
+       {
+        "id": "t5",
+        "description": "Tarefa da temporária Texto muito longo sem espaço algum para testar o estouro das caixas xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "status": "done",
+        "depends_on": [],
+        "files": [
+         "extra/e.py"
+        ]
+       }
+      ]
+     },
+     "progress": null,
+     "tools_used": {
+      "read": 4,
+      "patch": 2,
+      "checks": 1,
+      "progress": 3
+     },
+     "job": {
+      "state": null,
+      "cycle": 1,
+      "started": false
+     }
+    }
+   ]
+  }
+ }
+}

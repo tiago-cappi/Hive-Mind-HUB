@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "file": "voice_hub.ps1",
+      "bytes": 6265,
+      "sha256": "592a0eb942a6a2460b56ba5269587b703c9c4eb5710988a94da99cf494708177",
+      "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\voice_hub.ps1",
+      "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\voice_hub.ps1",
+      "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\voice_hub.ps1",
+      "status": "archived-origin-removed"
+    },
+    {
+      "file": "launch_voice_hub.cmd",
+      "bytes": 236,
+      "sha256": "ddaa86d12587f534b93bae0feed3652b515868f1ac6931d5bc661c4281536650",
+      "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\launch_voice_hub.cmd",
+      "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\launch_voice_hub.cmd",
+      "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\launch_voice_hub.cmd",
+      "status": "archived-origin-removed"
+    },
+    {
+      "file": "launch_voice_hub.vbs",
+      "bytes": 304,
+      "sha256": "ed6fbf44094d542677649bba2b2070dc8119bc3ab6aa9b3480cdbf8839ff0f6c",
+      "origin": "C:\\Users\\m.rafael\\.claude\\hooks\\voice-input\\launch_voice_hub.vbs",
+      "archive": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\docs\\historico\\voice-hub-winforms\\launch_voice_hub.vbs",
+      "backup": "C:\\Users\\m.rafael\\Desktop\\Projetos Pessoais\\core-voice-hub-v2-main\\core-voice-hub-v2-main\\.migration-backups\\2026-10-08_centralizacao-hub\\global\\voice-hub-winforms\\launch_voice_hub.vbs",
+      "status": "archived-origin-removed"
+    }
+  ],
+  "consumerScan": "rg hooks: somente seus2launchers; zero processos, atalhos desktop/startmenus ou tarefas encontrados na retirada",
+  "sharedVoicePreserved": true,
+  "restoredFilesVerified": 3
+}

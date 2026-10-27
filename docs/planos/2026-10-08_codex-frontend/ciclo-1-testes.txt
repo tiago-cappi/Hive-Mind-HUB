@@ -1,0 +1,12 @@
+........................................................................ [ 31%]
+........................................................................ [ 62%]
+...........................................................F............ [ 94%]
+.............                                                            [100%]
+================================== FAILURES ===================================
+___________________ test_front_tem_a_aba_espelho_do_celular ___________________
+tests\test_session_watch.py:80: in test_front_tem_a_aba_espelho_do_celular
+    assert "if (t.mirror) return;" in src
+E   assert 'if (t.mirror) return;' in '<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-wid...dbg, setState,\n};\n</script>\n<script type="module" src="/codex-ui/static/providers.js"></script>\n</body>\n</html>\n'
+=========================== short test summary info ===========================
+FAILED tests/test_session_watch.py::test_front_tem_a_aba_espelho_do_celular
+1 failed, 228 passed in 24.08s
